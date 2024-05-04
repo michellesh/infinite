@@ -68,7 +68,7 @@ void loop() {
 
   for (int i = 0; i < NUM_STRIPS; i++) {
     for (int j = 0; j < STRIP_LENGTH; j++) {
-      int hue = map(i, 0, NUM_STRIPS, 200, 280);
+      int hue = map(i, 0, NUM_STRIPS, 100, 180);
       leds[i * STRIP_LENGTH + j] = CHSV(hue, 170, 255);
     }
   }
