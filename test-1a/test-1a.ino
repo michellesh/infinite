@@ -1,22 +1,44 @@
 #include <FastLED.h>
 
-#define LED_PIN 13
-#define LED_PIN_2 12
+#define LED_PIN 12
+#define LED_PIN_2 14
+#define LED_PIN_3 27
+#define LED_PIN_4 26
+#define LED_PIN_5 25
+#define LED_PIN_6 33
+#define LED_PIN_7 32
+#define LED_PIN_8 2
 #define NUM_ROLLS 4
 #define NUM_LEDS_PER_ROLL 300
 #define NUM_LEDS NUM_LEDS_PER_ROLL *NUM_ROLLS
+#define NUM_PINS 7
 #define BRIGHTNESS 100
 
-CRGB leds[NUM_LEDS];
-CRGB leds2[NUM_LEDS];
+
+CRGB leds[NUM_PINS][NUM_LEDS];
 
 void setup() {
   Serial.begin(9600);
 
-  FastLED.addLeds<WS2813, LED_PIN, GRB>(leds, NUM_LEDS)
+  FastLED.addLeds<WS2813, LED_PIN, GRB>(leds[0], NUM_LEDS)
       .setCorrection(TypicalLEDStrip)
       .setDither(BRIGHTNESS < 255);
-  //FastLED.addLeds<WS2813, LED_PIN_2, GRB>(leds2, NUM_LEDS)
+  FastLED.addLeds<WS2813, LED_PIN_2, GRB>(leds[1], NUM_LEDS)
+      .setCorrection(TypicalLEDStrip)
+      .setDither(BRIGHTNESS < 255);
+  //FastLED.addLeds<WS2813, LED_PIN_3, GRB>(leds[2], NUM_LEDS)
+  //    .setCorrection(TypicalLEDStrip)
+  //    .setDither(BRIGHTNESS < 255);
+  //FastLED.addLeds<WS2813, LED_PIN_4, GRB>(leds[3], NUM_LEDS)
+  //    .setCorrection(TypicalLEDStrip)
+  //    .setDither(BRIGHTNESS < 255);
+  //FastLED.addLeds<WS2813, LED_PIN_5, GRB>(leds[4], NUM_LEDS)
+  //    .setCorrection(TypicalLEDStrip)
+  //    .setDither(BRIGHTNESS < 255);
+  //FastLED.addLeds<WS2813, LED_PIN_6, GRB>(leds[5], NUM_LEDS)
+  //    .setCorrection(TypicalLEDStrip)
+  //    .setDither(BRIGHTNESS < 255);
+  //FastLED.addLeds<WS2813, LED_PIN_7, GRB>(leds[6], NUM_LEDS)
   //    .setCorrection(TypicalLEDStrip)
   //    .setDither(BRIGHTNESS < 255);
 }
@@ -32,6 +54,7 @@ void loop() {
   FastLED.show();
 }
 
+/*
 // This function is taken from the FastLED example Pride2015
 void pride() {
   static uint16_t sPseudotime = 0;
@@ -94,3 +117,4 @@ void sinBeat() {
 
   fadeToBlackBy(leds, NUM_LEDS, 10);
 }
+*/

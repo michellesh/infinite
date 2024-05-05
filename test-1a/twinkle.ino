@@ -1,5 +1,5 @@
 #define TWINKLE_DENSITY 6 // 0 (NONE lit) to 8 (ALL lit at once)
-#define TWINKLE_SPEED 3 // 0-8
+#define TWINKLE_SPEED 6 // 0-8
 
 CRGB backgroundColor = CRGB::Black;
 
@@ -18,11 +18,12 @@ void twinkle() {
 
   uint32_t clock32 = millis();
 
-  for (int i = 0; i < NUM_LEDS; i++) {
-    int r = map(i, 0, NUM_LEDS, 0, 255);
-    CRGB color = CRGB(r, 100, 100);
-    leds[i] = getTwinkleColor(PRNG16, clock32, color);
-    //leds2[i] = getTwinkleColor(PRNG16, clock32, color);
+  for (int pin = 0; pin < NUM_PINS; pin++) {
+    for (int i = 0; i < NUM_LEDS; i++) {
+      int r = map(i, 0, NUM_LEDS, 0, 255);
+      CRGB color = CRGB(r, 100, 100);
+      leds[pin][i] = getTwinkleColor(PRNG16, clock32, color);
+    }
   }
 }
 
