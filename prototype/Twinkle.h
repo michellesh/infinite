@@ -46,7 +46,7 @@ public:
       // on the "brightness = f( time )" idea.
       uint8_t brightness = _getBrightness(myclock30, myunique8);
 
-      CRGB color = CRGB(map(i, 0, NUM_LEDS, 0, 255), 100, 100);
+      CRGB color = palette.getColor(i);
       leds[i] = color.nscale8(brightness);
     }
   }

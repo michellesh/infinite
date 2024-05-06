@@ -3,8 +3,10 @@
 #include <WiFi.h>
 #include <esp_now.h>
 
-#include "utils.h"
 #include "Range.h"
+#include "Timer.h"
+#include "utils.h"
+#include "colors.h"
 
 #include "Pattern.h"
 #include "SubPattern.h"
@@ -46,6 +48,9 @@ Set rings[NUM_RINGS];
 Set straights[NUM_STRAIGHTS];
 
 // clang-format off
+#include "Palette.h"
+Palette palette;
+
 #include "Spiral.h"
 #include "SpiralSubPattern.h"
 #include "Twinkle.h"
@@ -138,10 +143,12 @@ void setup() {
 
 void loop() {
   FastLED.clear();
+  palette.cycle();
 
   //basicSpirals.show();
   twinkle.show();
 
+  FastLED.setBrightness(BRIGHTNESS);
   FastLED.show();
 }
 
