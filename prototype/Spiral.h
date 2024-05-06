@@ -10,7 +10,7 @@ private:
   // angle
   uint8_t _getBrightness(int index) {
 
-    int16_t angleOffset = ledHeight[index] * _offset;
+    int16_t angleOffset = ledDepth[index] * _offset;
     int16_t targetAngle = (_angle + angleOffset + 360) % 360;
     int16_t pixelAngle = ledAngle[index];
 
@@ -39,7 +39,7 @@ public:
   static constexpr Range SPEED = {1, 10, 3}; // How many degrees to add to the
                                              // current angle each time
   static constexpr Range OFFSET = {
-      1, 4, 2}; // How many degrees to curl the spiral per unit of height
+      1, 4, 2}; // How many degrees to curl the spiral per unit of depth
 
   void setWidth(int16_t width) { _width = abs(width); }
 

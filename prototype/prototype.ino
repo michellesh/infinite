@@ -29,19 +29,20 @@
 #define NUM_RINGS 10
 #define NUM_STRAIGHTS 6
 #define NUM_LEDS_PER_STRAIGHT 144
-#define MAX_HEIGHT NUM_LEDS_PER_STRAIGHT
 #define NUM_LEDS_PER_RING 144
 #define NUM_LEDS                                                               \
   NUM_RINGS *NUM_LEDS_PER_RING + NUM_STRAIGHTS *NUM_LEDS_PER_STRAIGHT
 
+#define MAX_DEPTH NUM_LEDS_PER_STRAIGHT
+
 CRGB leds[NUM_LEDS];
-int ledHeight[NUM_LEDS];
+int ledDepth[NUM_LEDS];
 int ledAngle[NUM_LEDS];
 
 struct Set {
   CRGB *leds;
   int *ledAngle;
-  int *ledHeight;
+  int *ledDepth;
 };
 
 Set rings[NUM_RINGS];
@@ -111,31 +112,31 @@ void setup() {
 
   int offset = 0;
   for (int i = 0; i < NUM_STRAIGHTS; i++) {
-    Set straight = {&leds[offset], &ledAngle[offset], &ledHeight[offset]};
+    Set straight = {&leds[offset], &ledAngle[offset], &ledDepth[offset]};
     straights[i] = straight;
     offset += NUM_LEDS_PER_STRAIGHT;
   }
   for (int i = 0; i < NUM_RINGS; i++) {
-    Set ring = {&leds[offset], &ledAngle[offset], &ledHeight[offset]};
+    Set ring = {&leds[offset], &ledAngle[offset], &ledDepth[offset]};
     rings[i] = ring;
     offset += NUM_LEDS_PER_RING;
   }
 
-  // setup heights and angles for straights.
+  // setup depths and angles for straights.
   int angles[] = {150, 210, 90, 270, 30, 330};
   for (int i = 0; i < NUM_STRAIGHTS; i++) {
     for (int j = 0; j < NUM_LEDS_PER_STRAIGHT; j++) {
-      // the height is the index of the LED on that straight
-      straights[i].ledHeight[j] = j;
+      // the depth is the index of the LED on that straight
+      straights[i].ledDepth[j] = j;
       straights[i].ledAngle[j] = angles[i];
     }
   }
 
-  // setup heights and angles for rings
-  int heightStepPerRing = MAX_HEIGHT / (NUM_RINGS - 1);
+  // setup depths and angles for rings
+  int depthStepPerRing = MAX_DEPTH / (NUM_RINGS - 1);
   for (int i = 0; i < NUM_RINGS; i++) {
     for (int j = 0; j < NUM_LEDS_PER_RING; j++) {
-      rings[i].ledHeight[j] = heightStepPerRing * i;
+      rings[i].ledDepth[j] = depthStepPerRing * i;
       rings[i].ledAngle[j] = map(j, 0, NUM_LEDS_PER_RING, 330, 30);
     }
   }
@@ -152,19 +153,19 @@ void loop() {
   FastLED.show();
 }
 
-void testHeights() {
-  static int height = 0;
+void testDepths() {
+  static int depth = 0;
   int speed = 1;
   int width = 10;
 
   for (int i = 0; i < NUM_LEDS; i++) {
-    int dist = abs(ledHeight[i] - height);
+    int dist = abs(ledDepth[i] - depth);
     if (dist < width) {
       leds[i] = CRGB::Blue;
     }
   }
 
-  height = (height + speed + MAX_HEIGHT) % MAX_HEIGHT;
+  depth = (depth + speed + MAX_DEPTH) % MAX_DEPTH;
 }
 
 void testAngles() {
