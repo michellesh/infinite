@@ -48,9 +48,12 @@ Set straights[NUM_STRAIGHTS];
 // clang-format off
 #include "Spiral.h"
 #include "SpiralSubPattern.h"
+#include "Twinkle.h"
+#include "TwinkleSubPattern.h"
 // clang-format on
 
 SpiralSubPattern basicSpirals(SpiralSubPattern::BASIC_SPIRALS);
+TwinkleSubPattern twinkle(TwinkleSubPattern::MEDIUM_DENSITY);
 
 void setup() {
   Serial.begin(9600);
@@ -136,7 +139,8 @@ void setup() {
 void loop() {
   FastLED.clear();
 
-  basicSpirals.show();
+  //basicSpirals.show();
+  twinkle.show();
 
   FastLED.show();
 }
