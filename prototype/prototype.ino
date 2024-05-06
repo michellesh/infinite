@@ -2,6 +2,12 @@
 #include <FastLED.h>
 #include <WiFi.h>
 #include <esp_now.h>
+
+#include "utils.h"
+#include "Range.h"
+
+#include "Pattern.h"
+#include "SubPattern.h"
 // clang-format on
 
 #define BRIGHTNESS 255
@@ -38,6 +44,13 @@ struct Set {
 
 Set rings[NUM_RINGS];
 Set straights[NUM_STRAIGHTS];
+
+// clang-format off
+#include "Spiral.h"
+#include "SpiralSubPattern.h"
+// clang-format on
+
+SpiralSubPattern basicSpirals(SpiralSubPattern::BASIC_SPIRALS);
 
 void setup() {
   Serial.begin(9600);
@@ -123,8 +136,7 @@ void setup() {
 void loop() {
   FastLED.clear();
 
-  // testAngles();
-  testHeights();
+  basicSpirals.show();
 
   FastLED.show();
 }
