@@ -53,6 +53,7 @@ int activePattern = 0;
 #define PATTERN_TWINKLE 0
 #define PATTERN_BASIC_SPIRAL 1
 #define NUM_PATTERNS 2
+int speed = 3;
 
 // clang-format off
 #include "web_server.h"

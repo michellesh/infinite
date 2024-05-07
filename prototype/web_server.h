@@ -39,9 +39,9 @@ const char index_html[] PROGMEM = R"rawliteral(
   </style>
 </head>
 <body>
-  <h2>ESP32 VU Meter</h2>
-  <button type="button" id="nextBtn" onclick="sendData('n',0)">Twinkle</button>
-  <button type="button" id="nextBtn" onclick="sendData('n',1)">Spiral</button>
+  <h2>Infinitube! :-O</h2>
+  <button type="button" onclick="sendData('n',0)">Twinkle</button>
+  <button type="button" onclick="sendData('n',1)">Spiral</button>
   <button type="button" id="autoBtn" onclick="sendData('a',1)">Auto Change Pattern</button>
   </br></br>
   <label id="labelAutoChangeTime" for="displayTime">Seconds to show each pattern on auto </label>
@@ -49,16 +49,16 @@ const char index_html[] PROGMEM = R"rawliteral(
   </br></br>
   <table border="0">
   <tr>
-    <td class="labelCol"><label id="labelBrightness" for="brightnessSlider">Brightness</label></td>
-    <td><input type="range" id="brightnessSlider" onchange="sendData('b',this.value)" min="0" max="255" value="%BRIGHTNESSVALUE%" step="1" class="slider"></td>
-    <td class="valCol"><span id="brightnessValue">%BRIGHTNESSVALUE%</span></td>
+    <td class="labelCol"><label id="labelSpeed" for="speedSlider">Speed</label></td>
+    <td><input type="range" id="speedSlider" onchange="sendData('s',this.value)" min="1" max="10" value="%SPEEDVALUE%" step="1" class="slider"></td>
+    <td class="valCol"><span id="speedValue">%SPEEDVALUE%</span></td>
   </tr><tr>
     <td class="sliderCol"><label id="labelGain" for="gainSlider">Gain</label></td>
     <td><input type="range" id="gainSlider" onchange="sendData('g',this.value)" min="0" max="30" value="%GAINVALUE%" step="1" class="slider"></td>
     <td class="valCol"><span id="gainValue">%GAINVALUE%</span></td>
   </tr><tr>
     <td class="labelRow"><label id="labelSquelch" for="squelchSlider">Squelch</label></td>
-    <td><input type="range" id="squelchSlider" onchange="sendData('s',this.value)" min="0" max="30" value="%SQUELCHVALUE%" step="1" class="slider"></td>
+    <td><input type="range" id="squelchSlider" onchange="sendData('q',this.value)" min="0" max="30" value="%SQUELCHVALUE%" step="1" class="slider"></td>
     <td class="valCol"><span id="squelchValue">%SQUELCHVALUE%</span></td>
   </tr>
   </table>
@@ -92,15 +92,15 @@ const char index_html[] PROGMEM = R"rawliteral(
     case 't':
       document.getElementById('displayTime').value = dataValue;
       break;
-    case 'b':
-      document.getElementById('brightnessValue').innerHTML = dataValue;
-      document.getElementById('brightnessSlider').value = dataValue;
+    case 's':
+      document.getElementById('speedValue').innerHTML = dataValue;
+      document.getElementById('speedSlider').value = dataValue;
       break;
     case 'g':
       document.getElementById('gainValue').innerHTML = dataValue;
       document.getElementById('gainSlider').value = dataValue;
       break;
-    case 's':
+    case 'q':
       document.getElementById('squelchValue').innerHTML = dataValue;
       document.getElementById('squelchSlider').value = dataValue;
       break;
@@ -137,15 +137,15 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       case 't':
         //displayTime = dataValue.toInt();
         ws.textAll(message);
-      case 'b':
-        //brightness = dataValue.toInt();
+      case 's':
+        speed = dataValue.toInt();
         ws.textAll(message);
         break;
       case 'g':
         //gain = dataValue.toInt();
         ws.textAll(message);
         break;
-      case 's':
+      case 'q':
         //squelch = dataValue.toInt();
         ws.textAll(message);
         break;
@@ -189,8 +189,8 @@ String processor(const String& var){
   if(var == "DISPLAYTIME"){
     //return String(displayTime);
   }
-  if(var == "BRIGHTNESSVALUE"){
-    //return String(brightness);
+  if(var == "SPEEDVALUE"){
+    return String(speed);
   }
   if(var == "GAINVALUE"){
     //return String(gain);

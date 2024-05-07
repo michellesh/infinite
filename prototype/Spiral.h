@@ -61,6 +61,6 @@ public:
     }
 
     // Increment the angle. After 360 degrees, start over at 0 degrees
-    _angle = (_angle + _speed + 360) % 360;
+    _angle = (_angle + speed + 360) % 360;
   }
 };

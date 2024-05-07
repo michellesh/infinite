@@ -4,7 +4,7 @@ private:
   uint8_t _density = DENSITY.DFLT;
 
   uint8_t _getBrightness(uint32_t ms, uint8_t salt) {
-    uint16_t ticks = ms >> (8 - _speed);
+    uint16_t ticks = ms >> (8 - speed);
     uint8_t fastcycle8 = ticks;
     uint16_t slowcycle16 = (ticks >> 8) + salt;
     slowcycle16 += sin8(slowcycle16);
