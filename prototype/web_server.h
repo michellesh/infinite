@@ -88,7 +88,6 @@ const char index_html[] PROGMEM = R"rawliteral(
   function onOpen(event) {
     console.log('Connection opened');
     document.getElementById('autoBtn').style.backgroundColor = '#baffb3';
-    console.log('string processor:',%AUTOCYCLEPALETTES%);
   }
 
   function onClose(event) {
@@ -108,7 +107,6 @@ const char index_html[] PROGMEM = R"rawliteral(
       document.getElementById('speedSlider').value = dataValue;
       break;
     case 'a':
-      console.log('a is..',dataValue);
       if (dataValue == '1') document.getElementById('autoBtn').style.backgroundColor = '#baffb3';
       else document.getElementById('autoBtn').style.backgroundColor = '';
       break;
@@ -143,8 +141,9 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
         break;
       case 'p':
         palette.setPalette(dataValue.toInt());
-        autoCyclePalettes = false;
         ws.textAll(message);
+        autoCyclePalettes = false;
+        ws.textAll("a0");
         break;
       case 't':
         palette.setSecondsPerPalette(dataValue.toInt());
