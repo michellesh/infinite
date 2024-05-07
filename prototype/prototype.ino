@@ -48,7 +48,15 @@ struct Set {
 Set rings[NUM_RINGS];
 Set straights[NUM_STRAIGHTS];
 
+// globals controlled by web server
+int activePattern = 0;
+#define PATTERN_TWINKLE 0
+#define PATTERN_BASIC_SPIRAL 1
+#define NUM_PATTERNS 2
+
 // clang-format off
+#include "web_server.h"
+
 #include "Palette.h"
 Palette palette;
 
@@ -60,6 +68,7 @@ Palette palette;
 
 SpiralSubPattern basicSpirals(SpiralSubPattern::BASIC_SPIRALS);
 TwinkleSubPattern twinkle(TwinkleSubPattern::MEDIUM_DENSITY);
+
 
 void setup() {
   Serial.begin(9600);
@@ -140,15 +149,29 @@ void setup() {
       rings[i].ledAngle[j] = map(j, 0, NUM_LEDS_PER_RING, 330, 30);
     }
   }
+
+  setupWebServer();
 }
 
 void loop() {
   FastLED.clear();
   palette.cycle();
 
-  twinkle.show();
-  basicSpirals.show();
-  //testDepths();
+  EVERY_N_SECONDS(1) {
+  Serial.print("Local IP address: ");
+  Serial.println(WiFi.localIP());
+  }
+
+  switch (activePattern) {
+    case PATTERN_TWINKLE:
+      twinkle.show();
+      break;
+    case PATTERN_BASIC_SPIRAL:
+      basicSpirals.show();
+      break;
+    default:
+      break;
+  }
 
   FastLED.setBrightness(BRIGHTNESS);
   FastLED.show();
