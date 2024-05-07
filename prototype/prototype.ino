@@ -146,8 +146,9 @@ void loop() {
   FastLED.clear();
   palette.cycle();
 
-  //basicSpirals.show();
   twinkle.show();
+  basicSpirals.show();
+  //testDepths();
 
   FastLED.setBrightness(BRIGHTNESS);
   FastLED.show();

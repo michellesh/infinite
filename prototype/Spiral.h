@@ -55,7 +55,7 @@ public:
     for (int i = 0; i < NUM_LEDS; i++) {
       uint8_t brightness = _getBrightness(i);
       if (brightness > 0) {
-        CRGB color = CRGB(100 * _id, 100, 100);
+        CRGB color = _id == 1 ? CRGB::Red : CRGB::Blue;//CRGB(100 * _id, 100 * _id, 100 * _id);
         leds[i] = color.nscale8(brightness);
       }
     }
