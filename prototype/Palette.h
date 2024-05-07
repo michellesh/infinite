@@ -5,8 +5,7 @@ private:
   CRGBPalette16 _currentPalette = *(activePalettes[0]);
   CRGBPalette16 _targetPalette = *(activePalettes[0]);
   uint8_t _activeColorMode = DEPTH_GRADIENT;
-  uint8_t _secondsPerPalette = 10;
-  Timer _paletteCycleTimer = {_secondsPerPalette * 1000};
+  Timer _paletteCycleTimer = {10000}; // 10 seconds * 1000 ms
 
   void _setNextColorPalette() {
     const uint8_t numberOfPalettes =
@@ -32,6 +31,28 @@ public:
     EVERY_N_MILLISECONDS(10) {
       nblendPaletteTowardPalette(_currentPalette, _targetPalette, 12);
     }
+  }
+
+  void setColorMode(uint8_t colorMode) {
+    _activeColorMode = colorMode;
+  }
+
+  void setSecondsPerPalette(int secondsPerPalette) {
+    _paletteCycleTimer.totalCycleTime = secondsPerPalette * 1000;
+  }
+
+  int getSecondsPerPalette() {
+    return _paletteCycleTimer.totalCycleTime / 1000;
+  }
+
+  uint8_t getNumPalettes() {
+    return sizeof(activePalettes) / sizeof(activePalettes[0]);
+  }
+
+  void setPalette(uint8_t whichPalette) {
+    _currentPalette = *(activePalettes[whichPalette]);
+    _targetPalette = *(activePalettes[whichPalette]);
+    _paletteCycleTimer.reset();
   }
 
   CRGB colorFromPalette(uint8_t paletteIndex) {

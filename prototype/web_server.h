@@ -42,10 +42,17 @@ const char index_html[] PROGMEM = R"rawliteral(
   <h2>Infinitube! :-O</h2>
   <button type="button" onclick="sendData('n',0)">Twinkle</button>
   <button type="button" onclick="sendData('n',1)">Spiral</button>
-  <button type="button" id="autoBtn" onclick="sendData('a',1)">Auto Change Pattern</button>
+
+  <h3>Color Palettes</h3>
+  <button type="button" onclick="sendData('p',0)">Fire</button>
+  <button type="button" onclick="sendData('p',1)">Ocean</button>
+  <button type="button" onclick="sendData('p',2)">Floral</button>
+  <button type="button" onclick="sendData('p',3)">Ice</button>
+  <button type="button" onclick="sendData('p',4)">Fairy</button>
+  <button type="button" id="autoBtn" onclick="sendData('a',1)">Auto Cycle Palettes</button>
   </br></br>
-  <label id="labelAutoChangeTime" for="displayTime">Seconds to show each pattern on auto </label>
-  <input id="displayTime" type="number" min="1" max="65535" onchange="sendData('t',this.value)" value="%DISPLAYTIME%">
+  <label id="labelAutoChangeTime" for="secondsPerPalette">Seconds per palette on auto </label>
+  <input id="secondsPerPalette" type="number" min="1" max="65535" onchange="sendData('t',this.value)" value="%SECONDSPERPALETTE%">
   </br></br>
   <table border="0">
   <tr>
@@ -92,7 +99,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     var dataValue = event.data.substring(1);
     switch (dataType){
     case 't':
-      document.getElementById('displayTime').value = dataValue;
+      document.getElementById('secondsPerPalette').value = dataValue;
       break;
     case 's':
       document.getElementById('speedValue').innerHTML = dataValue;
@@ -136,29 +143,26 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
     String dataValue = message.substring(1);
 
     switch (dataType) {
-      case 't':
-        //displayTime = dataValue.toInt();
+      case 'n':
+        activePattern = (activePattern + 1) % NUM_PATTERNS;
+        break;
+      case 'p':
+        palette.setPalette(dataValue.toInt());
+        autoCyclePalettes = false;
         ws.textAll(message);
+        break;
+      case 't':
+        palette.setSecondsPerPalette(dataValue.toInt());
+        ws.textAll(message);
+        break;
       case 's':
         speed = dataValue.toInt();
         ws.textAll(message);
         break;
-      case 'g':
-        //gain = dataValue.toInt();
-        ws.textAll(message);
-        break;
-      case 'q':
-        //squelch = dataValue.toInt();
-        ws.textAll(message);
-        break;
-      case 'n':
-        //pattern = (pattern + 1) % 6;
-        activePattern = (activePattern + 1) % NUM_PATTERNS;
-        break;
       case 'a':
-        //autoChangePatterns = !autoChangePatterns;
-        //if (autoChangePatterns) ws.textAll("a1");
-        //else ws.textAll("a0");
+        autoCyclePalettes = !autoCyclePalettes;
+        if (autoCyclePalettes) ws.textAll("a1");
+        else ws.textAll("a0");
         break;
     }
   }
@@ -188,8 +192,8 @@ void initWebSocket() {
 }
 
 String processor(const String& var){
-  if(var == "DISPLAYTIME"){
-    //return String(displayTime);
+  if(var == "SECONDSPERPALETTE"){
+    return String(palette.getSecondsPerPalette());
   }
   if(var == "SPEEDVALUE"){
     return String(speed);

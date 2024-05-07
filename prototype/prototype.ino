@@ -54,12 +54,13 @@ int activePattern = 0;
 #define PATTERN_BASIC_SPIRAL 1
 #define NUM_PATTERNS 2
 int speed = 3;
+bool autoCyclePalettes = true;
 
 // clang-format off
-#include "web_server.h"
-
 #include "Palette.h"
 Palette palette;
+
+#include "web_server.h"
 
 #include "Spiral.h"
 #include "SpiralSubPattern.h"
@@ -156,7 +157,9 @@ void setup() {
 
 void loop() {
   FastLED.clear();
-  palette.cycle();
+  if (autoCyclePalettes) {
+    palette.cycle();
+  }
 
   EVERY_N_SECONDS(1) {
   Serial.print("Local IP address: ");
