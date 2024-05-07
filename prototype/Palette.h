@@ -34,6 +34,10 @@ public:
     }
   }
 
+  CRGB colorFromPalette(uint8_t paletteIndex) {
+    return ColorFromPalette(_currentPalette, paletteIndex);
+  }
+
   CRGB getColor(int i, bool reversePalette = false) {
     uint8_t paletteIndex = 0;
     switch (_activeColorMode) {

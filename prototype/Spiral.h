@@ -5,6 +5,7 @@ private:
   int16_t _width = WIDTH.DFLT;
   int16_t _speed = SPEED.DFLT;
   int16_t _offset = OFFSET.DFLT;
+  uint8_t _colorPaletteIndex = 0;
 
   // Gets the brightness of the LED if the LED's angle is close to the current
   // angle
@@ -49,13 +50,17 @@ public:
 
   void setOffset(int16_t offset) { _offset = offset; }
 
+  void setColorPaletteIndex(int16_t colorPaletteIndex) {
+    _colorPaletteIndex = colorPaletteIndex;
+  }
+
   void reverse() { _speed = _speed * -1; }
 
   void show() {
     for (int i = 0; i < NUM_LEDS; i++) {
       uint8_t brightness = _getBrightness(i);
       if (brightness > 0) {
-        CRGB color = _id == 1 ? CRGB::Red : CRGB::Blue;//CRGB(100 * _id, 100 * _id, 100 * _id);
+        CRGB color = palette.colorFromPalette(_colorPaletteIndex);
         leds[i] = color.nscale8(brightness);
       }
     }

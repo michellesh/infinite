@@ -52,12 +52,14 @@ const char index_html[] PROGMEM = R"rawliteral(
     <td class="labelCol"><label id="labelSpeed" for="speedSlider">Speed</label></td>
     <td><input type="range" id="speedSlider" onchange="sendData('s',this.value)" min="1" max="10" value="%SPEEDVALUE%" step="1" class="slider"></td>
     <td class="valCol"><span id="speedValue">%SPEEDVALUE%</span></td>
-  </tr><tr>
-    <td class="sliderCol"><label id="labelGain" for="gainSlider">Gain</label></td>
+  </tr>
+  <tr>
+    <td class="labelCol"><label id="labelGain" for="gainSlider">Gain</label></td>
     <td><input type="range" id="gainSlider" onchange="sendData('g',this.value)" min="0" max="30" value="%GAINVALUE%" step="1" class="slider"></td>
     <td class="valCol"><span id="gainValue">%GAINVALUE%</span></td>
-  </tr><tr>
-    <td class="labelRow"><label id="labelSquelch" for="squelchSlider">Squelch</label></td>
+  </tr>
+  <tr>
+    <td class="labelCol"><label id="labelSquelch" for="squelchSlider">Squelch</label></td>
     <td><input type="range" id="squelchSlider" onchange="sendData('q',this.value)" min="0" max="30" value="%SQUELCHVALUE%" step="1" class="slider"></td>
     <td class="valCol"><span id="squelchValue">%SQUELCHVALUE%</span></td>
   </tr>

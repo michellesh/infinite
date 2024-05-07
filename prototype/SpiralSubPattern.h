@@ -22,6 +22,8 @@ public:
       _numSpirals = 2;
       _spirals[0] = Spiral(1);
       _spirals[1] = Spiral(2);
+      _spirals[0].setColorPaletteIndex(0);
+      _spirals[1].setColorPaletteIndex(170);
       _spirals[0].setOffset(3);
       _spirals[1].setOffset(-3);
       _spirals[0].setSpeed(5);
