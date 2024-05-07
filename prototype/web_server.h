@@ -40,6 +40,8 @@ const char index_html[] PROGMEM = R"rawliteral(
 </head>
 <body>
   <h2>Infinitube! :-O</h2>
+
+  <h3>Patterns</h3>
   <button type="button" onclick="sendData('n',0)">Twinkle</button>
   <button type="button" onclick="sendData('n',1)">Spiral</button>
 
@@ -54,21 +56,19 @@ const char index_html[] PROGMEM = R"rawliteral(
   <label id="labelAutoChangeTime" for="secondsPerPalette">Seconds per palette on auto </label>
   <input id="secondsPerPalette" type="number" min="1" max="65535" onchange="sendData('t',this.value)" value="%SECONDSPERPALETTE%">
   </br></br>
+
+  <h3>Color Modes</h3>
+  <button type="button" onclick="sendData('m',0)">Solid</button>
+  <button type="button" onclick="sendData('m',1)">Index Gradient</button>
+  <button type="button" onclick="sendData('m',2)">Depth Gradient</button>
+  <button type="button" onclick="sendData('m',3)">Angle Gradient</button>
+  </br></br>
+
   <table border="0">
   <tr>
     <td class="labelCol"><label id="labelSpeed" for="speedSlider">Speed</label></td>
     <td><input type="range" id="speedSlider" onchange="sendData('s',this.value)" min="1" max="10" value="%SPEEDVALUE%" step="1" class="slider"></td>
     <td class="valCol"><span id="speedValue">%SPEEDVALUE%</span></td>
-  </tr>
-  <tr>
-    <td class="labelCol"><label id="labelGain" for="gainSlider">Gain</label></td>
-    <td><input type="range" id="gainSlider" onchange="sendData('g',this.value)" min="0" max="30" value="%GAINVALUE%" step="1" class="slider"></td>
-    <td class="valCol"><span id="gainValue">%GAINVALUE%</span></td>
-  </tr>
-  <tr>
-    <td class="labelCol"><label id="labelSquelch" for="squelchSlider">Squelch</label></td>
-    <td><input type="range" id="squelchSlider" onchange="sendData('q',this.value)" min="0" max="30" value="%SQUELCHVALUE%" step="1" class="slider"></td>
-    <td class="valCol"><span id="squelchValue">%SQUELCHVALUE%</span></td>
   </tr>
   </table>
 
@@ -87,6 +87,8 @@ const char index_html[] PROGMEM = R"rawliteral(
 
   function onOpen(event) {
     console.log('Connection opened');
+    document.getElementById('autoBtn').style.backgroundColor = '#baffb3';
+    console.log('string processor:',%AUTOCYCLEPALETTES%);
   }
 
   function onClose(event) {
@@ -105,15 +107,8 @@ const char index_html[] PROGMEM = R"rawliteral(
       document.getElementById('speedValue').innerHTML = dataValue;
       document.getElementById('speedSlider').value = dataValue;
       break;
-    case 'g':
-      document.getElementById('gainValue').innerHTML = dataValue;
-      document.getElementById('gainSlider').value = dataValue;
-      break;
-    case 'q':
-      document.getElementById('squelchValue').innerHTML = dataValue;
-      document.getElementById('squelchSlider').value = dataValue;
-      break;
     case 'a':
+      console.log('a is..',dataValue);
       if (dataValue == '1') document.getElementById('autoBtn').style.backgroundColor = '#baffb3';
       else document.getElementById('autoBtn').style.backgroundColor = '';
       break;
@@ -155,6 +150,10 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
         palette.setSecondsPerPalette(dataValue.toInt());
         ws.textAll(message);
         break;
+      case 'm':
+        palette.setColorMode(dataValue.toInt());
+        ws.textAll(message);
+        break;
       case 's':
         speed = dataValue.toInt();
         ws.textAll(message);
@@ -192,17 +191,14 @@ void initWebSocket() {
 }
 
 String processor(const String& var){
+  if(var == "AUTOCYCLEPALETTES"){
+    return String(autoCyclePalettes);
+  }
   if(var == "SECONDSPERPALETTE"){
     return String(palette.getSecondsPerPalette());
   }
   if(var == "SPEEDVALUE"){
     return String(speed);
-  }
-  if(var == "GAINVALUE"){
-    //return String(gain);
-  }
-  if(var == "SQUELCHVALUE"){
-    //return String(squelch);
   }
   return "";
 }
