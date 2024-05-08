@@ -44,6 +44,7 @@ const char index_html[] PROGMEM = R"rawliteral(
   <h3>Patterns</h3>
   <button type="button" onclick="sendData('n',0)">Twinkle</button>
   <button type="button" onclick="sendData('n',1)">Spiral</button>
+  <button type="button" onclick="sendData('n',2)">Rotating Pong</button>
 
   <h3>Color Palettes</h3>
   <button type="button" onclick="sendData('p',0)">Fire</button>
@@ -137,7 +138,8 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
 
     switch (dataType) {
       case 'n':
-        activePattern = (activePattern + 1) % NUM_PATTERNS;
+        activePattern = dataValue.toInt();
+        ws.textAll("a0");
         break;
       case 'p':
         palette.setPalette(dataValue.toInt());

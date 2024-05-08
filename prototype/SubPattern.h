@@ -4,5 +4,7 @@ class SubPattern {
 
   virtual void setPercentBrightness(uint8_t percentBrightness) {}
 
+  virtual void setup() {}
+
   virtual void show() {}
 };

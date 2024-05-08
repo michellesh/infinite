@@ -34,25 +34,30 @@
   NUM_RINGS *NUM_LEDS_PER_RING + NUM_STRAIGHTS *NUM_LEDS_PER_STRAIGHT
 
 #define MAX_DEPTH NUM_LEDS_PER_STRAIGHT
+#define DEPTH_SEGMENT_LENGTH MAX_DEPTH / (NUM_RINGS - 1)
+#define ANGLE_SEGMENT_LENGTH 360 / NUM_STRAIGHTS
 
 CRGB leds[NUM_LEDS];
 int ledDepth[NUM_LEDS];
 int ledAngle[NUM_LEDS];
 
-struct Set {
+struct Path {
   CRGB *leds;
   int *ledAngle;
   int *ledDepth;
+  int length;
+  int offset;
 };
 
-Set rings[NUM_RINGS];
-Set straights[NUM_STRAIGHTS];
+Path rings[NUM_RINGS];
+Path straights[NUM_STRAIGHTS];
 
 // globals controlled by web server
-int activePattern = 0;
+int activePattern = 2;
 #define PATTERN_TWINKLE 0
 #define PATTERN_BASIC_SPIRAL 1
-#define NUM_PATTERNS 2
+#define PATTERN_ROTATING_PONG 2
+#define NUM_PATTERNS 3
 int speed = 3;
 bool autoCyclePalettes = true;
 
@@ -66,11 +71,21 @@ Palette palette;
 #include "SpiralSubPattern.h"
 #include "Twinkle.h"
 #include "TwinkleSubPattern.h"
+#include "Line.h"
+#include "LineSubPattern.h"
 // clang-format on
 
-SpiralSubPattern basicSpirals(SpiralSubPattern::BASIC_SPIRALS);
 TwinkleSubPattern twinkle(TwinkleSubPattern::MEDIUM_DENSITY);
+SpiralSubPattern basicSpirals(SpiralSubPattern::BASIC_SPIRALS);
+LineSubPattern rotatingPong(LineSubPattern::ROTATING_PONG);
 
+// clang-format off
+SubPattern *activePatterns[] = {
+  &twinkle,
+  &basicSpirals,
+  &rotatingPong
+};
+// clang-format on
 
 void setup() {
   Serial.begin(9600);
@@ -122,19 +137,22 @@ void setup() {
       .setDither(BRIGHTNESS < 255);
 
   int offset = 0;
+  uint8_t sortStraight[] = {2, 3, 1, 4, 0, 5};
   for (int i = 0; i < NUM_STRAIGHTS; i++) {
-    Set straight = {&leds[offset], &ledAngle[offset], &ledDepth[offset]};
-    straights[i] = straight;
+    Path straight = {&leds[offset], &ledAngle[offset], &ledDepth[offset],
+                     NUM_LEDS_PER_STRAIGHT, offset};
+    straights[sortStraight[i]] = straight;
     offset += NUM_LEDS_PER_STRAIGHT;
   }
   for (int i = 0; i < NUM_RINGS; i++) {
-    Set ring = {&leds[offset], &ledAngle[offset], &ledDepth[offset]};
+    Path ring = {&leds[offset], &ledAngle[offset], &ledDepth[offset],
+                 NUM_LEDS_PER_RING, offset};
     rings[i] = ring;
     offset += NUM_LEDS_PER_RING;
   }
 
   // setup depths and angles for straights.
-  int angles[] = {150, 210, 90, 270, 30, 330};
+  int angles[] = {30, 90, 150, 210, 270, 330};
   for (int i = 0; i < NUM_STRAIGHTS; i++) {
     for (int j = 0; j < NUM_LEDS_PER_STRAIGHT; j++) {
       // the depth is the index of the LED on that straight
@@ -153,6 +171,10 @@ void setup() {
   }
 
   setupWebServer();
+
+  for (int i = 0; i < NUM_PATTERNS; i++) {
+    activePatterns[i]->setup();
+  }
 }
 
 void loop() {
@@ -162,20 +184,11 @@ void loop() {
   }
 
   EVERY_N_SECONDS(1) {
-  Serial.print("Local IP address: ");
-  Serial.println(WiFi.localIP());
+    Serial.print("Local IP address: ");
+    Serial.println(WiFi.localIP());
   }
 
-  switch (activePattern) {
-    case PATTERN_TWINKLE:
-      twinkle.show();
-      break;
-    case PATTERN_BASIC_SPIRAL:
-      basicSpirals.show();
-      break;
-    default:
-      break;
-  }
+  activePatterns[activePattern]->show();
 
   FastLED.setBrightness(BRIGHTNESS);
   FastLED.show();
