@@ -2,15 +2,15 @@ class Line : public Pattern {
 private:
   uint8_t _id = 0;
   int _length = LENGTH.DFLT;
-  float _speed = SPEED.DFLT;
+  bool _reverse = false;
   float _position = 0;
   Path _path;
 
   void _updatePosition() {
-    _position += _speed;
-    if ((_position >= _path.length && _speed > 0) ||
-        (_position < _length && _speed < 0)) {
-      _speed = -_speed;
+    _position += speed * (_reverse ? -1 : 1);
+    if ((_position >= _path.length && !_reverse) ||
+        (_position < _length && _reverse)) {
+      _reverse = !_reverse;
     }
   }
 
@@ -22,8 +22,6 @@ public:
       DEPTH_SEGMENT_LENGTH, DEPTH_SEGMENT_LENGTH * 3, DEPTH_SEGMENT_LENGTH * 2};
 
   void setPosition(float position) { _position = position; }
-
-  void setSpeed(float speed) { _speed = speed; }
 
   void setLength(int length) { _length = length; }
 
