@@ -1,4 +1,4 @@
-#define MAX_LINES 3
+#define MAX_LINES 10
 
 class LineSubPattern : public SubPattern {
 private:
@@ -23,9 +23,12 @@ public:
   void setup() {
     switch (_activeSubPattern) {
     case ROTATING_PONG:
-      _numLines = 1;
-      _lines[0] = Line(0);
-      _lines[0].setPath(straights[0]);
+      _numLines = NUM_STRAIGHTS;
+      for (uint8_t i = 0; i < _numLines; i++) {
+        _lines[i] = Line(i);
+        _lines[i].setPath(straights[i]);
+        _lines[i].setPosition(i * (MAX_DEPTH / NUM_STRAIGHTS));
+      }
       break;
     default:
       break;

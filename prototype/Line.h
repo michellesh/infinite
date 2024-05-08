@@ -8,7 +8,8 @@ private:
 
   void _updatePosition() {
     _position += _speed;
-    if (_position >= _path.length || (_position < _length && _speed < 0)) {
+    if ((_position >= _path.length && _speed > 0) ||
+        (_position < _length && _speed < 0)) {
       _speed = -_speed;
     }
   }
@@ -24,14 +25,19 @@ public:
 
   void setSpeed(float speed) { _speed = speed; }
 
+  void setLength(int length) { _length = length; }
+
   void setPath(Path &path) { _path = path; }
 
   void show() {
     // show this Line at current position and add tail of length _length
-    for (int i = _position; i > _position - _length && i > 0; i--) {
-      int brightness =
-          addFadeShape(map(i, _position, _position - _length, 0, 255));
-      _path.leds[i] = palette.getColor(_path.offset + i).nscale8(brightness);
+    for (int i = 0; i < _length; i++) {
+      int index = _position - i; // tail extends backwards behind position
+      if (index > 0 && index < _path.length) {
+        int brightness = addFadeShape(map(i, 0, _length, 0, 255));
+        _path.leds[index] =
+            palette.getColor(_path.offset + index).nscale8(brightness);
+      }
     }
 
     _updatePosition();
