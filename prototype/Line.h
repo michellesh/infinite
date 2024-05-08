@@ -6,13 +6,7 @@ private:
   float _position = 0;
   Path _path;
 
-  void _updatePosition() {
-    _position += speed * (_reverse ? -1 : 1);
-    if ((_position >= _path.length && !_reverse) ||
-        (_position < _length && _reverse)) {
-      _reverse = !_reverse;
-    }
-  }
+  void _updatePosition() { _position += speed * (_reverse ? -1 : 1); }
 
 public:
   Line(uint8_t id = 0) { _id = id; }
@@ -26,6 +20,15 @@ public:
   void setLength(int length) { _length = length; }
 
   void setPath(Path &path) { _path = path; }
+
+  bool isReversed() { return _reverse; }
+
+  void reverse() { _reverse = !_reverse; }
+
+  bool isOutOfBounds() {
+    return (_position >= _path.length && !_reverse) ||
+           (_position < _length && _reverse);
+  }
 
   void show() {
     // show this Line at current position and add tail of length _length

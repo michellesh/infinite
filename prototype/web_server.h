@@ -45,6 +45,7 @@ const char index_html[] PROGMEM = R"rawliteral(
   <button type="button" onclick="sendData('n',0)">Twinkle</button>
   <button type="button" onclick="sendData('n',1)">Spiral</button>
   <button type="button" onclick="sendData('n',2)">Rotating Pong</button>
+  <button type="button" onclick="sendData('n',3)">Lasers</button>
 
   <h3>Color Palettes</h3>
   <button type="button" onclick="sendData('p',0)">Fire</button>

@@ -9,12 +9,25 @@ private:
 
   void _showRotatingPong() {
     for (int i = 0; i < _numLines; i++) {
+      if (_lines[i].isOutOfBounds()) {
+        _lines[i].reverse();
+      }
+      _lines[i].show();
+    }
+  }
+
+  void _showLasers() {
+    for (int i = 0; i < _numLines; i++) {
+      if (_lines[i].isOutOfBounds()) {
+        _lines[i].setPosition(MAX_DEPTH);
+      }
       _lines[i].show();
     }
   }
 
 public:
   static const uint8_t ROTATING_PONG = 0;
+  static const uint8_t LASERS = 1;
 
   LineSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
@@ -28,6 +41,15 @@ public:
         _lines[i] = Line(i);
         _lines[i].setPath(straights[i]);
         _lines[i].setPosition(i * (MAX_DEPTH / NUM_STRAIGHTS));
+      }
+      break;
+    case LASERS:
+      _numLines = NUM_STRAIGHTS;
+      for (uint8_t i = 0; i < _numLines; i++) {
+        _lines[i] = Line(i);
+        _lines[i].setPath(straights[i]);
+        _lines[i].reverse();
+        _lines[i].setPosition(MAX_DEPTH - i * (MAX_DEPTH / NUM_STRAIGHTS));
       }
       break;
     default:
@@ -48,6 +70,9 @@ public:
     switch (_activeSubPattern) {
     case ROTATING_PONG:
       _showRotatingPong();
+      break;
+    case LASERS:
+      _showLasers();
       break;
     default:
       break;

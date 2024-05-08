@@ -57,7 +57,8 @@ int activePattern = 2;
 #define PATTERN_TWINKLE 0
 #define PATTERN_BASIC_SPIRAL 1
 #define PATTERN_ROTATING_PONG 2
-#define NUM_PATTERNS 3
+#define PATTERN_LASERS 3
+#define NUM_PATTERNS 4
 int speed = 3;
 bool autoCyclePalettes = true;
 
@@ -78,12 +79,14 @@ Palette palette;
 TwinkleSubPattern twinkle(TwinkleSubPattern::MEDIUM_DENSITY);
 SpiralSubPattern basicSpirals(SpiralSubPattern::BASIC_SPIRALS);
 LineSubPattern rotatingPong(LineSubPattern::ROTATING_PONG);
+LineSubPattern lasers(LineSubPattern::LASERS);
 
 // clang-format off
 SubPattern *activePatterns[] = {
   &twinkle,
   &basicSpirals,
-  &rotatingPong
+  &rotatingPong,
+  &lasers
 };
 // clang-format on
 
