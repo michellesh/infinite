@@ -15,9 +15,15 @@ public:
   static constexpr Range LENGTH = {
       DEPTH_SEGMENT_LENGTH, DEPTH_SEGMENT_LENGTH * 3, DEPTH_SEGMENT_LENGTH * 2};
 
+  uint8_t getId() { return _id; }
+
   void setPosition(float position) { _position = position; }
 
+  float getPosition() { return _position; }
+
   void setLength(int length) { _length = length; }
+
+  int getLength() { return _length; }
 
   void setPath(Path &path) { _path = path; }
 
@@ -28,6 +34,11 @@ public:
   bool isOutOfBounds() {
     return (_position >= _path.length && !_reverse) ||
            (_position < _length && _reverse);
+  }
+
+  bool isFullyOutOfBounds() {
+    return (_position >= _path.length + _length && !_reverse) ||
+           (_position < 0 && _reverse);
   }
 
   void show() {

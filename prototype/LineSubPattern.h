@@ -1,4 +1,4 @@
-#define MAX_LINES 10
+#define MAX_LINES NUM_RINGS * 2
 
 class LineSubPattern : public SubPattern {
 private:
@@ -25,9 +25,23 @@ private:
     }
   }
 
+  void _showRainfall() {
+    for (int i = 0; i < _numLines; i++) {
+      if (_lines[i].isFullyOutOfBounds()) {
+        if (_lines[i].isReversed()) {
+          _lines[i].setPosition(NUM_LEDS_PER_RING / 2 + _lines[i].getLength());
+        } else {
+          _lines[i].setPosition(NUM_LEDS_PER_RING / 2);
+        }
+      }
+      _lines[i].show();
+    }
+  }
+
 public:
   static const uint8_t ROTATING_PONG = 0;
   static const uint8_t LASERS = 1;
+  static const uint8_t RAINFALL = 2;
 
   LineSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
@@ -52,6 +66,19 @@ public:
         _lines[i].setPosition(MAX_DEPTH - i * (MAX_DEPTH / NUM_STRAIGHTS));
       }
       break;
+    case RAINFALL:
+      _numLines = NUM_RINGS;
+      for (uint8_t i = 0; i < _numLines; i++) {
+        _lines[i] = Line(i);
+        _lines[i].setPath(rings[i]);
+        if (i % 2 == 0) {
+          _lines[i].setPosition(NUM_LEDS_PER_RING / 2 + _lines[i].getLength());
+          _lines[i].reverse();
+        } else {
+          _lines[i].setPosition(NUM_LEDS_PER_RING / 2);
+        }
+      }
+      break;
     default:
       break;
     }
@@ -73,6 +100,9 @@ public:
       break;
     case LASERS:
       _showLasers();
+      break;
+    case RAINFALL:
+      _showRainfall();
       break;
     default:
       break;
