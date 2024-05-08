@@ -18,8 +18,8 @@ private:
 
   void _showLasers() {
     for (int i = 0; i < _numLines; i++) {
-      if (_lines[i].isOutOfBounds()) {
-        _lines[i].setPosition(MAX_DEPTH);
+      if (_lines[i].isFullyOutOfBounds()) {
+        _lines[i].setPosition(MAX_DEPTH + _lines[i].getLength());
       }
       _lines[i].show();
     }
@@ -31,7 +31,7 @@ private:
         if (_lines[i].isReversed()) {
           _lines[i].setPosition(NUM_LEDS_PER_RING / 2 + _lines[i].getLength());
         } else {
-          _lines[i].setPosition(NUM_LEDS_PER_RING / 2);
+          _lines[i].setPosition(0);
         }
       }
       _lines[i].show();
@@ -70,12 +70,19 @@ public:
       _numLines = NUM_RINGS;
       for (uint8_t i = 0; i < _numLines; i++) {
         _lines[i] = Line(i);
-        _lines[i].setPath(rings[i]);
         if (i % 2 == 0) {
+          int offset = rings[i].offset;
+          Path path = {&leds[offset], &ledAngle[offset], &ledDepth[offset],
+                       NUM_LEDS_PER_RING / 2, offset};
+          _lines[i].setPath(path);
           _lines[i].setPosition(NUM_LEDS_PER_RING / 2 + _lines[i].getLength());
           _lines[i].reverse();
         } else {
-          _lines[i].setPosition(NUM_LEDS_PER_RING / 2);
+          int offset = rings[i].offset + NUM_LEDS_PER_RING / 2;
+          Path path = {&leds[offset], &ledAngle[offset], &ledDepth[offset],
+                       NUM_LEDS_PER_RING / 2, offset};
+          _lines[i].setPath(path);
+          _lines[i].setPosition(0);
         }
       }
       break;

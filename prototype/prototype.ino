@@ -53,13 +53,13 @@ Path rings[NUM_RINGS];
 Path straights[NUM_STRAIGHTS];
 
 // globals controlled by web server
-int activePattern = 2;
 #define PATTERN_TWINKLE 0
 #define PATTERN_BASIC_SPIRAL 1
 #define PATTERN_ROTATING_PONG 2
 #define PATTERN_LASERS 3
 #define PATTERN_RAINFALL 4
 #define NUM_PATTERNS 5
+int activePattern = 4;
 int speed = 3;
 bool autoCyclePalettes = true;
 
