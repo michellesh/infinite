@@ -28,7 +28,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     h2 {font-size: 2.3rem; text-align: center}
     p {font-size: 1.9rem;}
   table {width: 100%%}
-  button {width: 49%%; height: 50px; font-size: 0.9rem;}
+  button {width: 32%%; height: 50px; font-size: 0.9rem;}
     body {max-width: 500px; margin:0px auto; padding: 0px 7px;}
     .slider { -webkit-appearance: none; margin: 14px 0; width: 100%%; height: 15px; background: #FFD65C;
       outline: none; -webkit-transition: .2s; transition: opacity .2s;}
@@ -43,10 +43,13 @@ const char index_html[] PROGMEM = R"rawliteral(
 
   <h3>Patterns</h3>
   <button type="button" onclick="sendData('n',0)">Twinkle</button>
-  <button type="button" onclick="sendData('n',1)">Spiral</button>
-  <button type="button" onclick="sendData('n',2)">Rotating Pong</button>
-  <button type="button" onclick="sendData('n',3)">Lasers</button>
-  <button type="button" onclick="sendData('n',4)">Rainfall</button>
+  <br/>
+  <button type="button" onclick="sendData('n',1)">Spiral: Single</button>
+  <button type="button" onclick="sendData('n',2)">Spiral: Double</button>
+  <br/>
+  <button type="button" onclick="sendData('n',3)">Lines: Rotating Pong</button>
+  <button type="button" onclick="sendData('n',4)">Lines: Lasers</button>
+  <button type="button" onclick="sendData('n',5)">Lines: Rainfall</button>
 
   <h3>Color Palettes</h3>
   <button type="button" onclick="sendData('p',0)">Fire</button>
@@ -141,7 +144,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
     switch (dataType) {
       case 'n':
         activePattern = dataValue.toInt();
-        ws.textAll("a0");
+        ws.textAll(message);
         break;
       case 'p':
         palette.setPalette(dataValue.toInt());

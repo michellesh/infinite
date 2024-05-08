@@ -70,6 +70,7 @@ public:
       _numLines = NUM_RINGS;
       for (uint8_t i = 0; i < _numLines; i++) {
         _lines[i] = Line(i);
+        _lines[i].setSpeedMultiplier(0.5);
         if (i % 2 == 0) {
           int offset = rings[i].offset;
           Path path = {&leds[offset], &ledAngle[offset], &ledDepth[offset],

@@ -3,10 +3,13 @@ private:
   uint8_t _id = 0;
   int _length = LENGTH.DFLT;
   bool _reverse = false;
+  float _speedMultiplier = 1;
   float _position = 0;
   Path _path;
 
-  void _updatePosition() { _position += speed * (_reverse ? -1 : 1); }
+  void _updatePosition() {
+    _position += (speed * _speedMultiplier) * (_reverse ? -1 : 1);
+  }
 
 public:
   Line(uint8_t id = 0) { _id = id; }
@@ -16,6 +19,10 @@ public:
       DEPTH_SEGMENT_LENGTH, DEPTH_SEGMENT_LENGTH * 3, DEPTH_SEGMENT_LENGTH * 2};
 
   uint8_t getId() { return _id; }
+
+  void setSpeedMultiplier(float speedMultiplier) {
+    _speedMultiplier = speedMultiplier;
+  }
 
   void setPosition(float position) { _position = position; }
 

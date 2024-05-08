@@ -7,18 +7,31 @@ private:
   uint8_t _activeSubPattern = 0;
   uint8_t _percentBrightness = 0; // percent brightness of the whole pattern
 
-  void _showBasicSpiralRotation() {
+  void _showSingleSpiral() {
+    _spirals[0].show();
+  }
+
+  void _showDoubleSpiral() {
     _spirals[0].show();
     _spirals[1].show();
   }
 
 public:
-  static const uint8_t BASIC_SPIRALS = 0;
+  static const uint8_t SINGLE_SPIRAL = 0;
+  static const uint8_t DOUBLE_SPIRAL = 1;
 
   SpiralSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
     switch (_activeSubPattern) {
-    case BASIC_SPIRALS:
+    case SINGLE_SPIRAL:
+      _numSpirals = 1;
+      _spirals[0] = Spiral(1);
+      _spirals[0].setColorPaletteIndex(0);
+      _spirals[0].setOffset(3);
+      _spirals[0].setSpeed(5);
+      _spirals[0].setWidth(180);
+      break;
+    case DOUBLE_SPIRAL:
       _numSpirals = 2;
       _spirals[0] = Spiral(1);
       _spirals[1] = Spiral(2);
@@ -47,8 +60,11 @@ public:
 
   virtual void show() {
     switch (_activeSubPattern) {
-    case BASIC_SPIRALS:
-      _showBasicSpiralRotation();
+    case SINGLE_SPIRAL:
+      _showSingleSpiral();
+      break;
+    case DOUBLE_SPIRAL:
+      _showDoubleSpiral();
       break;
     default:
       break;

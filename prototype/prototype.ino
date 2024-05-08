@@ -54,11 +54,12 @@ Path straights[NUM_STRAIGHTS];
 
 // globals controlled by web server
 #define PATTERN_TWINKLE 0
-#define PATTERN_BASIC_SPIRAL 1
-#define PATTERN_ROTATING_PONG 2
-#define PATTERN_LASERS 3
-#define PATTERN_RAINFALL 4
-#define NUM_PATTERNS 5
+#define PATTERN_SINGLE_SPIRAL 1
+#define PATTERN_DOUBLE_SPIRAL 2
+#define PATTERN_ROTATING_PONG 3
+#define PATTERN_LASERS 4
+#define PATTERN_RAINFALL 5
+#define NUM_PATTERNS 6
 int activePattern = 4;
 int speed = 3;
 bool autoCyclePalettes = true;
@@ -78,7 +79,8 @@ Palette palette;
 // clang-format on
 
 TwinkleSubPattern twinkle(TwinkleSubPattern::MEDIUM_DENSITY);
-SpiralSubPattern basicSpirals(SpiralSubPattern::BASIC_SPIRALS);
+SpiralSubPattern singleSpiral(SpiralSubPattern::SINGLE_SPIRAL);
+SpiralSubPattern doubleSpiral(SpiralSubPattern::DOUBLE_SPIRAL);
 LineSubPattern rotatingPong(LineSubPattern::ROTATING_PONG);
 LineSubPattern lasers(LineSubPattern::LASERS);
 LineSubPattern rainfall(LineSubPattern::RAINFALL);
@@ -86,7 +88,8 @@ LineSubPattern rainfall(LineSubPattern::RAINFALL);
 // clang-format off
 SubPattern *activePatterns[] = {
   &twinkle,
-  &basicSpirals,
+  &singleSpiral,
+  &doubleSpiral,
   &rotatingPong,
   &lasers,
   &rainfall
