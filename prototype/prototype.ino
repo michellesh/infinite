@@ -60,7 +60,7 @@ Path straights[NUM_STRAIGHTS];
 #define PATTERN_LASERS 4
 #define PATTERN_RAINFALL 5
 #define NUM_PATTERNS 6
-int activePattern = 4;
+int activePattern = 5;
 int speed = 3;
 bool autoCyclePalettes = true;
 

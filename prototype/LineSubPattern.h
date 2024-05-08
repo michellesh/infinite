@@ -28,10 +28,12 @@ private:
   void _showRainfall() {
     for (int i = 0; i < _numLines; i++) {
       if (_lines[i].isFullyOutOfBounds()) {
-        if (_lines[i].isReversed()) {
-          _lines[i].setPosition(NUM_LEDS_PER_RING / 2 + _lines[i].getLength());
+        int r = random(0, 50);
+        if (_lines[i].isReversed()) { // even numbered rings
+          int max = NUM_LEDS_PER_RING / 2 + _lines[i].getLength();
+          _lines[i].setPosition(max + r);
         } else {
-          _lines[i].setPosition(0);
+          _lines[i].setPosition(-r);
         }
       }
       _lines[i].show();
