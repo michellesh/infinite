@@ -40,10 +40,21 @@ private:
     }
   }
 
+  void _showBasketWeaving() {
+    for (int i = 0; i < _numLines; i++) {
+      if (_lines[i].isFullyOutOfBounds()) {
+        Path path = _lines[i].getPath();
+        _lines[i].setPosition(path.length + _lines[i].getLength());
+      }
+      _lines[i].show();
+    }
+  }
+
 public:
   static const uint8_t ROTATING_PONG = 0;
   static const uint8_t LASERS = 1;
   static const uint8_t RAINFALL = 2;
+  static const uint8_t BASKET_WEAVING = 3;
 
   LineSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
@@ -89,6 +100,22 @@ public:
         }
       }
       break;
+    case BASKET_WEAVING:
+      _numLines = NUM_STRAIGHTS + NUM_RINGS;
+      for (uint8_t i = 0; i < NUM_STRAIGHTS; i++) {
+        _lines[i] = Line(i);
+        _lines[i].setPath(straights[i]);
+        _lines[i].reverse();
+        _lines[i].setPosition(MAX_DEPTH - i * (MAX_DEPTH / NUM_STRAIGHTS));
+      }
+      for (uint8_t i = NUM_STRAIGHTS; i < _numLines; i++) {
+        _lines[i] = Line(i);
+        _lines[i].setSpeedMultiplier(0.5);
+        _lines[i].setPath(rings[i - NUM_STRAIGHTS]);
+        _lines[i].reverse();
+        _lines[i].setPosition(360 - (i - NUM_STRAIGHTS) * (360 / NUM_RINGS));
+      }
+      break;
     default:
       break;
     }
@@ -113,6 +140,9 @@ public:
       break;
     case RAINFALL:
       _showRainfall();
+      break;
+    case BASKET_WEAVING:
+      _showBasketWeaving();
       break;
     default:
       break;

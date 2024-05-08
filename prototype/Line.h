@@ -32,7 +32,9 @@ public:
 
   int getLength() { return _length; }
 
-  void setPath(Path &path) { _path = path; }
+  void setPath(Path &path) { _path = path; } // TODO remove &?
+
+  Path getPath() { return _path; }
 
   bool isReversed() { return _reverse; }
 

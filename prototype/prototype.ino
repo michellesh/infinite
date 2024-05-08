@@ -59,8 +59,9 @@ Path straights[NUM_STRAIGHTS];
 #define PATTERN_ROTATING_PONG 3
 #define PATTERN_LASERS 4
 #define PATTERN_RAINFALL 5
-#define NUM_PATTERNS 6
-int activePattern = 5;
+#define PATTERN_BASKET_WEAVING 6
+#define NUM_PATTERNS 7
+int activePattern = 6;
 int speed = 3;
 bool autoCyclePalettes = true;
 
@@ -84,6 +85,7 @@ SpiralSubPattern doubleSpiral(SpiralSubPattern::DOUBLE_SPIRAL);
 LineSubPattern rotatingPong(LineSubPattern::ROTATING_PONG);
 LineSubPattern lasers(LineSubPattern::LASERS);
 LineSubPattern rainfall(LineSubPattern::RAINFALL);
+LineSubPattern basketWeaving(LineSubPattern::BASKET_WEAVING);
 
 // clang-format off
 SubPattern *activePatterns[] = {
@@ -92,7 +94,8 @@ SubPattern *activePatterns[] = {
   &doubleSpiral,
   &rotatingPong,
   &lasers,
-  &rainfall
+  &rainfall,
+  &basketWeaving
 };
 // clang-format on
 
