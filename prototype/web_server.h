@@ -45,10 +45,10 @@ const char index_html[] PROGMEM = R"rawliteral(
   <button type="button" onclick="sendData('n',0)">Twinkle</button>
   <button type="button" onclick="sendData('n',1)">Twinkle: Groups</button>
   <button type="button" onclick="sendData('n',2)">Twinkle: Random Fading Segments</button>
-  <br/>
+  <br/><br/>
   <button type="button" onclick="sendData('n',3)">Spiral: Single</button>
   <button type="button" onclick="sendData('n',4)">Spiral: Double</button>
-  <br/>
+  <br/><br/>
   <button type="button" onclick="sendData('n',5)">Lines: Rotating Pong</button>
   <button type="button" onclick="sendData('n',6)">Lines: Lasers</button>
   <button type="button" onclick="sendData('n',7)">Lines: Rainfall</button>
@@ -79,6 +79,11 @@ const char index_html[] PROGMEM = R"rawliteral(
     <td class="labelCol"><label id="labelSpeed" for="speedSlider">Speed</label></td>
     <td><input type="range" id="speedSlider" onchange="sendData('s',this.value)" min="1" max="10" value="%SPEEDVALUE%" step="1" class="slider"></td>
     <td class="valCol"><span id="speedValue">%SPEEDVALUE%</span></td>
+  </tr>
+  <tr>
+    <td class="labelCol"><label id="labelDensity" for="densitySlider">Density</label></td>
+    <td><input type="range" id="densitySlider" onchange="sendData('d',this.value)" min="1" max="10" value="%DENSITYVALUE%" step="1" class="slider"></td>
+    <td class="valCol"><span id="densityValue">%DENSITYVALUE%</span></td>
   </tr>
   </table>
 
@@ -115,6 +120,10 @@ const char index_html[] PROGMEM = R"rawliteral(
     case 's':
       document.getElementById('speedValue').innerHTML = dataValue;
       document.getElementById('speedSlider').value = dataValue;
+      break;
+    case 'd':
+      document.getElementById('densityValue').innerHTML = dataValue;
+      document.getElementById('densitySlider').value = dataValue;
       break;
     case 'a':
       if (dataValue == '1') document.getElementById('autoBtn').style.backgroundColor = '#baffb3';
@@ -168,6 +177,10 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
         speed = dataValue.toInt();
         ws.textAll(message);
         break;
+      case 'd':
+        density = dataValue.toInt();
+        ws.textAll(message);
+        break;
       case 'a':
         autoCyclePalettes = !autoCyclePalettes;
         if (autoCyclePalettes) ws.textAll("a1");
@@ -209,6 +222,9 @@ String processor(const String& var){
   }
   if(var == "SPEEDVALUE"){
     return String(speed);
+  }
+  if(var == "DENSITYVALUE"){
+    return String(density);
   }
   return "";
 }

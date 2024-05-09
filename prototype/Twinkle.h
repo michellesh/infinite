@@ -3,9 +3,9 @@ private:
   float _speedMultiplier = 1;
   float _densityMultiplier = 1;
 
-  int _getSpeed() { return (float)speed * _speedMultiplier; }
+  int _getSpeed() { return speed * _speedMultiplier; }
 
-  int _getDensity() { return (float)density * _densityMultiplier; }
+  int _getDensity() { return density * _densityMultiplier; }
 
   uint8_t _getBrightness(uint16_t &PRNG16, uint32_t clock32) {
     // Use pseudo random number generator to get values for the clock speed
@@ -21,7 +21,7 @@ private:
         (uint32_t)((clock32 * myspeedmultiplierQ5_3) >> 3) + myclockoffset16;
     uint8_t myunique8 = PRNG16 >> 8; // get 'salt' value for this pixel
 
-    uint16_t ticks = myclock30 >> (8 - _getSpeed());
+    uint16_t ticks = myclock30 >> (8 - min(8, _getSpeed()));
     uint8_t fastcycle8 = ticks;
     uint16_t slowcycle16 = (ticks >> 8) + myunique8;
     slowcycle16 += sin8(slowcycle16);
@@ -34,10 +34,6 @@ private:
   }
 
 public:
-  static constexpr Range SPEED = {1, 8, 4};
-  static constexpr Range DENSITY = {2, 8, 4};
-  static constexpr Range WIDTH = {2, 8, 4};
-
   void setSpeedMultiplier(float speedMultiplier) {
     _speedMultiplier = speedMultiplier;
   }
