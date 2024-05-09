@@ -50,11 +50,21 @@ private:
     }
   }
 
+  void _showCometTrails() {
+    for (int i = 0; i < _numLines; i++) {
+      if (_lines[i].isFullyOutOfBounds()) {
+        _lines[i].setPosition(MAX_DEPTH + _lines[i].getLength());
+      }
+      _lines[i].show();
+    }
+  }
+
 public:
   static const uint8_t ROTATING_PONG = 0;
   static const uint8_t LASERS = 1;
   static const uint8_t RAINFALL = 2;
   static const uint8_t BASKET_WEAVING = 3;
+  static const uint8_t COMET_TRAILS = 4;
 
   LineSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
@@ -116,6 +126,17 @@ public:
         _lines[i].setPosition(360 - (i - NUM_STRAIGHTS) * (360 / NUM_RINGS));
       }
       break;
+    case COMET_TRAILS:
+      _numLines = NUM_STRAIGHTS;
+      for (uint8_t i = 0; i < _numLines; i++) {
+        _lines[i] = Line(i);
+        _lines[i].setSpeedMultiplier(0.2);
+        _lines[i].setPath(straights[i]);
+        _lines[i].setLength(MAX_DEPTH / 3);
+        _lines[i].reverse();
+        _lines[i].setPosition(MAX_DEPTH - i * (MAX_DEPTH / NUM_STRAIGHTS));
+      }
+      break;
     default:
       break;
     }
@@ -143,6 +164,9 @@ public:
       break;
     case BASKET_WEAVING:
       _showBasketWeaving();
+      break;
+    case COMET_TRAILS:
+      _showCometTrails();
       break;
     default:
       break;

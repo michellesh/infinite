@@ -40,6 +40,7 @@
 CRGB leds[NUM_LEDS];
 int ledDepth[NUM_LEDS];
 int ledAngle[NUM_LEDS];
+uint8_t twinkleBrightness[NUM_LEDS];
 
 struct Path {
   CRGB *leds;
@@ -60,8 +61,9 @@ Path straights[NUM_STRAIGHTS];
 #define PATTERN_LASERS 4
 #define PATTERN_RAINFALL 5
 #define PATTERN_BASKET_WEAVING 6
-#define NUM_PATTERNS 7
-int activePattern = 6;
+#define PATTERN_COMET_TRAILS 7
+#define NUM_PATTERNS 8
+int activePattern = 7;
 int speed = 3;
 bool autoCyclePalettes = true;
 
@@ -86,6 +88,7 @@ LineSubPattern rotatingPong(LineSubPattern::ROTATING_PONG);
 LineSubPattern lasers(LineSubPattern::LASERS);
 LineSubPattern rainfall(LineSubPattern::RAINFALL);
 LineSubPattern basketWeaving(LineSubPattern::BASKET_WEAVING);
+LineSubPattern cometTrails(LineSubPattern::COMET_TRAILS);
 
 // clang-format off
 SubPattern *activePatterns[] = {
@@ -95,7 +98,8 @@ SubPattern *activePatterns[] = {
   &rotatingPong,
   &lasers,
   &rainfall,
-  &basketWeaving
+  &basketWeaving,
+  &cometTrails
 };
 // clang-format on
 
@@ -194,6 +198,7 @@ void loop() {
   if (autoCyclePalettes) {
     palette.cycle();
   }
+  twinkleSome(&twinkleBrightness[0], NUM_LEDS);
 
   EVERY_N_SECONDS(1) {
     Serial.print("Local IP address: ");

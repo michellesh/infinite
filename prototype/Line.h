@@ -51,13 +51,22 @@ public:
   }
 
   void show() {
+    uint16_t PRNG16 = 11337;
+    uint32_t clock32 = millis();
+
     // show this Line at current position and add tail of length _length
     for (int i = 0; i < _length; i++) {
       int index = _position - i; // tail extends backwards behind position
       if (index > 0 && index < _path.length) {
-        int brightness = addFadeShape(map(i, 0, _length, 0, 255));
+        //uint8_t brightness = addFadeShape(map(i, 0, _length, 0, 255));
+        uint8_t _twinkleBrightness = twinkleBrightness[_path.offset + index];
+        float _t = (float)_twinkleBrightness * mapf(i, 0, _length, 0, 1);
+        if (i > _length * 3 / 4) {
+          float _b = mapf(i, _length * 3 / 4, _length, 0, 255);
+          _t = max(_t, _b);
+        }
         _path.leds[index] =
-            palette.getColor(_path.offset + index).nscale8(brightness);
+            palette.getColor(_path.offset + index).nscale8(_t);
       }
     }
 
