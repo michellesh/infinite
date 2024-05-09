@@ -30,6 +30,10 @@ uint8_t fadeShape(uint8_t x, XY p1, XY p2 = {127, 255}) {
 
 uint8_t addFadeShape(uint8_t x) { return fadeShape(x, {60, 20}); }
 
+uint8_t basicFade(uint8_t x, uint8_t max = 255) {
+  return x < 127 ? map(x, 0, 127, 0, max) : map(x, 127, 255, max, 0);
+}
+
 // This function is like 'triwave8', which produces a
 // symmetrical up-and-down triangle sawtooth waveform, except that this
 // function produces a triangle wave with a faster attack and a slower decay:

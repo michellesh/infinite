@@ -1,32 +1,32 @@
-class TwinkleSubPattern : public SubPattern {
- private:
-  Twinkle _twinkle;
-  uint8_t _percentBrightness = 0;  // percent brightness of the whole pattern
+uint8_t nodeBrightness[NUM_STRAIGHTS * NUM_RINGS];
 
- public:
-  static const uint8_t LOW_DENSITY = 0;
-  static const uint8_t MEDIUM_DENSITY = 1;
-  static const uint8_t HIGH_DENSITY = 2;
+class TwinkleSubPattern : public SubPattern {
+private:
+  Twinkle _twinkle;
+  uint8_t _activeSubPattern = 0;
+  uint8_t _percentBrightness = 0; // percent brightness of the whole pattern
+
+  void _showTwinkleGroups() { _twinkle.showGroups(ANGLE_SEGMENT_LENGTH); }
+
+public:
+  static const uint8_t TWINKLE = 0;
+  static const uint8_t TWINKLE_GROUPS = 1;
 
   TwinkleSubPattern(uint8_t activeSubPattern = 0) {
-    switch (activeSubPattern) {
-      case LOW_DENSITY:
-        _twinkle.setDensity(Twinkle::DENSITY.MIN);
-        break;
-      case MEDIUM_DENSITY:
-        _twinkle.setDensity(Twinkle::DENSITY.DFLT);
-        break;
-      case HIGH_DENSITY:
-        _twinkle.setDensity(Twinkle::DENSITY.MAX);
-        break;
-      default:
-        break;
+    _activeSubPattern = activeSubPattern;
+  }
+
+  void setup() {
+    switch (_activeSubPattern) {
+    case TWINKLE_GROUPS:
+      _twinkle.setDensity(Twinkle::DENSITY.MIN);
+      break;
+    default:
+      break;
     }
   }
 
-  void setSpeed(uint8_t speed) {
-    _twinkle.setSpeed(speed);
-  }
+  void setSpeed(uint8_t speed) { _twinkle.setSpeed(speed); }
 
   virtual uint8_t getPercentBrightness() { return _percentBrightness; }
 
@@ -35,5 +35,14 @@ class TwinkleSubPattern : public SubPattern {
     _twinkle.setPercentBrightness(percentBrightness);
   }
 
-  virtual void show() { _twinkle.show(); }
+  virtual void show() {
+    switch (_activeSubPattern) {
+    case TWINKLE_GROUPS:
+      _showTwinkleGroups();
+      break;
+    default:
+      _twinkle.showLEDs();
+      break;
+    }
+  }
 };
