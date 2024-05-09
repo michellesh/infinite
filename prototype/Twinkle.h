@@ -1,7 +1,11 @@
 class Twinkle : public Pattern {
 private:
-  uint8_t _speed = SPEED.DFLT;
-  uint8_t _density = DENSITY.DFLT;
+  float _speedMultiplier = 1;
+  float _densityMultiplier = 1;
+
+  int _getSpeed() { return (float)speed * _speedMultiplier; }
+
+  int _getDensity() { return (float)density * _densityMultiplier; }
 
   uint8_t _getBrightness(uint16_t &PRNG16, uint32_t clock32) {
     // Use pseudo random number generator to get values for the clock speed
@@ -17,24 +21,30 @@ private:
         (uint32_t)((clock32 * myspeedmultiplierQ5_3) >> 3) + myclockoffset16;
     uint8_t myunique8 = PRNG16 >> 8; // get 'salt' value for this pixel
 
-    uint16_t ticks = myclock30 >> (8 - speed);
+    uint16_t ticks = myclock30 >> (8 - _getSpeed());
     uint8_t fastcycle8 = ticks;
     uint16_t slowcycle16 = (ticks >> 8) + myunique8;
     slowcycle16 += sin8(slowcycle16);
     slowcycle16 = (slowcycle16 * 2053) + 1384;
     uint8_t slowcycle8 = (slowcycle16 & 0xFF) + (slowcycle16 >> 8);
 
-    return ((slowcycle8 & 0x0E) / 2) < _density ? attackDecayWave8(fastcycle8)
-                                                : 0;
+    return ((slowcycle8 & 0x0E) / 2) < _getDensity()
+               ? attackDecayWave8(fastcycle8)
+               : 0;
   }
 
 public:
   static constexpr Range SPEED = {1, 8, 4};
   static constexpr Range DENSITY = {2, 8, 4};
+  static constexpr Range WIDTH = {2, 8, 4};
 
-  void setSpeed(uint8_t speed) { _speed = speed; }
+  void setSpeedMultiplier(float speedMultiplier) {
+    _speedMultiplier = speedMultiplier;
+  }
 
-  void setDensity(uint8_t density) { _density = density; }
+  void setDensityMultiplier(float densityMultiplier) {
+    _densityMultiplier = densityMultiplier;
+  }
 
   void showLEDs() {
     uint16_t PRNG16 = 11337;

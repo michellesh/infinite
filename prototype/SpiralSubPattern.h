@@ -28,7 +28,6 @@ public:
       _spirals[0] = Spiral(1);
       _spirals[0].setColorPaletteIndex(0);
       _spirals[0].setOffset(3);
-      _spirals[0].setSpeed(5);
       _spirals[0].setWidth(180);
       break;
     case DOUBLE_SPIRAL:
@@ -39,8 +38,6 @@ public:
       _spirals[1].setColorPaletteIndex(170);
       _spirals[0].setOffset(3);
       _spirals[1].setOffset(-3);
-      _spirals[0].setSpeed(5);
-      _spirals[1].setSpeed(5);
       _spirals[0].setWidth(180);
       _spirals[1].setWidth(180);
       break;

@@ -3,9 +3,11 @@ private:
   uint8_t _id = 0;
   int16_t _angle = 0; // the current angle
   int16_t _width = WIDTH.DFLT;
-  int16_t _speed = SPEED.DFLT;
   int16_t _offset = OFFSET.DFLT;
   uint8_t _colorPaletteIndex = 0;
+  float _speedMultiplier = 1;
+
+  int _getSpeed() { return (float)speed * _speedMultiplier; }
 
   // Gets the brightness of the LED if the LED's angle is close to the current
   // angle
@@ -44,17 +46,19 @@ public:
 
   void setWidth(int16_t width) { _width = abs(width); }
 
-  void setSpeed(int16_t speed) { _speed = speed; }
-
   void setAngle(int16_t angle) { _angle = angle; }
 
   void setOffset(int16_t offset) { _offset = offset; }
+
+  void setSpeedMultiplier(float speedMultiplier) {
+    _speedMultiplier = speedMultiplier;
+  }
 
   void setColorPaletteIndex(int16_t colorPaletteIndex) {
     _colorPaletteIndex = colorPaletteIndex;
   }
 
-  void reverse() { _speed = _speed * -1; }
+  void reverse() { _speedMultiplier = _speedMultiplier * -1; }
 
   void show() {
     for (int i = 0; i < NUM_LEDS; i++) {
@@ -66,6 +70,6 @@ public:
     }
 
     // Increment the angle. After 360 degrees, start over at 0 degrees
-    _angle = (_angle + speed + 360) % 360;
+    _angle = (_angle + _getSpeed() + 360) % 360;
   }
 };

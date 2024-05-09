@@ -43,16 +43,17 @@ const char index_html[] PROGMEM = R"rawliteral(
 
   <h3>Patterns</h3>
   <button type="button" onclick="sendData('n',0)">Twinkle</button>
-  <button type="button" onclick="sendData('n',1)">Twinkle groups</button>
+  <button type="button" onclick="sendData('n',1)">Twinkle: Groups</button>
+  <button type="button" onclick="sendData('n',2)">Twinkle: Random Fading Segments</button>
   <br/>
-  <button type="button" onclick="sendData('n',2)">Spiral: Single</button>
-  <button type="button" onclick="sendData('n',3)">Spiral: Double</button>
+  <button type="button" onclick="sendData('n',3)">Spiral: Single</button>
+  <button type="button" onclick="sendData('n',4)">Spiral: Double</button>
   <br/>
-  <button type="button" onclick="sendData('n',4)">Lines: Rotating Pong</button>
-  <button type="button" onclick="sendData('n',5)">Lines: Lasers</button>
-  <button type="button" onclick="sendData('n',6)">Lines: Rainfall</button>
-  <button type="button" onclick="sendData('n',7)">Lines: Basket Weaving</button>
-  <button type="button" onclick="sendData('n',8)">Lines: Comet Trails</button>
+  <button type="button" onclick="sendData('n',5)">Lines: Rotating Pong</button>
+  <button type="button" onclick="sendData('n',6)">Lines: Lasers</button>
+  <button type="button" onclick="sendData('n',7)">Lines: Rainfall</button>
+  <button type="button" onclick="sendData('n',8)">Lines: Basket Weaving</button>
+  <button type="button" onclick="sendData('n',9)">Lines: Comet Trails</button>
 
   <h3>Color Palettes</h3>
   <button type="button" onclick="sendData('p',0)">Fire</button>
