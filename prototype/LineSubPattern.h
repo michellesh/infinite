@@ -19,6 +19,7 @@ private:
   void _showLasers() {
     for (int i = 0; i < _numLines; i++) {
       if (_lines[i].isFullyOutOfBounds()) {
+        // TODO only works if reversed
         _lines[i].setPosition(MAX_DEPTH + _lines[i].getLength());
       }
       _lines[i].show();
@@ -43,6 +44,7 @@ private:
   void _showBasketWeaving() {
     for (int i = 0; i < _numLines; i++) {
       if (_lines[i].isFullyOutOfBounds()) {
+        // TODO only works if reversed
         Path path = _lines[i].getPath();
         _lines[i].setPosition(path.length + _lines[i].getLength());
       }
@@ -53,9 +55,21 @@ private:
   void _showCometTrails() {
     for (int i = 0; i < _numLines; i++) {
       if (_lines[i].isFullyOutOfBounds()) {
+        // TODO only works if reversed
         _lines[i].setPosition(MAX_DEPTH + _lines[i].getLength());
       }
       _lines[i].show();
+    }
+  }
+
+  void _showRotatingHexagons() {
+    for (int i = 0; i < _numLines; i++) {
+      if (_lines[i].isOutOfBounds()) {
+        // TODO only works if reversed
+        Path path = _lines[i].getPath();
+        _lines[i].setPosition(path.length + _lines[i].getLength());
+      }
+      _lines[i].showRepeat();
     }
   }
 
@@ -65,6 +79,9 @@ public:
   static const uint8_t RAINFALL = 2;
   static const uint8_t BASKET_WEAVING = 3;
   static const uint8_t COMET_TRAILS = 4;
+  static const uint8_t ROTATING_HEXAGONS = 5;
+  static const uint8_t COUNTER_ROTATING_HEXAGONS = 6;
+  static const uint8_t VARIABLE_SPEED_ROTATION = 7;
 
   LineSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
@@ -116,7 +133,8 @@ public:
         _lines[i] = Line(i);
         _lines[i].setPath(straights[i]);
         _lines[i].reverse();
-        _lines[i].setPosition(MAX_DEPTH - i * (MAX_DEPTH / NUM_STRAIGHTS));
+        _lines[i].setPosition(MAX_DEPTH - i * (MAX_DEPTH / NUM_STRAIGHTS
+              ));
       }
       for (uint8_t i = NUM_STRAIGHTS; i < _numLines; i++) {
         _lines[i] = Line(i);
@@ -124,6 +142,8 @@ public:
         _lines[i].setPath(rings[i - NUM_STRAIGHTS]);
         _lines[i].reverse();
         _lines[i].setPosition(360 - (i - NUM_STRAIGHTS) * (360 / NUM_RINGS));
+        // TODO this shouldn't be 360
+        // although that might be why it starts with a delay which is neat
       }
       break;
     case COMET_TRAILS:
@@ -136,6 +156,17 @@ public:
         _lines[i].setFadeType(Line::FADE_COMET);
         _lines[i].reverse();
         _lines[i].setPosition(MAX_DEPTH - i * (MAX_DEPTH / NUM_STRAIGHTS));
+      }
+      break;
+    case ROTATING_HEXAGONS:
+      _numLines = NUM_RINGS;
+      for (uint8_t i = 0; i < _numLines; i++) {
+        _lines[i] = Line(i);
+        _lines[i].setSpeedMultiplier(0.5);
+        _lines[i].setPath(rings[i]);
+        _lines[i].setLength(NUM_LEDS_PER_RING / 16); // TODO dont hardcode 16?
+        _lines[i].reverse();
+        _lines[i].setPosition(i * (10 * NUM_LEDS_PER_RING / 360)); // 10 "degrees"
       }
       break;
     default:
@@ -168,6 +199,9 @@ public:
       break;
     case COMET_TRAILS:
       _showCometTrails();
+      break;
+    case ROTATING_HEXAGONS:
+      _showRotatingHexagons();
       break;
     default:
       break;

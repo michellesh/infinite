@@ -3,14 +3,13 @@ private:
   uint8_t _id = 0;
   int _length = LENGTH.DFLT;
   uint8_t _fadeType = FADE_BOTH_ENDS;
-  bool _reverse = false;
   float _speedMultiplier = 1;
   float _position = 0;
   Path _path;
 
-  void _updatePosition() {
-    _position += (speed * _speedMultiplier) * (_reverse ? -1 : 1);
-  }
+  float _getSpeed() { return (float)speed * _speedMultiplier; }
+
+  void _updatePosition() { _position = _position + _getSpeed(); }
 
   uint8_t _getBrightness(int indexOnPath, int indexOnLine) {
     if (_fadeType == FADE_COMET) {
@@ -55,26 +54,23 @@ public:
 
   Path getPath() { return _path; }
 
-  bool isReversed() { return _reverse; }
+  bool isReversed() { return _speedMultiplier < 0; }
 
-  void reverse() { _reverse = !_reverse; }
+  void reverse() { _speedMultiplier = _speedMultiplier * -1; }
 
   void setFadeType(uint8_t fadeType) { _fadeType = fadeType; }
 
   bool isOutOfBounds() {
-    return (_position >= _path.length && !_reverse) ||
-           (_position < _length && _reverse);
+    return (_position >= _path.length && !isReversed()) ||
+           (_position < _length && isReversed());
   }
 
   bool isFullyOutOfBounds() {
-    return (_position >= _path.length + _length && !_reverse) ||
-           (_position < 0 && _reverse);
+    return (_position >= _path.length + _length && !isReversed()) ||
+           (_position < 0 && isReversed());
   }
 
   void show() {
-    uint16_t PRNG16 = 11337;
-    uint32_t clock32 = millis();
-
     // show this Line at current position and add tail of length _length
     for (int indexOnLine = 0; indexOnLine < _length; indexOnLine++) {
       int indexOnPath =
@@ -83,6 +79,19 @@ public:
         uint8_t brightness = _getBrightness(indexOnPath, indexOnLine);
         _path.leds[indexOnPath] =
             palette.getColor(_path.offset + indexOnPath).nscale8(brightness);
+      }
+    }
+
+    _updatePosition();
+  }
+
+  void showRepeat() {
+    for (int indexOnPath = 0; indexOnPath < _path.length; indexOnPath++) {
+      if ((int)floor((indexOnPath + _position) / _length) % 2 == 0) {
+        int indexOnLine = (int(indexOnPath + _position) % _length);
+        CRGB color = palette.getColor(_path.offset + indexOnPath);
+        uint8_t distInGroup = map(indexOnLine, 0, _length, 0, 255);
+        _path.leds[indexOnPath] = color.nscale8(basicFade(distInGroup));
       }
     }
 

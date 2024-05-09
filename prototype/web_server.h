@@ -54,6 +54,8 @@ const char index_html[] PROGMEM = R"rawliteral(
   <button type="button" onclick="sendData('n',7)">Lines: Rainfall</button>
   <button type="button" onclick="sendData('n',8)">Lines: Basket Weaving</button>
   <button type="button" onclick="sendData('n',9)">Lines: Comet Trails</button>
+  <br/><br/>
+  <button type="button" onclick="sendData('n',10)">Spinning: Rotating Hexagons</button>
 
   <h3>Color Palettes</h3>
   <button type="button" onclick="sendData('p',0)">Fire</button>
