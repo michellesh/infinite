@@ -56,6 +56,7 @@ const char index_html[] PROGMEM = R"rawliteral(
   <button type="button" onclick="sendData('n',9)">Lines: Comet Trails</button>
   <br/><br/>
   <button type="button" onclick="sendData('n',10)">Spinning: Rotating Hexagons</button>
+  <button type="button" onclick="sendData('n',11)">Spinning: Counter Rotating Hexagons</button>
 
   <h3>Color Palettes</h3>
   <button type="button" onclick="sendData('p',0)">Fire</button>

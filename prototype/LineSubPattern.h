@@ -65,9 +65,12 @@ private:
   void _showRotatingHexagons() {
     for (int i = 0; i < _numLines; i++) {
       if (_lines[i].isOutOfBounds()) {
-        // TODO only works if reversed
-        Path path = _lines[i].getPath();
-        _lines[i].setPosition(path.length + _lines[i].getLength());
+        if (_lines[i].isReversed()) {
+          Path path = _lines[i].getPath();
+          _lines[i].setPosition(path.length + _lines[i].getLength());
+        } else {
+          _lines[i].setPosition(0);
+        }
       }
       _lines[i].showRepeat();
     }
@@ -165,7 +168,19 @@ public:
         _lines[i].setSpeedMultiplier(0.5);
         _lines[i].setPath(rings[i]);
         _lines[i].setLength(NUM_LEDS_PER_RING / 16); // TODO dont hardcode 16?
-        _lines[i].reverse();
+        _lines[i].setPosition(i * (10 * NUM_LEDS_PER_RING / 360)); // 10 "degrees"
+      }
+      break;
+    case COUNTER_ROTATING_HEXAGONS:
+      _numLines = NUM_RINGS;
+      for (uint8_t i = 0; i < _numLines; i++) {
+        _lines[i] = Line(i);
+        _lines[i].setSpeedMultiplier(0.5);
+        _lines[i].setPath(rings[i]);
+        _lines[i].setLength(NUM_LEDS_PER_RING / 16); // TODO dont hardcode 16?
+        if (i % 2 == 0) {
+          _lines[i].reverse();
+        }
         _lines[i].setPosition(i * (10 * NUM_LEDS_PER_RING / 360)); // 10 "degrees"
       }
       break;
@@ -201,6 +216,9 @@ public:
       _showCometTrails();
       break;
     case ROTATING_HEXAGONS:
+      _showRotatingHexagons();
+      break;
+    case COUNTER_ROTATING_HEXAGONS:
       _showRotatingHexagons();
       break;
     default:
