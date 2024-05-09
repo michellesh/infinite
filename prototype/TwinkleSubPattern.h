@@ -1,5 +1,3 @@
-uint8_t nodeBrightness[NUM_STRAIGHTS * NUM_RINGS];
-
 class TwinkleSubPattern : public SubPattern {
 private:
   Twinkle _twinkle;

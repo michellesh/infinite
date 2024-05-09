@@ -67,8 +67,10 @@ Path straights[NUM_STRAIGHTS];
 #define PATTERN_ROTATING_HEXAGONS 10
 #define PATTERN_COUNTER_ROTATING_HEXAGONS 11
 #define PATTERN_VARIABLE_SPEED_ROTATION 12
-#define NUM_PATTERNS 13
-int activePattern = PATTERN_VARIABLE_SPEED_ROTATION;
+#define PATTERN_FLASHING_HEXAGONS 13
+#define PATTERN_FLASHING_HEXAGONS_WARP 14
+#define NUM_PATTERNS 15
+int activePattern = 0;
 int speed = 3;
 int density = 4;
 bool autoCyclePalettes = true;
@@ -85,6 +87,8 @@ Palette palette;
 #include "TwinkleSubPattern.h"
 #include "Line.h"
 #include "LineSubPattern.h"
+#include "Flash.h"
+#include "FlashSubPattern.h"
 // clang-format on
 
 TwinkleSubPattern twinkle(TwinkleSubPattern::TWINKLE);
@@ -100,6 +104,8 @@ LineSubPattern cometTrails(LineSubPattern::COMET_TRAILS);
 LineSubPattern rotatingHexagons(LineSubPattern::ROTATING_HEXAGONS);
 LineSubPattern counterRotatingHexagons(LineSubPattern::COUNTER_ROTATING_HEXAGONS);
 LineSubPattern variableSpeedRotation(LineSubPattern::VARIABLE_SPEED_ROTATION);
+FlashSubPattern flashingHexagons(FlashSubPattern::FLASHING_HEXAGONS);
+FlashSubPattern flashingHexagonsWarp(FlashSubPattern::FLASHING_HEXAGONS_WARP);
 
 // clang-format off
 SubPattern *activePatterns[] = {
@@ -115,7 +121,9 @@ SubPattern *activePatterns[] = {
   &cometTrails,
   &rotatingHexagons,
   &counterRotatingHexagons,
-  &variableSpeedRotation
+  &variableSpeedRotation,
+  &flashingHexagons,
+  &flashingHexagonsWarp
 };
 // clang-format on
 
