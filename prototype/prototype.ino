@@ -66,8 +66,9 @@ Path straights[NUM_STRAIGHTS];
 #define PATTERN_COMET_TRAILS 9
 #define PATTERN_ROTATING_HEXAGONS 10
 #define PATTERN_COUNTER_ROTATING_HEXAGONS 11
-#define NUM_PATTERNS 12
-int activePattern = PATTERN_COUNTER_ROTATING_HEXAGONS;
+#define PATTERN_VARIABLE_SPEED_ROTATION 12
+#define NUM_PATTERNS 13
+int activePattern = PATTERN_VARIABLE_SPEED_ROTATION;
 int speed = 3;
 int density = 4;
 bool autoCyclePalettes = true;
@@ -98,6 +99,7 @@ LineSubPattern basketWeaving(LineSubPattern::BASKET_WEAVING);
 LineSubPattern cometTrails(LineSubPattern::COMET_TRAILS);
 LineSubPattern rotatingHexagons(LineSubPattern::ROTATING_HEXAGONS);
 LineSubPattern counterRotatingHexagons(LineSubPattern::COUNTER_ROTATING_HEXAGONS);
+LineSubPattern variableSpeedRotation(LineSubPattern::VARIABLE_SPEED_ROTATION);
 
 // clang-format off
 SubPattern *activePatterns[] = {
@@ -112,7 +114,8 @@ SubPattern *activePatterns[] = {
   &basketWeaving,
   &cometTrails,
   &rotatingHexagons,
-  &counterRotatingHexagons
+  &counterRotatingHexagons,
+  &variableSpeedRotation
 };
 // clang-format on
 

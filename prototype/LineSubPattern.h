@@ -184,6 +184,19 @@ public:
         _lines[i].setPosition(i * (10 * NUM_LEDS_PER_RING / 360)); // 10 "degrees"
       }
       break;
+    case VARIABLE_SPEED_ROTATION:
+      _numLines = NUM_RINGS;
+      for (uint8_t i = 0; i < _numLines; i++) {
+        _lines[i] = Line(i);
+        _lines[i].setPath(rings[i]);
+        _lines[i].setLength(NUM_LEDS_PER_RING / 16); // TODO dont hardcode 16?
+        if (i < _numLines / 2) {
+          _lines[i].setSpeedMultiplier(mapf(i, 0, _numLines / 2 - 1, 0.2, 1));
+        } else {
+          _lines[i].setSpeedMultiplier(mapf(i, _numLines / 2, _numLines - 1, 1, 0.2));
+        }
+      }
+      break;
     default:
       break;
     }
@@ -219,6 +232,9 @@ public:
       _showRotatingHexagons();
       break;
     case COUNTER_ROTATING_HEXAGONS:
+      _showRotatingHexagons();
+      break;
+    case VARIABLE_SPEED_ROTATION:
       _showRotatingHexagons();
       break;
     default:
