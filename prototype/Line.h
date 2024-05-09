@@ -2,6 +2,7 @@ class Line : public Pattern {
 private:
   uint8_t _id = 0;
   int _length = LENGTH.DFLT;
+  uint8_t _fadeType = FADE_BOTH_ENDS;
   bool _reverse = false;
   float _speedMultiplier = 1;
   float _position = 0;
@@ -11,10 +12,28 @@ private:
     _position += (speed * _speedMultiplier) * (_reverse ? -1 : 1);
   }
 
+  uint8_t _getBrightness(int indexOnPath, int indexOnLine) {
+    if (_fadeType == FADE_COMET) {
+      uint8_t _twinkleBrightness =
+          twinkleBrightness[_path.offset + indexOnPath];
+      float t = (float)_twinkleBrightness * mapf(indexOnLine, 0, _length, 0, 1);
+      if (indexOnLine > _length * 3 / 4) {
+        float b = mapf(indexOnLine, _length * 3 / 4, _length, 0, 255);
+        t = max(t, b);
+      }
+      return t;
+    }
+
+    // FADE_BOTH_ENDS
+    return addFadeShape(map(indexOnLine, 0, _length, 0, 255));
+  }
+
 public:
   Line(uint8_t id = 0) { _id = id; }
 
-  static constexpr Range SPEED = {1, 10, 3};
+  static constexpr uint8_t FADE_BOTH_ENDS = 0;
+  static constexpr uint8_t FADE_COMET = 1;
+
   static constexpr Range LENGTH = {
       DEPTH_SEGMENT_LENGTH, DEPTH_SEGMENT_LENGTH * 3, DEPTH_SEGMENT_LENGTH * 2};
 
@@ -40,6 +59,8 @@ public:
 
   void reverse() { _reverse = !_reverse; }
 
+  void setFadeType(uint8_t fadeType) { _fadeType = fadeType; }
+
   bool isOutOfBounds() {
     return (_position >= _path.length && !_reverse) ||
            (_position < _length && _reverse);
@@ -55,18 +76,13 @@ public:
     uint32_t clock32 = millis();
 
     // show this Line at current position and add tail of length _length
-    for (int i = 0; i < _length; i++) {
-      int index = _position - i; // tail extends backwards behind position
-      if (index > 0 && index < _path.length) {
-        //uint8_t brightness = addFadeShape(map(i, 0, _length, 0, 255));
-        uint8_t _twinkleBrightness = twinkleBrightness[_path.offset + index];
-        float _t = (float)_twinkleBrightness * mapf(i, 0, _length, 0, 1);
-        if (i > _length * 3 / 4) {
-          float _b = mapf(i, _length * 3 / 4, _length, 0, 255);
-          _t = max(_t, _b);
-        }
-        _path.leds[index] =
-            palette.getColor(_path.offset + index).nscale8(_t);
+    for (int indexOnLine = 0; indexOnLine < _length; indexOnLine++) {
+      int indexOnPath =
+          _position - indexOnLine; // tail extends backwards behind position
+      if (indexOnPath > 0 && indexOnPath < _path.length) {
+        uint8_t brightness = _getBrightness(indexOnPath, indexOnLine);
+        _path.leds[indexOnPath] =
+            palette.getColor(_path.offset + indexOnPath).nscale8(brightness);
       }
     }
 

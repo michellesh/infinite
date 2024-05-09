@@ -198,6 +198,8 @@ void loop() {
   if (autoCyclePalettes) {
     palette.cycle();
   }
+
+  // Store twinkle brightnesses in array for use in patterns besides twinkle
   twinkleSome(&twinkleBrightness[0], NUM_LEDS);
 
   EVERY_N_SECONDS(1) {

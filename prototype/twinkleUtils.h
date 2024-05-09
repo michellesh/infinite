@@ -1,8 +1,6 @@
 #define TWINKLE_DENSITY 6 // 0 (NONE lit) to 8 (ALL lit at once)
 #define TWINKLE_SPEED 5   // 0-8
 
-CRGB backgroundColor = CRGB::Black;
-
 uint8_t getTwinkleBrightness(uint16_t &PRNG16, uint32_t clock32, uint8_t speed) {
   PRNG16 = (uint16_t)(PRNG16 * 2053) + 1384; // next 'random' number
   uint16_t myclockoffset16 = PRNG16;         // use that number as clock offset
@@ -38,7 +36,7 @@ uint8_t getTwinkleBrightness(uint16_t &PRNG16, uint32_t clock32, uint8_t speed) 
 //  "CalculateOneTwinkle" on each pixel.  It then displays
 //  either the twinkle color of the background color,
 //  whichever is brighter.
-void twinkleSome(uint8_t *leds, int numLEDs) {
+void twinkleSome(uint8_t *ledBrightness, int numLEDs) {
 
   // "PRNG16" is the pseudorandom number generator
   // It MUST be reset to the same starting value each time
@@ -50,7 +48,6 @@ void twinkleSome(uint8_t *leds, int numLEDs) {
 
   for (int i = 0; i < numLEDs; i++) {
     uint8_t brightness = getTwinkleBrightness(PRNG16, clock32, TWINKLE_SPEED);
-    //leds[i].nscale8(brightness);
-    leds[i] = brightness;
+    ledBrightness[i] = brightness;
   }
 }

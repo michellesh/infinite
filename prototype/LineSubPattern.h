@@ -133,6 +133,7 @@ public:
         _lines[i].setSpeedMultiplier(0.2);
         _lines[i].setPath(straights[i]);
         _lines[i].setLength(MAX_DEPTH / 3);
+        _lines[i].setFadeType(Line::FADE_COMET);
         _lines[i].reverse();
         _lines[i].setPosition(MAX_DEPTH - i * (MAX_DEPTH / NUM_STRAIGHTS));
       }
