@@ -2,20 +2,28 @@ class Spiral : public Pattern {
 private:
   uint8_t _id = 0;
   int16_t _angle = 0; // the current angle
-  int16_t _width = WIDTH.DFLT;
-  int16_t _offset = OFFSET.DFLT;
   uint8_t _colorPaletteIndex = 0;
   float _speedMultiplier = 1;
+  float _densityMultiplier = 1;
 
   int _getSpeed() { return (float)speed * _speedMultiplier; }
+
+  int _getWidth() { return map(width, 1, 10, WIDTH.MIN, WIDTH.MAX); }
+
+  int _getOffset() {
+    float _density = density <= 5 ? map(density, 1, 5, -OFFSET.MAX, -OFFSET.MIN)
+                                  : map(density, 5, 10, OFFSET.MIN, OFFSET.MAX);
+    return _density * _densityMultiplier;
+  }
 
   // Gets the brightness of the LED if the LED's angle is close to the current
   // angle
   uint8_t _getBrightness(int index) {
 
-    int16_t angleOffset = ledDepth[index] * _offset;
+    int16_t angleOffset = ledDepth[index] * _getOffset();
     int16_t targetAngle = (_angle + angleOffset + 360) % 360;
     int16_t pixelAngle = ledAngle[index];
+    int16_t _width = _getWidth();
 
     // Calculate distance from the current angle. If angle is near end
     // (360-width < a < 360), also check LEDs near beginning. If angle is near
@@ -37,21 +45,21 @@ public:
   Spiral(uint8_t id = 0) { _id = id; }
 
   static constexpr Range WIDTH = {
-      10, 90, 90}; // How many degrees along the circumference at
-                   // the current angle to light up
+      50, 300, 180}; // How many degrees along the circumference at
+                     // the current angle to light up
   static constexpr Range SPEED = {1, 10, 3}; // How many degrees to add to the
                                              // current angle each time
   static constexpr Range OFFSET = {
       1, 4, 2}; // How many degrees to curl the spiral per unit of depth
 
-  void setWidth(int16_t width) { _width = abs(width); }
-
   void setAngle(int16_t angle) { _angle = angle; }
-
-  void setOffset(int16_t offset) { _offset = offset; }
 
   void setSpeedMultiplier(float speedMultiplier) {
     _speedMultiplier = speedMultiplier;
+  }
+
+  void setDensityMultiplier(float densityMultiplier) {
+    _densityMultiplier = densityMultiplier;
   }
 
   void setColorPaletteIndex(int16_t colorPaletteIndex) {

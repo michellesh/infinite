@@ -7,9 +7,7 @@ private:
   uint8_t _activeSubPattern = 0;
   uint8_t _percentBrightness = 0; // percent brightness of the whole pattern
 
-  void _showSingleSpiral() {
-    _spirals[0].show();
-  }
+  void _showSingleSpiral() { _spirals[0].show(); }
 
   void _showDoubleSpiral() {
     _spirals[0].show();
@@ -27,8 +25,7 @@ public:
       _numSpirals = 1;
       _spirals[0] = Spiral(1);
       _spirals[0].setColorPaletteIndex(0);
-      _spirals[0].setOffset(3);
-      _spirals[0].setWidth(180);
+      _spirals[0].setSpeedMultiplier(1.5);
       break;
     case DOUBLE_SPIRAL:
       _numSpirals = 2;
@@ -36,10 +33,9 @@ public:
       _spirals[1] = Spiral(2);
       _spirals[0].setColorPaletteIndex(0);
       _spirals[1].setColorPaletteIndex(170);
-      _spirals[0].setOffset(3);
-      _spirals[1].setOffset(-3);
-      _spirals[0].setWidth(180);
-      _spirals[1].setWidth(180);
+      _spirals[1].setDensityMultiplier(-1);
+      _spirals[0].setSpeedMultiplier(1.5);
+      _spirals[1].setSpeedMultiplier(1.5);
       break;
     default:
       break;
