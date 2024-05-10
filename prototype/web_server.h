@@ -46,6 +46,24 @@ const char index_html[] PROGMEM = R"rawliteral(
 <body>
   <h2>Infinitube! :-O</h2>
 
+  <table border="0">
+  <tr>
+    <td class="labelCol"><label id="labelSpeed" for="speedSlider">Speed</label></td>
+    <td><input type="range" id="speedSlider" onchange="sendData('s',this.value)" min="1" max="10" value="%SPEEDVALUE%" step="1" class="slider"></td>
+    <td class="valCol"><span id="speedValue">%SPEEDVALUE%</span></td>
+  </tr>
+  <tr>
+    <td class="labelCol"><label id="labelDensity" for="densitySlider">Density</label></td>
+    <td><input type="range" id="densitySlider" onchange="sendData('d',this.value)" min="1" max="10" value="%DENSITYVALUE%" step="1" class="slider"></td>
+    <td class="valCol"><span id="densityValue">%DENSITYVALUE%</span></td>
+  </tr>
+  <tr>
+    <td class="labelCol"><label id="labelWidth" for="widthSlider">Width</label></td>
+    <td><input type="range" id="widthSlider" onchange="sendData('w',this.value)" min="1" max="10" value="%WIDTHVALUE%" step="1" class="slider"></td>
+    <td class="valCol"><span id="widthValue">%WIDTHVALUE%</span></td>
+  </tr>
+  </table>
+
   <h3>Patterns</h3>
   <div class="buttons">
     <button type="button" onclick="sendData('n',0)">Twinkle</button>
@@ -91,19 +109,6 @@ const char index_html[] PROGMEM = R"rawliteral(
     <div class="break"></div>
   </div>
 
-  <table border="0">
-  <tr>
-    <td class="labelCol"><label id="labelSpeed" for="speedSlider">Speed</label></td>
-    <td><input type="range" id="speedSlider" onchange="sendData('s',this.value)" min="1" max="10" value="%SPEEDVALUE%" step="1" class="slider"></td>
-    <td class="valCol"><span id="speedValue">%SPEEDVALUE%</span></td>
-  </tr>
-  <tr>
-    <td class="labelCol"><label id="labelDensity" for="densitySlider">Density</label></td>
-    <td><input type="range" id="densitySlider" onchange="sendData('d',this.value)" min="1" max="10" value="%DENSITYVALUE%" step="1" class="slider"></td>
-    <td class="valCol"><span id="densityValue">%DENSITYVALUE%</span></td>
-  </tr>
-  </table>
-
 <script>
  var gateway = `ws://${window.location.hostname}/ws`;
   var websocket;
@@ -141,6 +146,10 @@ const char index_html[] PROGMEM = R"rawliteral(
     case 'd':
       document.getElementById('densityValue').innerHTML = dataValue;
       document.getElementById('densitySlider').value = dataValue;
+      break;
+    case 'w':
+      document.getElementById('widthValue').innerHTML = dataValue;
+      document.getElementById('widthSlider').value = dataValue;
       break;
     case 'a':
       if (dataValue == '1') document.getElementById('autoBtn').style.backgroundColor = '#baffb3';
@@ -198,6 +207,10 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
         density = dataValue.toInt();
         ws.textAll(message);
         break;
+      case 'w':
+        width = dataValue.toInt();
+        ws.textAll(message);
+        break;
       case 'a':
         autoCyclePalettes = !autoCyclePalettes;
         if (autoCyclePalettes) ws.textAll("a1");
@@ -242,6 +255,9 @@ String processor(const String& var){
   }
   if(var == "DENSITYVALUE"){
     return String(density);
+  }
+  if(var == "WIDTHVALUE"){
+    return String(width);
   }
   return "";
 }

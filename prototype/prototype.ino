@@ -73,6 +73,7 @@ Path straights[NUM_STRAIGHTS];
 int activePattern = 0;
 int speed = 3;
 int density = 4;
+int width = 5;
 bool autoCyclePalettes = true;
 
 // clang-format off
@@ -235,34 +236,4 @@ void loop() {
 
   FastLED.setBrightness(BRIGHTNESS);
   FastLED.show();
-}
-
-void testDepths() {
-  static int depth = 0;
-  int speed = 1;
-  int width = 10;
-
-  for (int i = 0; i < NUM_LEDS; i++) {
-    int dist = abs(ledDepth[i] - depth);
-    if (dist < width) {
-      leds[i] = CRGB::Blue;
-    }
-  }
-
-  depth = (depth + speed + MAX_DEPTH) % MAX_DEPTH;
-}
-
-void testAngles() {
-  static int angle = 0;
-  int speed = 1;
-  int width = 10;
-
-  for (int i = 0; i < NUM_LEDS; i++) {
-    int dist = abs(ledAngle[i] - angle);
-    if (dist < width) {
-      leds[i] = CRGB::Blue;
-    }
-  }
-
-  angle = (angle + speed + 360) % 360;
 }

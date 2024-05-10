@@ -4,13 +4,11 @@ private:
   uint8_t _activeSubPattern = 0;
   uint8_t _percentBrightness = 0; // percent brightness of the whole pattern
 
-  void _showTwinkle() { _twinkle.showLEDs(); }
+  void _showTwinkle() { _twinkle.show(); }
 
-  void _showTwinkleGroups() { _twinkle.showGroups(5); }
+  void _showTwinkleGroups() { _twinkle.show(); }
 
-  void _showRandomFadingSegments() {
-    _twinkle.showGroups(DEPTH_SEGMENT_LENGTH);
-  }
+  void _showRandomFadingSegments() { _twinkle.show(); }
 
 public:
   static const uint8_t TWINKLE = 0;
@@ -23,9 +21,13 @@ public:
 
   void setup() {
     switch (_activeSubPattern) {
+    case TWINKLE_GROUPS:
+      _twinkle.setWidthMultiplier(5);
+      break;
     case RANDOM_FADING_SEGMENTS:
       _twinkle.setDensityMultiplier(0.5);
       _twinkle.setSpeedMultiplier(2);
+      _twinkle.setWidthMultiplier(DEPTH_SEGMENT_LENGTH / 2);
       break;
     default:
       break;

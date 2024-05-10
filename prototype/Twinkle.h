@@ -2,10 +2,13 @@ class Twinkle : public Pattern {
 private:
   float _speedMultiplier = 1;
   float _densityMultiplier = 1;
+  float _widthMultiplier = 1;
 
   int _getSpeed() { return speed * _speedMultiplier; }
 
   int _getDensity() { return density * _densityMultiplier; }
+
+  int _getWidth() { return width * _widthMultiplier; }
 
   uint8_t _getBrightness(uint16_t &PRNG16, uint32_t clock32) {
     // Use pseudo random number generator to get values for the clock speed
@@ -42,32 +45,34 @@ public:
     _densityMultiplier = densityMultiplier;
   }
 
-  void showLEDs() {
-    uint16_t PRNG16 = 11337;
-    uint32_t clock32 = millis();
-
-    for (int i = 0; i < NUM_LEDS; i++) {
-      uint8_t brightness = _getBrightness(PRNG16, clock32);
-      CRGB color = palette.getColor(i);
-      leds[i] = color.nscale8(brightness);
-    }
+  void setWidthMultiplier(float widthMultiplier) {
+    _widthMultiplier = widthMultiplier;
   }
 
-  void showGroups(int groupLength) {
+  void show() {
     uint16_t PRNG16 = 11337;
     uint32_t clock32 = millis();
 
-    int currentGroup = 0;
-    uint8_t brightness;
-    for (int i = 0; i < NUM_LEDS; i++) {
-      if (i % groupLength == 0) {
-        currentGroup += groupLength;
-        brightness = _getBrightness(PRNG16, clock32);
+    int groupLength = _getWidth();
+    if (groupLength > 1) {
+      int currentGroup = 0;
+      uint8_t brightness;
+      for (int i = 0; i < NUM_LEDS; i++) {
+        if (i % groupLength == 0) {
+          currentGroup += groupLength;
+          brightness = _getBrightness(PRNG16, clock32);
+        }
+        CRGB color = palette.getColor(i);
+        uint8_t distInGroup =
+            map(i, currentGroup, currentGroup + groupLength, 0, 255);
+        leds[i] = color.nscale8(basicFade(distInGroup, brightness));
       }
-      CRGB color = palette.getColor(i);
-      uint8_t distInGroup =
-          map(i, currentGroup, currentGroup + groupLength, 0, 255);
-      leds[i] = color.nscale8(basicFade(distInGroup, brightness));
+    } else {
+      for (int i = 0; i < NUM_LEDS; i++) {
+        uint8_t brightness = _getBrightness(PRNG16, clock32);
+        CRGB color = palette.getColor(i);
+        leds[i] = color.nscale8(brightness);
+      }
     }
   }
 };
