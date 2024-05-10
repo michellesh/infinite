@@ -6,14 +6,11 @@ private:
 
   void _showTwinkle() { _twinkle.show(); }
 
-  void _showTwinkleGroups() { _twinkle.show(); }
-
   void _showRandomFadingSegments() { _twinkle.show(); }
 
 public:
   static const uint8_t TWINKLE = 0;
-  static const uint8_t TWINKLE_GROUPS = 1;
-  static const uint8_t RANDOM_FADING_SEGMENTS = 2;
+  static const uint8_t RANDOM_FADING_SEGMENTS = 1;
 
   TwinkleSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
@@ -21,8 +18,7 @@ public:
 
   void setup() {
     switch (_activeSubPattern) {
-    case TWINKLE_GROUPS:
-      _twinkle.setWidthMultiplier(5);
+    case TWINKLE:
       break;
     case RANDOM_FADING_SEGMENTS:
       _twinkle.setDensityMultiplier(0.5);
@@ -45,9 +41,6 @@ public:
     switch (_activeSubPattern) {
     case TWINKLE:
       _showTwinkle();
-      break;
-    case TWINKLE_GROUPS:
-      _showTwinkleGroups();
       break;
     case RANDOM_FADING_SEGMENTS:
       _showRandomFadingSegments();

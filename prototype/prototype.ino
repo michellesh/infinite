@@ -55,21 +55,20 @@ Path straights[NUM_STRAIGHTS];
 
 // globals controlled by web server
 #define PATTERN_TWINKLE 0
-#define PATTERN_TWINKLE_GROUPS 1
-#define PATTERN_RANDOM_FADING_SEGMENTS 2
-#define PATTERN_SINGLE_SPIRAL 3
-#define PATTERN_DOUBLE_SPIRAL 4
-#define PATTERN_ROTATING_PONG 5
-#define PATTERN_LASERS 6
-#define PATTERN_RAINFALL 7
-#define PATTERN_BASKET_WEAVING 8
-#define PATTERN_COMET_TRAILS 9
-#define PATTERN_ROTATING_HEXAGONS 10
-#define PATTERN_COUNTER_ROTATING_HEXAGONS 11
-#define PATTERN_VARIABLE_SPEED_ROTATION 12
-#define PATTERN_FLASHING_HEXAGONS 13
-#define PATTERN_FLASHING_HEXAGONS_WARP 14
-#define NUM_PATTERNS 15
+#define PATTERN_RANDOM_FADING_SEGMENTS 1
+#define PATTERN_SINGLE_SPIRAL 2
+#define PATTERN_DOUBLE_SPIRAL 3
+#define PATTERN_ROTATING_PONG 4
+#define PATTERN_LASERS 5
+#define PATTERN_RAINFALL 6
+#define PATTERN_BASKET_WEAVING 7
+#define PATTERN_COMET_TRAILS 8
+#define PATTERN_ROTATING_HEXAGONS 9
+#define PATTERN_COUNTER_ROTATING_HEXAGONS 10
+#define PATTERN_VARIABLE_SPEED_ROTATION 11
+#define PATTERN_FLASHING_HEXAGONS 12
+#define PATTERN_FLASHING_HEXAGONS_WARP 13
+#define NUM_PATTERNS 14
 int activePattern = 0;
 int speed = 3;
 int density = 4;
@@ -93,7 +92,6 @@ Palette palette;
 // clang-format on
 
 TwinkleSubPattern twinkle(TwinkleSubPattern::TWINKLE);
-TwinkleSubPattern twinkleGroups(TwinkleSubPattern::TWINKLE_GROUPS);
 TwinkleSubPattern randomFadingSegments(TwinkleSubPattern::RANDOM_FADING_SEGMENTS);
 SpiralSubPattern singleSpiral(SpiralSubPattern::SINGLE_SPIRAL);
 SpiralSubPattern doubleSpiral(SpiralSubPattern::DOUBLE_SPIRAL);
@@ -111,7 +109,6 @@ FlashSubPattern flashingHexagonsWarp(FlashSubPattern::FLASHING_HEXAGONS_WARP);
 // clang-format off
 SubPattern *activePatterns[] = {
   &twinkle,
-  &twinkleGroups,
   &randomFadingSegments,
   &singleSpiral,
   &doubleSpiral,
