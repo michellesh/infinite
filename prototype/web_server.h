@@ -24,62 +24,72 @@ const char index_html[] PROGMEM = R"rawliteral(
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Infinitube</title>
   <style>
-    html {font-family: Arial; display: inline-block}
-    h2 {font-size: 2.3rem; text-align: center}
-    p {font-size: 1.9rem;}
-  table {width: 100%%}
-  button {width: 32%%; height: 50px; font-size: 0.9rem;}
-    body {max-width: 500px; margin:0px auto; padding: 0px 7px;}
-    .slider { -webkit-appearance: none; margin: 14px 0; width: 100%%; height: 15px; background: #FFD65C;
-      outline: none; -webkit-transition: .2s; transition: opacity .2s;}
-    .slider::-webkit-slider-thumb {-webkit-appearance: none; appearance: none; width: 25px; height: 25px; background: #003249; cursor: pointer;}
-    .slider::-moz-range-thumb { width: 25px; height: 25px; background: #003249; cursor: pointer; }
-  .labelCol {width: 80px}
-  .valCol {width: 40px; padding-left: 14px}
+    html { font-family: Arial; display: inline-block; }
+    body { max-width: 500px; margin:0px auto; padding: 0px 7px; }
+    button { width: 32%%; height: 50px; font-size: 0.9rem; }
+    table { width: 100%%; }
+    h2 { font-size: 2.3rem; text-align: center }
+    p { font-size: 1.9rem; }
+    .buttons { display: flex; flex-wrap: wrap; }
+    .break { flex-basis: 100%%; height: 10px; }
+    .labelCol { width: 80px; }
+    .valCol { width: 40px; padding-left: 14px; }
+    .slider { -webkit-appearance: none; margin: 14px 0; width: 100%%;
+      height: 15px; background: #FFD65C; outline: none; -webkit-transition: .2s;
+      transition: opacity .2s; }
+    .slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none;
+      width: 25px; height: 25px; background: #003249; cursor: pointer; }
+    .slider::-moz-range-thumb { width: 25px; height: 25px; background: #003249;
+      cursor: pointer; }
   </style>
 </head>
 <body>
   <h2>Infinitube! :-O</h2>
 
   <h3>Patterns</h3>
-  <button type="button" onclick="sendData('n',0)">Twinkle</button>
-  <button type="button" onclick="sendData('n',1)">Twinkle: Groups</button>
-  <button type="button" onclick="sendData('n',2)">Twinkle: Random Fading Segments</button>
-  <br/><br/>
-  <button type="button" onclick="sendData('n',3)">Spiral: Single</button>
-  <button type="button" onclick="sendData('n',4)">Spiral: Double</button>
-  <br/><br/>
-  <button type="button" onclick="sendData('n',5)">Lines: Rotating Pong</button>
-  <button type="button" onclick="sendData('n',6)">Lines: Lasers</button>
-  <button type="button" onclick="sendData('n',7)">Lines: Rainfall</button>
-  <button type="button" onclick="sendData('n',8)">Lines: Basket Weaving</button>
-  <button type="button" onclick="sendData('n',9)">Lines: Comet Trails</button>
-  <br/><br/>
-  <button type="button" onclick="sendData('n',10)">Spinning: Rotating Hexagons</button>
-  <button type="button" onclick="sendData('n',11)">Spinning: Counter Rotating Hexagons</button>
-  <button type="button" onclick="sendData('n',12)">Spinning: Variable Speed Rotation</button>
-  <br/><br/>
-  <button type="button" onclick="sendData('n',13)">Flashing Hexagons</button>
-  <button type="button" onclick="sendData('n',14)">Flashing Hexagons Warp</button>
+  <div class="buttons">
+    <button type="button" onclick="sendData('n',0)">Twinkle</button>
+    <button type="button" onclick="sendData('n',1)">Twinkle: Groups</button>
+    <button type="button" onclick="sendData('n',2)">Twinkle: Random Fading Segments</button>
+    <div class="break"></div>
+    <button type="button" onclick="sendData('n',3)">Spiral: Single</button>
+    <button type="button" onclick="sendData('n',4)">Spiral: Double</button>
+    <div class="break"></div>
+    <button type="button" onclick="sendData('n',5)">Lines: Rotating Pong</button>
+    <button type="button" onclick="sendData('n',6)">Lines: Lasers</button>
+    <button type="button" onclick="sendData('n',7)">Lines: Rainfall</button>
+    <button type="button" onclick="sendData('n',8)">Lines: Basket Weaving</button>
+    <button type="button" onclick="sendData('n',9)">Lines: Comet Trails</button>
+    <div class="break"></div>
+    <button type="button" onclick="sendData('n',10)">Spinning: Rotating Hexagons</button>
+    <button type="button" onclick="sendData('n',11)">Spinning: Counter Rotating Hexagons</button>
+    <button type="button" onclick="sendData('n',12)">Spinning: Variable Speed Rotation</button>
+    <div class="break"></div>
+    <button type="button" onclick="sendData('n',13)">Flashing Hexagons</button>
+    <button type="button" onclick="sendData('n',14)">Flashing Hexagons Warp</button>
+    <div class="break"></div>
 
-  <h3>Color Palettes</h3>
-  <button type="button" onclick="sendData('p',0)">Fire</button>
-  <button type="button" onclick="sendData('p',1)">Ocean</button>
-  <button type="button" onclick="sendData('p',2)">Floral</button>
-  <button type="button" onclick="sendData('p',3)">Ice</button>
-  <button type="button" onclick="sendData('p',4)">Fairy</button>
-  <button type="button" id="autoBtn" onclick="sendData('a',1)">Auto Cycle Palettes</button>
-  </br></br>
-  <label id="labelAutoChangeTime" for="secondsPerPalette">Seconds per palette on auto </label>
-  <input id="secondsPerPalette" type="number" min="1" max="65535" onchange="sendData('t',this.value)" value="%SECONDSPERPALETTE%">
-  </br></br>
+    <h3>Color Palettes</h3>
+    <div class="break"></div>
+    <button type="button" onclick="sendData('p',0)">Fire</button>
+    <button type="button" onclick="sendData('p',1)">Ocean</button>
+    <button type="button" onclick="sendData('p',2)">Floral</button>
+    <button type="button" onclick="sendData('p',3)">Ice</button>
+    <button type="button" onclick="sendData('p',4)">Fairy</button>
+    <button type="button" id="autoBtn" onclick="sendData('a',1)">Auto Cycle Palettes</button>
+    <div class="break"></div>
+    <label id="labelAutoChangeTime" for="secondsPerPalette">Seconds per palette on auto </label>
+    <input id="secondsPerPalette" type="number" min="1" max="65535" onchange="sendData('t',this.value)" value="%SECONDSPERPALETTE%">
+    <div class="break"></div>
 
-  <h3>Color Modes</h3>
-  <button type="button" onclick="sendData('m',0)">Solid</button>
-  <button type="button" onclick="sendData('m',1)">Index Gradient</button>
-  <button type="button" onclick="sendData('m',2)">Depth Gradient</button>
-  <button type="button" onclick="sendData('m',3)">Angle Gradient</button>
-  </br></br>
+    <h3>Color Modes</h3>
+    <div class="break"></div>
+    <button type="button" onclick="sendData('m',0)">Solid</button>
+    <button type="button" onclick="sendData('m',1)">Index Gradient</button>
+    <button type="button" onclick="sendData('m',2)">Depth Gradient</button>
+    <button type="button" onclick="sendData('m',3)">Angle Gradient</button>
+    <div class="break"></div>
+  </div>
 
   <table border="0">
   <tr>
