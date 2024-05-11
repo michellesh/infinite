@@ -14,14 +14,8 @@ public:
 
   void setup() {
     switch (_activeSubPattern) {
-    case FLASHING_HEXAGONS:
-      _flash.setFlashTime(50);
-      _flash.setDwellTime(100);
-      break;
     case FLASHING_HEXAGONS_WARP:
-      _flash.setFlashTime(5);
-      _flash.setDwellTime(5);
-      //_flash.setSpeedMultiplier(0.1); // TODO
+      _flash.setDurationMultiplier(0.1);
       break;
     default:
       break;

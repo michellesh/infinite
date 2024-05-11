@@ -1,21 +1,26 @@
 class Flash : public Pattern {
 private:
-  float _speedMultiplier = 1;
-  long _flashTime = 50;
-  long _dwellTime = 100;
-  Timer _flashToggleTimer = {_flashTime};
+  Timer _flashToggleTimer = {FLASH_DURATION.DFLT};
   bool _flashing = true;
+  float _durationMultiplier = 1;
 
-  int _getSpeed() { return speed * _speedMultiplier; }
-
-public:
-  void setSpeedMultiplier(float speedMultiplier) {
-    _speedMultiplier = speedMultiplier;
+  long _getFlashDuration() {
+    long duration = map(speed, 10, 1, FLASH_DURATION.MIN, FLASH_DURATION.MAX);
+    return duration * _durationMultiplier;
   }
 
-  void setFlashTime(long flashTime) { _flashTime = flashTime; }
+  long _getDwellDuration() {
+    long duration = map(speed, 10, 1, DWELL_DURATION.MIN, DWELL_DURATION.MAX);
+    return duration * _durationMultiplier;
+  }
 
-  void setDwellTime(long dwellTime) { _dwellTime = dwellTime; }
+public:
+  static constexpr Range FLASH_DURATION = {5, 100, 50};  // milliseconds
+  static constexpr Range DWELL_DURATION = {5, 500, 100}; // milliseconds
+
+  void setDurationMultiplier(float durationMultiplier) {
+    _durationMultiplier = durationMultiplier;
+  }
 
   void show() {
     static uint8_t ringNum = NUM_RINGS - 1;
@@ -29,7 +34,8 @@ public:
         ringNum = ringNum == 0 ? NUM_RINGS - 1 : ringNum - 1;
       }
       _flashing = !_flashing;
-      _flashToggleTimer.totalCycleTime = _flashing ? _flashTime : _dwellTime;
+      _flashToggleTimer.totalCycleTime =
+          _flashing ? _getFlashDuration() : _getDwellDuration();
       _flashToggleTimer.reset();
     }
   }

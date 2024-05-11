@@ -69,7 +69,7 @@ Path straights[NUM_STRAIGHTS];
 #define PATTERN_FLASHING_HEXAGONS 12
 #define PATTERN_FLASHING_HEXAGONS_WARP 13
 #define NUM_PATTERNS 14
-int activePattern = 5;
+int activePattern = 12;
 int speed = 3;
 int density = 4;
 int width = 5;
