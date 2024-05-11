@@ -57,7 +57,7 @@ public:
 
   float getPosition() { return _position; }
 
-  void setPath(Path &path) { _path = path; } // TODO remove &?
+  void setPath(Path path) { _path = path; }
 
   Path getPath() { return _path; }
 
