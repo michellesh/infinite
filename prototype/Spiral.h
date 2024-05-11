@@ -6,7 +6,9 @@ private:
   float _speedMultiplier = 1;
   float _densityMultiplier = 1;
 
-  int _getSpeed() { return (float)speed * _speedMultiplier; }
+  int _getSpeed() {
+    return (float)speed * _speedMultiplier * (reverse ? -1 : 1);
+  }
 
   int _getWidth() { return map(width, 1, 10, WIDTH.MIN, WIDTH.MAX); }
 
@@ -65,8 +67,6 @@ public:
   void setColorPaletteIndex(int16_t colorPaletteIndex) {
     _colorPaletteIndex = colorPaletteIndex;
   }
-
-  void reverse() { _speedMultiplier = _speedMultiplier * -1; }
 
   void show() {
     for (int i = 0; i < NUM_LEDS; i++) {
