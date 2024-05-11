@@ -7,7 +7,9 @@ private:
   float _position = 0;
   Path _path;
 
-  float _getSpeed() { return (float)speed * _speedMultiplier; }
+  float _getSpeed() {
+    return (float)speed * _speedMultiplier * (reverse ? -1 : 1);
+  }
 
   void _updatePosition() { _position = _position + _getSpeed(); }
 
@@ -59,9 +61,14 @@ public:
 
   Path getPath() { return _path; }
 
-  bool isReversed() { return _speedMultiplier < 0; }
+  bool isReversed() { return _speedMultiplier * (reverse ? -1 : 1) < 0; }
 
-  void reverse() { _speedMultiplier = _speedMultiplier * -1; }
+  void setReverse(bool reverse) {
+    _speedMultiplier =
+        reverse ? abs(_speedMultiplier) * -1 : abs(_speedMultiplier);
+  }
+
+  void toggleReverse() { _speedMultiplier *= -1; }
 
   void setFadeType(uint8_t fadeType) { _fadeType = fadeType; }
 
@@ -73,6 +80,10 @@ public:
   bool isFullyOutOfBounds() {
     return (_position >= _path.length + getLength() && !isReversed()) ||
            (_position < 0 && isReversed());
+  }
+
+  void resetPosition() {
+    setPosition(isReversed() ? _path.length + getLength() : 0);
   }
 
   void show() {

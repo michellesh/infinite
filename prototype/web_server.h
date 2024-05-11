@@ -63,6 +63,10 @@ const char index_html[] PROGMEM = R"rawliteral(
     <td class="valCol"><span id="widthValue">%WIDTHVALUE%</span></td>
   </tr>
   </table>
+  <div>
+    <input type="checkbox" id="reverse" name="reverse" onclick="sendData('r',this.value)" />
+    <label for="reverse">Reverse</label>
+  </div>
 
   <h3>Patterns</h3>
   <div class="buttons">
@@ -151,8 +155,9 @@ const char index_html[] PROGMEM = R"rawliteral(
       document.getElementById('widthSlider').value = dataValue;
       break;
     case 'a':
-      if (dataValue == '1') document.getElementById('autoBtn').style.backgroundColor = '#baffb3';
-      else document.getElementById('autoBtn').style.backgroundColor = '';
+      const button = document.getElementById('autoBtn');
+      if (dataValue == '1') button.style.backgroundColor = '#baffb3';
+      else button.style.backgroundColor = '';
       break;
     }
   }
@@ -214,6 +219,9 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
         autoCyclePalettes = !autoCyclePalettes;
         if (autoCyclePalettes) ws.textAll("a1");
         else ws.textAll("a0");
+        break;
+      case 'r':
+        reverse = !reverse;
         break;
     }
   }

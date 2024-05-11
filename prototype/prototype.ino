@@ -69,10 +69,11 @@ Path straights[NUM_STRAIGHTS];
 #define PATTERN_FLASHING_HEXAGONS 12
 #define PATTERN_FLASHING_HEXAGONS_WARP 13
 #define NUM_PATTERNS 14
-int activePattern = 0;
+int activePattern = 5;
 int speed = 3;
 int density = 4;
 int width = 5;
+bool reverse = false;
 bool autoCyclePalettes = true;
 
 // clang-format off

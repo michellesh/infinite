@@ -10,17 +10,16 @@ private:
   void _showRotatingPong() {
     for (int i = 0; i < _numLines; i++) {
       if (_lines[i].isOutOfBounds()) {
-        _lines[i].reverse();
+        _lines[i].toggleReverse();
       }
       _lines[i].show();
     }
   }
 
-  void _showLasers() {
+  void _showBasicReset() {
     for (int i = 0; i < _numLines; i++) {
       if (_lines[i].isFullyOutOfBounds()) {
-        // TODO only works if reversed
-        _lines[i].setPosition(MAX_DEPTH + _lines[i].getLength());
+        _lines[i].resetPosition();
       }
       _lines[i].show();
     }
@@ -36,27 +35,6 @@ private:
         } else {
           _lines[i].setPosition(-r);
         }
-      }
-      _lines[i].show();
-    }
-  }
-
-  void _showBasketWeaving() {
-    for (int i = 0; i < _numLines; i++) {
-      if (_lines[i].isFullyOutOfBounds()) {
-        // TODO only works if reversed
-        Path path = _lines[i].getPath();
-        _lines[i].setPosition(path.length + _lines[i].getLength());
-      }
-      _lines[i].show();
-    }
-  }
-
-  void _showCometTrails() {
-    for (int i = 0; i < _numLines; i++) {
-      if (_lines[i].isFullyOutOfBounds()) {
-        // TODO only works if reversed
-        _lines[i].setPosition(MAX_DEPTH + _lines[i].getLength());
       }
       _lines[i].show();
     }
@@ -106,7 +84,7 @@ public:
       for (uint8_t i = 0; i < _numLines; i++) {
         _lines[i] = Line(i);
         _lines[i].setPath(straights[i]);
-        _lines[i].reverse();
+        _lines[i].setReverse(true);
         _lines[i].setPosition(MAX_DEPTH - i * (MAX_DEPTH / NUM_STRAIGHTS));
       }
       break;
@@ -121,7 +99,7 @@ public:
                        NUM_LEDS_PER_RING / 2, offset};
           _lines[i].setPath(path);
           _lines[i].setPosition(NUM_LEDS_PER_RING / 2 + _lines[i].getLength());
-          _lines[i].reverse();
+          _lines[i].setReverse(true);
         } else {
           int offset = rings[i].offset + NUM_LEDS_PER_RING / 2;
           Path path = {&leds[offset], &ledAngle[offset], &ledDepth[offset],
@@ -136,14 +114,14 @@ public:
       for (uint8_t i = 0; i < NUM_STRAIGHTS; i++) {
         _lines[i] = Line(i);
         _lines[i].setPath(straights[i]);
-        _lines[i].reverse();
+        _lines[i].setReverse(true);
         _lines[i].setPosition(MAX_DEPTH - i * (MAX_DEPTH / NUM_STRAIGHTS));
       }
       for (uint8_t i = NUM_STRAIGHTS; i < _numLines; i++) {
         _lines[i] = Line(i);
         _lines[i].setSpeedMultiplier(0.5);
         _lines[i].setPath(rings[i - NUM_STRAIGHTS]);
-        _lines[i].reverse();
+        _lines[i].setReverse(true);
         _lines[i].setPosition(360 - (i - NUM_STRAIGHTS) * (360 / NUM_RINGS));
         // TODO this shouldn't be 360
         // although that might be why it starts with a delay which is neat
@@ -157,7 +135,7 @@ public:
         _lines[i].setPath(straights[i]);
         _lines[i].setLengthMultiplier(2);
         _lines[i].setFadeType(Line::FADE_COMET);
-        _lines[i].reverse();
+        _lines[i].setReverse(true);
         _lines[i].setPosition(MAX_DEPTH - i * (MAX_DEPTH / NUM_STRAIGHTS));
       }
       break;
@@ -180,7 +158,7 @@ public:
         _lines[i].setPath(rings[i]);
         _lines[i].setLengthMultiplier(0.5);
         if (i % 2 == 0) {
-          _lines[i].reverse();
+          _lines[i].setReverse(true);
         }
         _lines[i].setPosition(i *
                               (10 * NUM_LEDS_PER_RING / 360)); // 10 "degrees"
@@ -220,16 +198,16 @@ public:
       _showRotatingPong();
       break;
     case LASERS:
-      _showLasers();
+      _showBasicReset();
       break;
     case RAINFALL:
       _showRainfall();
       break;
     case BASKET_WEAVING:
-      _showBasketWeaving();
+      _showBasicReset();
       break;
     case COMET_TRAILS:
-      _showCometTrails();
+      _showBasicReset();
       break;
     case ROTATING_HEXAGONS:
       _showRotatingHexagons();
