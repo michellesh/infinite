@@ -1,9 +1,9 @@
 class Line : public Pattern {
 private:
   uint8_t _id = 0;
-  int _length = LENGTH.DFLT;
   uint8_t _fadeType = FADE_BOTH_ENDS;
   float _speedMultiplier = 1;
+  float _lengthMultiplier = 1;
   float _position = 0;
   Path _path;
 
@@ -12,6 +12,7 @@ private:
   void _updatePosition() { _position = _position + _getSpeed(); }
 
   uint8_t _getBrightness(int indexOnPath, int indexOnLine) {
+    int _length = getLength();
     if (_fadeType == FADE_COMET) {
       uint8_t _twinkleBrightness =
           twinkleBrightness[_path.offset + indexOnPath];
@@ -42,13 +43,17 @@ public:
     _speedMultiplier = speedMultiplier;
   }
 
+  void setLengthMultiplier(float lengthMultiplier) {
+    _lengthMultiplier = lengthMultiplier;
+  }
+
+  int getLength() {
+    return map(width, 1, 10, LENGTH.MIN, LENGTH.MAX) * _lengthMultiplier;
+  }
+
   void setPosition(float position) { _position = position; }
 
   float getPosition() { return _position; }
-
-  void setLength(int length) { _length = length; }
-
-  int getLength() { return _length; }
 
   void setPath(Path &path) { _path = path; } // TODO remove &?
 
@@ -62,17 +67,17 @@ public:
 
   bool isOutOfBounds() {
     return (_position >= _path.length && !isReversed()) ||
-           (_position < _length && isReversed());
+           (_position < getLength() && isReversed());
   }
 
   bool isFullyOutOfBounds() {
-    return (_position >= _path.length + _length && !isReversed()) ||
+    return (_position >= _path.length + getLength() && !isReversed()) ||
            (_position < 0 && isReversed());
   }
 
   void show() {
-    // show this Line at current position and add tail of length _length
-    for (int indexOnLine = 0; indexOnLine < _length; indexOnLine++) {
+    // show this Line at current position and add tail of length
+    for (int indexOnLine = 0; indexOnLine < getLength(); indexOnLine++) {
       int indexOnPath =
           _position - indexOnLine; // tail extends backwards behind position
       if (indexOnPath > 0 && indexOnPath < _path.length) {
@@ -86,12 +91,20 @@ public:
   }
 
   void showRepeat() {
-    for (int indexOnPath = 0; indexOnPath < _path.length; indexOnPath++) {
-      if ((int)floor((indexOnPath + _position) / _length) % 2 == 0) {
-        int indexOnLine = (int(indexOnPath + _position) % _length);
-        CRGB color = palette.getColor(_path.offset + indexOnPath);
-        uint8_t distInGroup = map(indexOnLine, 0, _length, 0, 255);
-        _path.leds[indexOnPath] = color.nscale8(basicFade(distInGroup));
+    int _length = getLength();
+    int numLinesOnPath = floor(_path.length / (_length * 2));
+    int increment = _path.length / numLinesOnPath;
+    for (int indexOnPath = 0; indexOnPath < _path.length;
+         indexOnPath += increment) {
+      for (int indexOnLine = 0; indexOnLine < getLength(); indexOnLine++) {
+        int index = indexOnPath + indexOnLine + _position;
+        if (index > _path.length)
+          index -= _path.length;
+        if (index >= 0 && index < _path.length) {
+          CRGB color = palette.getColor(_path.offset + indexOnPath);
+          uint8_t distInGroup = map(indexOnLine, 0, _length, 0, 255);
+          _path.leds[index] = color.nscale8(basicFade(distInGroup));
+        }
       }
     }
 

@@ -64,13 +64,14 @@ private:
 
   void _showRotatingHexagons() {
     for (int i = 0; i < _numLines; i++) {
-      if (_lines[i].isOutOfBounds()) {
-        if (_lines[i].isReversed()) {
-          Path path = _lines[i].getPath();
-          _lines[i].setPosition(path.length + _lines[i].getLength());
-        } else {
-          _lines[i].setPosition(0);
-        }
+      float position = _lines[i].getPosition();
+      Path path = _lines[i].getPath();
+      bool isReversed = _lines[i].isReversed();
+      float length = _lines[i].getLength();
+      if (position >= (path.length) && !isReversed) {
+        _lines[i].setPosition(position - path.length);
+      } else if (position < 0 && isReversed) {
+        _lines[i].setPosition(position + path.length - 1);
       }
       _lines[i].showRepeat();
     }
@@ -136,8 +137,7 @@ public:
         _lines[i] = Line(i);
         _lines[i].setPath(straights[i]);
         _lines[i].reverse();
-        _lines[i].setPosition(MAX_DEPTH - i * (MAX_DEPTH / NUM_STRAIGHTS
-              ));
+        _lines[i].setPosition(MAX_DEPTH - i * (MAX_DEPTH / NUM_STRAIGHTS));
       }
       for (uint8_t i = NUM_STRAIGHTS; i < _numLines; i++) {
         _lines[i] = Line(i);
@@ -155,7 +155,7 @@ public:
         _lines[i] = Line(i);
         _lines[i].setSpeedMultiplier(0.2);
         _lines[i].setPath(straights[i]);
-        _lines[i].setLength(MAX_DEPTH / 3);
+        _lines[i].setLengthMultiplier(2);
         _lines[i].setFadeType(Line::FADE_COMET);
         _lines[i].reverse();
         _lines[i].setPosition(MAX_DEPTH - i * (MAX_DEPTH / NUM_STRAIGHTS));
@@ -167,8 +167,9 @@ public:
         _lines[i] = Line(i);
         _lines[i].setSpeedMultiplier(0.5);
         _lines[i].setPath(rings[i]);
-        _lines[i].setLength(NUM_LEDS_PER_RING / 16); // TODO dont hardcode 16?
-        _lines[i].setPosition(i * (10 * NUM_LEDS_PER_RING / 360)); // 10 "degrees"
+        _lines[i].setLengthMultiplier(0.5);
+        _lines[i].setPosition(i *
+                              (10 * NUM_LEDS_PER_RING / 360)); // 10 "degrees"
       }
       break;
     case COUNTER_ROTATING_HEXAGONS:
@@ -177,11 +178,12 @@ public:
         _lines[i] = Line(i);
         _lines[i].setSpeedMultiplier(0.5);
         _lines[i].setPath(rings[i]);
-        _lines[i].setLength(NUM_LEDS_PER_RING / 16); // TODO dont hardcode 16?
+        _lines[i].setLengthMultiplier(0.5);
         if (i % 2 == 0) {
           _lines[i].reverse();
         }
-        _lines[i].setPosition(i * (10 * NUM_LEDS_PER_RING / 360)); // 10 "degrees"
+        _lines[i].setPosition(i *
+                              (10 * NUM_LEDS_PER_RING / 360)); // 10 "degrees"
       }
       break;
     case VARIABLE_SPEED_ROTATION:
@@ -189,11 +191,12 @@ public:
       for (uint8_t i = 0; i < _numLines; i++) {
         _lines[i] = Line(i);
         _lines[i].setPath(rings[i]);
-        _lines[i].setLength(NUM_LEDS_PER_RING / 16); // TODO dont hardcode 16?
+        _lines[i].setLengthMultiplier(0.5);
         if (i < _numLines / 2) {
           _lines[i].setSpeedMultiplier(mapf(i, 0, _numLines / 2 - 1, 0.2, 1));
         } else {
-          _lines[i].setSpeedMultiplier(mapf(i, _numLines / 2, _numLines - 1, 1, 0.2));
+          _lines[i].setSpeedMultiplier(
+              mapf(i, _numLines / 2, _numLines - 1, 1, 0.2));
         }
       }
       break;
