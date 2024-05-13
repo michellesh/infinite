@@ -38,20 +38,18 @@
 #define ANGLE_SEGMENT_LENGTH 360 / NUM_STRAIGHTS
 
 CRGB leds[NUM_LEDS];
-int ledDepth[NUM_LEDS];
-int ledAngle[NUM_LEDS];
 uint8_t twinkleBrightness[NUM_LEDS];
 
 struct Path {
   CRGB *leds;
-  int *ledAngle;
-  int *ledDepth;
   int length;
   int offset;
 };
 
 Path rings[NUM_RINGS];
 Path straights[NUM_STRAIGHTS];
+
+#include "ledDepth-ledAngle.h"
 
 // globals controlled by web server
 #define PATTERN_TWINKLE 0
@@ -69,7 +67,7 @@ Path straights[NUM_STRAIGHTS];
 #define PATTERN_FLASHING_HEXAGONS 12
 #define PATTERN_FLASHING_HEXAGONS_WARP 13
 #define NUM_PATTERNS 14
-int activePattern = 12;
+int activePattern = 2;
 int speed = 3;
 int density = 4;
 int width = 5;
@@ -93,7 +91,8 @@ Palette palette;
 // clang-format on
 
 TwinkleSubPattern twinkle(TwinkleSubPattern::TWINKLE);
-TwinkleSubPattern randomFadingSegments(TwinkleSubPattern::RANDOM_FADING_SEGMENTS);
+TwinkleSubPattern
+    randomFadingSegments(TwinkleSubPattern::RANDOM_FADING_SEGMENTS);
 SpiralSubPattern singleSpiral(SpiralSubPattern::SINGLE_SPIRAL);
 SpiralSubPattern doubleSpiral(SpiralSubPattern::DOUBLE_SPIRAL);
 LineSubPattern rotatingPong(LineSubPattern::ROTATING_PONG);
@@ -102,7 +101,8 @@ LineSubPattern rainfall(LineSubPattern::RAINFALL);
 LineSubPattern basketWeaving(LineSubPattern::BASKET_WEAVING);
 LineSubPattern cometTrails(LineSubPattern::COMET_TRAILS);
 LineSubPattern rotatingHexagons(LineSubPattern::ROTATING_HEXAGONS);
-LineSubPattern counterRotatingHexagons(LineSubPattern::COUNTER_ROTATING_HEXAGONS);
+LineSubPattern
+    counterRotatingHexagons(LineSubPattern::COUNTER_ROTATING_HEXAGONS);
 LineSubPattern variableSpeedRotation(LineSubPattern::VARIABLE_SPEED_ROTATION);
 FlashSubPattern flashingHexagons(FlashSubPattern::FLASHING_HEXAGONS);
 FlashSubPattern flashingHexagonsWarp(FlashSubPattern::FLASHING_HEXAGONS_WARP);
@@ -178,35 +178,14 @@ void setup() {
   int offset = 0;
   uint8_t sortStraight[] = {2, 3, 1, 4, 0, 5};
   for (int i = 0; i < NUM_STRAIGHTS; i++) {
-    Path straight = {&leds[offset], &ledAngle[offset], &ledDepth[offset],
-                     NUM_LEDS_PER_STRAIGHT, offset};
+    Path straight = {&leds[offset], NUM_LEDS_PER_STRAIGHT, offset};
     straights[sortStraight[i]] = straight;
     offset += NUM_LEDS_PER_STRAIGHT;
   }
   for (int i = 0; i < NUM_RINGS; i++) {
-    Path ring = {&leds[offset], &ledAngle[offset], &ledDepth[offset],
-                 NUM_LEDS_PER_RING, offset};
+    Path ring = {&leds[offset], NUM_LEDS_PER_RING, offset};
     rings[i] = ring;
     offset += NUM_LEDS_PER_RING;
-  }
-
-  // setup depths and angles for straights.
-  int angles[] = {30, 90, 150, 210, 270, 330};
-  for (int i = 0; i < NUM_STRAIGHTS; i++) {
-    for (int j = 0; j < NUM_LEDS_PER_STRAIGHT; j++) {
-      // the depth is the index of the LED on that straight
-      straights[i].ledDepth[j] = j;
-      straights[i].ledAngle[j] = angles[i];
-    }
-  }
-
-  // setup depths and angles for rings
-  int depthStepPerRing = MAX_DEPTH / (NUM_RINGS - 1);
-  for (int i = 0; i < NUM_RINGS; i++) {
-    for (int j = 0; j < NUM_LEDS_PER_RING; j++) {
-      rings[i].ledDepth[j] = depthStepPerRing * i;
-      rings[i].ledAngle[j] = map(j, 0, NUM_LEDS_PER_RING, 330, 30);
-    }
   }
 
   setupWebServer();

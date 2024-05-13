@@ -33,9 +33,7 @@ public:
     }
   }
 
-  void setColorMode(uint8_t colorMode) {
-    _activeColorMode = colorMode;
-  }
+  void setColorMode(uint8_t colorMode) { _activeColorMode = colorMode; }
 
   void setSecondsPerPalette(int secondsPerPalette) {
     _paletteCycleTimer.totalCycleTime = secondsPerPalette * 1000;
@@ -67,11 +65,11 @@ public:
       break;
     }
     case DEPTH_GRADIENT: {
-      paletteIndex = map(ledDepth[i], 0, MAX_DEPTH, 0, MAX_PALETTE_INDEX);
+      paletteIndex = map(ledDepth(i), 0, MAX_DEPTH, 0, MAX_PALETTE_INDEX);
       break;
     }
     case ANGLE_GRADIENT: {
-      paletteIndex = map(ledAngle[i], 0, 360, 0, MAX_PALETTE_INDEX);
+      paletteIndex = map(ledAngle(i), 0, 360, 0, MAX_PALETTE_INDEX);
       break;
     }
     default:

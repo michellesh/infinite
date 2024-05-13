@@ -95,15 +95,13 @@ public:
         _lines[i].setSpeedMultiplier(0.5);
         if (i % 2 == 0) {
           int offset = rings[i].offset;
-          Path path = {&leds[offset], &ledAngle[offset], &ledDepth[offset],
-                       NUM_LEDS_PER_RING / 2, offset};
+          Path path = {&leds[offset], NUM_LEDS_PER_RING / 2, offset};
           _lines[i].setPath(path);
           _lines[i].setPosition(NUM_LEDS_PER_RING / 2 + _lines[i].getLength());
           _lines[i].setReverse(true);
         } else {
           int offset = rings[i].offset + NUM_LEDS_PER_RING / 2;
-          Path path = {&leds[offset], &ledAngle[offset], &ledDepth[offset],
-                       NUM_LEDS_PER_RING / 2, offset};
+          Path path = {&leds[offset], NUM_LEDS_PER_RING / 2, offset};
           _lines[i].setPath(path);
           _lines[i].setPosition(0);
         }

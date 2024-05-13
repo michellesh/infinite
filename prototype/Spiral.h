@@ -22,9 +22,9 @@ private:
   // angle
   uint8_t _getBrightness(int index) {
 
-    int16_t angleOffset = ledDepth[index] * _getOffset();
+    int16_t angleOffset = ledDepth(index) * _getOffset();
     int16_t targetAngle = (_angle + angleOffset + 360) % 360;
-    int16_t pixelAngle = ledAngle[index];
+    int16_t pixelAngle = ledAngle(index);
     int16_t _width = _getWidth();
 
     // Calculate distance from the current angle. If angle is near end
