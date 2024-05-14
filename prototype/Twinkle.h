@@ -3,6 +3,7 @@ private:
   float _speedMultiplier = 1;
   float _densityMultiplier = 1;
   float _widthMultiplier = 1;
+  bool _withOverlay = false;
 
   int _getSpeed() { return speed * _speedMultiplier; }
 
@@ -49,6 +50,8 @@ public:
     _widthMultiplier = widthMultiplier;
   }
 
+  void setWithOverlay(bool withOverlay) { _withOverlay = withOverlay; }
+
   void show() {
     uint16_t PRNG16 = 11337;
     uint32_t clock32 = millis();
@@ -65,13 +68,20 @@ public:
         CRGB color = palette.getColor(i);
         uint8_t distInGroup =
             map(i, currentGroup, currentGroup + groupLength, 0, 255);
-        leds[i] = color.nscale8(basicFade(distInGroup, brightness));
+        uint8_t b = basicFade(distInGroup, brightness);
+        if (_withOverlay) {
+          b = b > overlayBrightness[i] ? b : overlayBrightness[i];
+        }
+        leds[i] = color.nscale8(b);
       }
     } else {
       for (int i = 0; i < NUM_LEDS; i++) {
-        uint8_t brightness = _getBrightness(PRNG16, clock32);
         CRGB color = palette.getColor(i);
-        leds[i] = color.nscale8(brightness);
+        uint8_t b = _getBrightness(PRNG16, clock32);
+        if (_withOverlay) {
+          b = b > overlayBrightness[i] ? b : overlayBrightness[i];
+        }
+        leds[i] = color.nscale8(b);
       }
     }
   }

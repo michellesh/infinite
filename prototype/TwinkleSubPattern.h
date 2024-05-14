@@ -7,6 +7,7 @@ private:
 public:
   static const uint8_t TWINKLE = 0;
   static const uint8_t RANDOM_FADING_SEGMENTS = 1;
+  static const uint8_t TWINKLE_OVERLAY = 2;
 
   TwinkleSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
@@ -18,6 +19,9 @@ public:
       _twinkle.setDensityMultiplier(0.5);
       _twinkle.setSpeedMultiplier(2);
       _twinkle.setWidthMultiplier(DEPTH_SEGMENT_LENGTH / 2);
+      break;
+    case TWINKLE_OVERLAY:
+      _twinkle.setWithOverlay(true);
       break;
     default:
       break;
@@ -35,6 +39,7 @@ public:
     switch (_activeSubPattern) {
     case TWINKLE:
     case RANDOM_FADING_SEGMENTS:
+    case TWINKLE_OVERLAY:
       _twinkle.show();
       break;
     default:

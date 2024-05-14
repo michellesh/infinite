@@ -51,3 +51,17 @@ uint8_t attackDecayWave8(uint8_t i) {
     return 255 - (i + (i / 2));
   }
 }
+
+unsigned long ticks = 0;
+
+float sinwave(float minValue, float maxValue, unsigned long waveLength = 50,
+              unsigned long waveLengthOffset = 0) {
+  return mapf(sin((float)(ticks + waveLengthOffset) * PI / waveLength), -1, 1,
+              minValue, maxValue);
+}
+
+float sawtooth(float minValue, float maxValue, unsigned long waveLength = 50,
+               unsigned long waveLengthOffset = 0) {
+  float t = (float)(ticks + waveLengthOffset) / waveLength;
+  return mapf(t - floor(t), 0, 1, minValue, maxValue);
+}

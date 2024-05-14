@@ -39,7 +39,7 @@
 
 CRGB leds[NUM_LEDS];
 uint8_t twinkleBrightness[NUM_LEDS];
-#include "twinkleUtils.h"
+uint8_t overlayBrightness[NUM_LEDS];
 
 struct Path {
   CRGB *leds;
@@ -50,26 +50,29 @@ struct Path {
 Path rings[NUM_RINGS];
 Path straights[NUM_STRAIGHTS];
 
+#include "twinkleUtils.h"
 #include "ledDepth-ledAngle.h"
+#include "overlay.h"
 
 // globals controlled by web server
 #define PATTERN_TWINKLE 0
 #define PATTERN_RANDOM_FADING_SEGMENTS 1
 #define PATTERN_RANDOM_FLASHING_SEGMENTS 2
-#define PATTERN_SINGLE_SPIRAL 3
-#define PATTERN_DOUBLE_SPIRAL 4
-#define PATTERN_ROTATING_PONG 5
-#define PATTERN_LASERS 6
-#define PATTERN_RAINFALL 7
-#define PATTERN_BASKET_WEAVING 8
-#define PATTERN_COMET_TRAILS 9
-#define PATTERN_ROTATING_HEXAGONS 10
-#define PATTERN_COUNTER_ROTATING_HEXAGONS 11
-#define PATTERN_VARIABLE_SPEED_ROTATION 12
-#define PATTERN_FLASHING_HEXAGONS 13
-#define PATTERN_FLASHING_HEXAGONS_WARP 14
-#define NUM_PATTERNS 15
-int activePattern = 2;
+#define PATTERN_TWINKLE_OVERLAY 3
+#define PATTERN_SINGLE_SPIRAL 4
+#define PATTERN_DOUBLE_SPIRAL 5
+#define PATTERN_ROTATING_PONG 6
+#define PATTERN_LASERS 7
+#define PATTERN_RAINFALL 8
+#define PATTERN_BASKET_WEAVING 9
+#define PATTERN_COMET_TRAILS 10
+#define PATTERN_ROTATING_HEXAGONS 11
+#define PATTERN_COUNTER_ROTATING_HEXAGONS 12
+#define PATTERN_VARIABLE_SPEED_ROTATION 13
+#define PATTERN_FLASHING_HEXAGONS 14
+#define PATTERN_FLASHING_HEXAGONS_WARP 15
+#define NUM_PATTERNS 16
+int activePattern = 0;
 int speed = 3;
 int density = 4;
 int width = 5;
@@ -97,6 +100,7 @@ TwinkleSubPattern
     randomFadingSegments(TwinkleSubPattern::RANDOM_FADING_SEGMENTS);
 LineSubPattern
     randomFlashingSegments(LineSubPattern::RANDOM_FLASHING_SEGMENTS);
+TwinkleSubPattern twinkleOverlay(TwinkleSubPattern::TWINKLE_OVERLAY);
 SpiralSubPattern singleSpiral(SpiralSubPattern::SINGLE_SPIRAL);
 SpiralSubPattern doubleSpiral(SpiralSubPattern::DOUBLE_SPIRAL);
 LineSubPattern rotatingPong(LineSubPattern::ROTATING_PONG);
@@ -116,6 +120,7 @@ SubPattern *activePatterns[] = {
   &twinkle,
   &randomFadingSegments,
   &randomFlashingSegments,
+  &twinkleOverlay,
   &singleSpiral,
   &doubleSpiral,
   &rotatingPong,
@@ -211,8 +216,13 @@ void loop() {
     Serial.println(WiFi.localIP());
   }
 
+  if (activePattern == PATTERN_TWINKLE_OVERLAY) {
+    waveOverlay();
+  }
+
   activePatterns[activePattern]->show();
 
   FastLED.setBrightness(BRIGHTNESS);
   FastLED.show();
+  ticks++;
 }
