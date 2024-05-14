@@ -1,6 +1,17 @@
 // #define MAX_LINES NUM_RINGS * 2
 #define MAX_LINES                                                              \
   NUM_STRAIGHTS *(NUM_RINGS - 1) + NUM_RINGS *(NUM_STRAIGHTS - 1)
+#define NUM_FLICKERS 4
+
+struct Flicker {
+  int id = 0;
+  bool state = false;
+  bool idle = false;
+  Timer idTimer = {1000};
+  Timer stateTimer = {10};
+};
+
+Flicker flickers[NUM_FLICKERS];
 
 class LineSubPattern : public SubPattern {
 private:
@@ -58,8 +69,30 @@ private:
   }
 
   void _showRandomFlashingSegments() {
+    for (int i = 0; i < NUM_FLICKERS; i++) {
+      if (flickers[i].idTimer.complete()) {
+        flickers[i].idle = !flickers[i].idle;
+        flickers[i].id = random(0, _numLines - 1);
+        flickers[i].stateTimer.totalCycleTime = random(10, 100);
+        flickers[i].idTimer.totalCycleTime = random(600, 1200);
+        flickers[i].idTimer.reset();
+      }
+      if (flickers[i].stateTimer.complete()) {
+        flickers[i].state = !flickers[i].state;
+        flickers[i].stateTimer.reset();
+      }
+    }
+
     for (int i = 0; i < _numLines; i++) {
-      _lines[i].showPathFixed();
+      bool isFlickering = false;
+      bool flickerState = false;
+      for (int j = 0; j < NUM_FLICKERS; j++) {
+        if (!flickers[j].idle && flickers[j].id == i) {
+          isFlickering = true;
+          flickerState = flickers[j].state;
+        }
+      }
+      _lines[i].showPathFixed(_numLines, isFlickering, flickerState);
     }
   }
 
@@ -199,6 +232,7 @@ public:
           int lineIndex = i * (NUM_RINGS - 1) + j;
           _lines[lineIndex] = Line(lineIndex);
           _lines[lineIndex].setPath(p);
+          _lines[lineIndex].setSpeedMultiplier(1.5);
           totalLength += segmentLength;
         }
       }
@@ -214,6 +248,7 @@ public:
               (NUM_STRAIGHTS * (NUM_RINGS - 1)) + i * (NUM_STRAIGHTS - 1) + j;
           _lines[lineIndex] = Line(lineIndex);
           _lines[lineIndex].setPath(p);
+          _lines[lineIndex].setSpeedMultiplier(1.5);
           totalLength += segmentLength;
         }
       }

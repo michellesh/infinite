@@ -86,15 +86,25 @@ public:
     setPosition(isReversed() ? _path.length + getLength() : 0);
   }
 
-  void showPathFixed() {
+  void showPathFixed(int maxTwinkles, bool isFlickering, bool flickerState) {
+    int s = (float)speed * _speedMultiplier;
+    twinkleSome(maxTwinkles, min(s, MAX_TWINKLE_SPEED),
+                map(density, 1, 10, 1, MAX_TWINKLE_DENSITY));
+
     // No position, just shows entire path
     for (int i = 0; i < _path.length; i++) {
-      uint8_t brightness = twinkleBrightness[_id] < 127 ? 0 : 255;
+      uint8_t brightness = isFlickering ? (flickerState ? 255 : 0)
+                           : twinkleBrightness[_id] < 127 ? 0
+                                                          : 255;
       _path.leds[i] = palette.getColor(_path.offset + i).nscale8(brightness);
     }
   }
 
   void show() {
+    if (_fadeType == FADE_COMET) {
+      twinkleSome(NUM_LEDS, 5, 6);
+    }
+
     // show this Line at current position and add tail of length
     for (int indexOnLine = 0; indexOnLine < getLength(); indexOnLine++) {
       int indexOnPath =
