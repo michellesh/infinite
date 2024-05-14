@@ -14,22 +14,27 @@
 
 #define BRIGHTNESS 255
 
-#define PIN_1 25
-#define PIN_2 26
-#define PIN_3 33
+#define PIN_1 12
+#define PIN_2 13
+#define PIN_3 14
 #define PIN_4 27
-#define PIN_5 32
-#define PIN_6 14
-#define PIN_7 12
-#define PIN_8 13
-#define PIN_9 19
-#define PIN_10 18
+#define PIN_5 26
+#define PIN_6 25
+#define PIN_7 33
+#define PIN_8 32
+#define PIN_9 2
+#define PIN_10 4
 #define PIN_11 5
+#define PIN_12 18
+#define PIN_13 19
+#define PIN_14 21
+#define PIN_15 22
+#define PIN_16 23
 
 #define NUM_RINGS 10
 #define NUM_STRAIGHTS 6
-#define NUM_LEDS_PER_STRAIGHT 144
-#define NUM_LEDS_PER_RING 144
+#define NUM_LEDS_PER_STRAIGHT 600
+#define NUM_LEDS_PER_RING 600
 #define NUM_LEDS                                                               \
   NUM_RINGS *NUM_LEDS_PER_RING + NUM_STRAIGHTS *NUM_LEDS_PER_STRAIGHT
 
@@ -155,23 +160,43 @@ void setup() {
       .setCorrection(TypicalLEDStrip)
       .setDither(BRIGHTNESS < 255);
   startIndex += NUM_LEDS_PER_STRAIGHT;
-  FastLED.addLeds<WS2813, PIN_7, GRB>(leds, startIndex, NUM_LEDS_PER_RING * 2)
+  FastLED.addLeds<WS2813, PIN_7, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
       .setCorrection(TypicalLEDStrip)
       .setDither(BRIGHTNESS < 255);
-  startIndex += NUM_LEDS_PER_RING * 2;
-  FastLED.addLeds<WS2813, PIN_8, GRB>(leds, startIndex, NUM_LEDS_PER_RING * 2)
+  startIndex += NUM_LEDS_PER_RING;
+  FastLED.addLeds<WS2813, PIN_8, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
       .setCorrection(TypicalLEDStrip)
       .setDither(BRIGHTNESS < 255);
-  startIndex += NUM_LEDS_PER_RING * 2;
-  FastLED.addLeds<WS2813, PIN_9, GRB>(leds, startIndex, NUM_LEDS_PER_RING * 2)
+  startIndex += NUM_LEDS_PER_RING;
+  FastLED.addLeds<WS2813, PIN_9, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
       .setCorrection(TypicalLEDStrip)
       .setDither(BRIGHTNESS < 255);
-  startIndex += NUM_LEDS_PER_RING * 2;
-  FastLED.addLeds<WS2813, PIN_10, GRB>(leds, startIndex, NUM_LEDS_PER_RING * 2)
+  startIndex += NUM_LEDS_PER_RING;
+  FastLED.addLeds<WS2813, PIN_10, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
       .setCorrection(TypicalLEDStrip)
       .setDither(BRIGHTNESS < 255);
-  startIndex += NUM_LEDS_PER_RING * 2;
-  FastLED.addLeds<WS2813, PIN_11, GRB>(leds, startIndex, NUM_LEDS_PER_RING * 2)
+  startIndex += NUM_LEDS_PER_RING;
+  FastLED.addLeds<WS2813, PIN_11, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
+      .setCorrection(TypicalLEDStrip)
+      .setDither(BRIGHTNESS < 255);
+  startIndex += NUM_LEDS_PER_RING;
+  FastLED.addLeds<WS2813, PIN_12, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
+      .setCorrection(TypicalLEDStrip)
+      .setDither(BRIGHTNESS < 255);
+  startIndex += NUM_LEDS_PER_RING;
+  FastLED.addLeds<WS2813, PIN_13, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
+      .setCorrection(TypicalLEDStrip)
+      .setDither(BRIGHTNESS < 255);
+  startIndex += NUM_LEDS_PER_RING;
+  FastLED.addLeds<WS2813, PIN_14, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
+      .setCorrection(TypicalLEDStrip)
+      .setDither(BRIGHTNESS < 255);
+  startIndex += NUM_LEDS_PER_RING;
+  FastLED.addLeds<WS2813, PIN_15, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
+      .setCorrection(TypicalLEDStrip)
+      .setDither(BRIGHTNESS < 255);
+  startIndex += NUM_LEDS_PER_RING;
+  FastLED.addLeds<WS2813, PIN_16, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
       .setCorrection(TypicalLEDStrip)
       .setDither(BRIGHTNESS < 255);
 
