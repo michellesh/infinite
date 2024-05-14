@@ -86,6 +86,14 @@ public:
     setPosition(isReversed() ? _path.length + getLength() : 0);
   }
 
+  void showPathFixed() {
+    // No position, just shows entire path
+    for (int i = 0; i < _path.length; i++) {
+      uint8_t brightness = twinkleBrightness[_id] < 127 ? 0 : 255;
+      _path.leds[i] = palette.getColor(_path.offset + i).nscale8(brightness);
+    }
+  }
+
   void show() {
     // show this Line at current position and add tail of length
     for (int indexOnLine = 0; indexOnLine < getLength(); indexOnLine++) {

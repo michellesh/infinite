@@ -1,4 +1,6 @@
-#define MAX_LINES NUM_RINGS * 2
+// #define MAX_LINES NUM_RINGS * 2
+#define MAX_LINES                                                              \
+  NUM_STRAIGHTS *(NUM_RINGS - 1) + NUM_RINGS *(NUM_STRAIGHTS - 1)
 
 class LineSubPattern : public SubPattern {
 private:
@@ -55,6 +57,12 @@ private:
     }
   }
 
+  void _showRandomFlashingSegments() {
+    for (int i = 0; i < _numLines; i++) {
+      _lines[i].showPathFixed();
+    }
+  }
+
 public:
   static const uint8_t ROTATING_PONG = 0;
   static const uint8_t LASERS = 1;
@@ -64,6 +72,7 @@ public:
   static const uint8_t ROTATING_HEXAGONS = 5;
   static const uint8_t COUNTER_ROTATING_HEXAGONS = 6;
   static const uint8_t VARIABLE_SPEED_ROTATION = 7;
+  static const uint8_t RANDOM_FLASHING_SEGMENTS = 8;
 
   LineSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
@@ -176,6 +185,31 @@ public:
         }
       }
       break;
+    case RANDOM_FLASHING_SEGMENTS:
+      _numLines =
+          NUM_STRAIGHTS * (NUM_RINGS - 1) + NUM_RINGS * (NUM_STRAIGHTS - 1);
+      for (uint8_t i = 0; i < NUM_STRAIGHTS; i++) {
+        int segmentLength = (NUM_LEDS_PER_STRAIGHT / (NUM_RINGS - 1));
+        for (uint8_t j = 0; j < NUM_RINGS - 1; j++) {
+          Path p = {&straights[i].leds[j * segmentLength], segmentLength,
+                    straights[i].offset + j * segmentLength};
+          int lineIndex = i * (NUM_RINGS - 1) + j;
+          _lines[lineIndex] = Line(lineIndex);
+          _lines[lineIndex].setPath(p);
+        }
+      }
+      for (uint8_t i = 0; i < NUM_RINGS; i++) {
+        int segmentLength = NUM_LEDS_PER_RING / (NUM_STRAIGHTS - 1);
+        for (uint8_t j = 0; j < NUM_STRAIGHTS - 1; j++) {
+          Path p = {&rings[i].leds[j * segmentLength], segmentLength,
+                    rings[i].offset + j * segmentLength};
+          int lineIndex =
+              (NUM_STRAIGHTS * (NUM_RINGS - 1)) + i * (NUM_STRAIGHTS - 1) + j;
+          _lines[lineIndex] = Line(lineIndex);
+          _lines[lineIndex].setPath(p);
+        }
+      }
+      break;
     default:
       break;
     }
@@ -215,6 +249,9 @@ public:
       break;
     case VARIABLE_SPEED_ROTATION:
       _showRotatingHexagons();
+      break;
+    case RANDOM_FLASHING_SEGMENTS:
+      _showRandomFlashingSegments();
       break;
     default:
       break;
