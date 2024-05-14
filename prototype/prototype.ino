@@ -50,10 +50,6 @@ struct Path {
 Path rings[NUM_RINGS];
 Path straights[NUM_STRAIGHTS];
 
-#include "twinkleUtils.h"
-#include "ledDepth-ledAngle.h"
-#include "overlay.h"
-
 // globals controlled by web server
 #define PATTERN_TWINKLE 0
 #define PATTERN_RANDOM_FADING_SEGMENTS 1
@@ -74,12 +70,18 @@ Path straights[NUM_STRAIGHTS];
 #define NUM_PATTERNS 16
 int activePattern = 0;
 int speed = 3;
+int overlaySpeed = 8;
+int overlayWidth = 5;
 int density = 4;
 int width = 5;
 bool reverse = false;
 bool autoCyclePalettes = true;
 
 // clang-format off
+#include "twinkleUtils.h"
+#include "ledDepth-ledAngle.h"
+#include "overlay.h"
+
 #include "Palette.h"
 Palette palette;
 

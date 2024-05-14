@@ -62,6 +62,16 @@ const char index_html[] PROGMEM = R"rawliteral(
     <td><input type="range" id="widthSlider" onchange="sendData('w',this.value)" min="1" max="10" value="%WIDTHVALUE%" step="1" class="slider"></td>
     <td class="valCol"><span id="widthValue">%WIDTHVALUE%</span></td>
   </tr>
+  <tr>
+    <td class="labelCol"><label id="labelOverlaySpeed" for="overlaySpeedSlider">Overlay Speed</label></td>
+    <td><input type="range" id="overlaySpeedSlider" onchange="sendData('o',this.value)" min="1" max="10" value="%OVERLAYSPEEDVALUE%" step="1" class="slider"></td>
+    <td class="valCol"><span id="overlaySpeedValue">%OVERLAYSPEEDVALUE%</span></td>
+  </tr>
+  <tr>
+    <td class="labelCol"><label id="labelOverlayWidth" for="overlayWidthSlider">Overlay Width</label></td>
+    <td><input type="range" id="overlayWidthSlider" onchange="sendData('x',this.value)" min="1" max="10" value="%OVERLAYWIDTHVALUE%" step="1" class="slider"></td>
+    <td class="valCol"><span id="overlayWidthValue">%OVERLAYWIDTHVALUE%</span></td>
+  </tr>
   </table>
   <div>
     <input type="checkbox" id="reverse" name="reverse" onclick="sendData('r',this.value)" />
@@ -156,6 +166,14 @@ const char index_html[] PROGMEM = R"rawliteral(
       document.getElementById('widthValue').innerHTML = dataValue;
       document.getElementById('widthSlider').value = dataValue;
       break;
+    case 'o':
+      document.getElementById('overlaySpeedValue').innerHTML = dataValue;
+      document.getElementById('overlaySpeedSlider').value = dataValue;
+      break;
+    case 'x':
+      document.getElementById('overlayWidthValue').innerHTML = dataValue;
+      document.getElementById('overlayWidthSlider').value = dataValue;
+      break;
     case 'a':
       const button = document.getElementById('autoBtn');
       if (dataValue == '1') button.style.backgroundColor = '#baffb3';
@@ -217,6 +235,14 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
         width = dataValue.toInt();
         ws.textAll(message);
         break;
+      case 'o':
+        overlaySpeed = dataValue.toInt();
+        ws.textAll(message);
+        break;
+      case 'x':
+        overlayWidth = dataValue.toInt();
+        ws.textAll(message);
+        break;
       case 'a':
         autoCyclePalettes = !autoCyclePalettes;
         if (autoCyclePalettes) ws.textAll("a1");
@@ -267,6 +293,12 @@ String processor(const String& var){
   }
   if(var == "WIDTHVALUE"){
     return String(width);
+  }
+  if(var == "OVERLAYSPEEDVALUE"){
+    return String(overlaySpeed);
+  }
+  if(var == "OVERLAYWIDTHVALUE"){
+    return String(overlayWidth);
   }
   return "";
 }
