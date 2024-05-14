@@ -189,24 +189,32 @@ public:
       _numLines =
           NUM_STRAIGHTS * (NUM_RINGS - 1) + NUM_RINGS * (NUM_STRAIGHTS - 1);
       for (uint8_t i = 0; i < NUM_STRAIGHTS; i++) {
+        int totalLength = 0;
         int segmentLength = (NUM_LEDS_PER_STRAIGHT / (NUM_RINGS - 1));
         for (uint8_t j = 0; j < NUM_RINGS - 1; j++) {
-          Path p = {&straights[i].leds[j * segmentLength], segmentLength,
+          int length = j == NUM_RINGS - 2 ? straights[i].length - totalLength
+                                          : segmentLength;
+          Path p = {&straights[i].leds[j * segmentLength], length,
                     straights[i].offset + j * segmentLength};
           int lineIndex = i * (NUM_RINGS - 1) + j;
           _lines[lineIndex] = Line(lineIndex);
           _lines[lineIndex].setPath(p);
+          totalLength += segmentLength;
         }
       }
       for (uint8_t i = 0; i < NUM_RINGS; i++) {
+        int totalLength = 0;
         int segmentLength = NUM_LEDS_PER_RING / (NUM_STRAIGHTS - 1);
         for (uint8_t j = 0; j < NUM_STRAIGHTS - 1; j++) {
-          Path p = {&rings[i].leds[j * segmentLength], segmentLength,
+          int length = j == NUM_STRAIGHTS - 2 ? rings[i].length - totalLength
+                                              : segmentLength;
+          Path p = {&rings[i].leds[j * segmentLength], length,
                     rings[i].offset + j * segmentLength};
           int lineIndex =
               (NUM_STRAIGHTS * (NUM_RINGS - 1)) + i * (NUM_STRAIGHTS - 1) + j;
           _lines[lineIndex] = Line(lineIndex);
           _lines[lineIndex].setPath(p);
+          totalLength += segmentLength;
         }
       }
       break;
