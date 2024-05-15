@@ -31,6 +31,9 @@ private:
   }
 
 public:
+  Timer timer = {500};
+  bool idle = false;
+
   Line(uint8_t id = 0) { _id = id; }
 
   static constexpr uint8_t FADE_BOTH_ENDS = 0;
@@ -82,8 +85,8 @@ public:
            (_position < 0 && isReversed());
   }
 
-  void resetPosition() {
-    setPosition(isReversed() ? _path.length + getLength() : 0);
+  void resetPosition(int offset = 0) {
+    setPosition(isReversed() ? _path.length + getLength() + offset : -offset);
   }
 
   void showPathFixed(int maxTwinkles, bool isFlickering, bool flickerState) {

@@ -141,6 +141,7 @@ SubPattern *activePatterns[] = {
 void setup() {
   Serial.begin(9600);
   delay(500);
+  randomSeed(analogRead(0));
 
   int startIndex = 0;
   FastLED.addLeds<WS2813, PIN_1, GRB>(leds, startIndex, NUM_LEDS_PER_STRAIGHT)

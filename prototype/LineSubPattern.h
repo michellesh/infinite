@@ -3,6 +3,8 @@
   NUM_STRAIGHTS *(NUM_RINGS - 1) + NUM_RINGS *(NUM_STRAIGHTS - 1)
 #define NUM_FLICKERS 4
 
+#define MAX_IDLE_TIME 2000
+
 struct Flicker {
   int id = 0;
   bool state = false;
@@ -31,8 +33,15 @@ private:
 
   void _showBasicReset() {
     for (int i = 0; i < _numLines; i++) {
-      if (_lines[i].isFullyOutOfBounds()) {
-        _lines[i].resetPosition();
+      if (_lines[i].idle && _lines[i].timer.complete()) {
+        _lines[i].resetPosition(random(0, 40));
+        _lines[i].idle = false;
+      }
+      if (_lines[i].isFullyOutOfBounds() && !_lines[i].idle) {
+        _lines[i].idle = true;
+        int idleTime = map(density, 1, 10, MAX_IDLE_TIME, 0);
+        _lines[i].timer.totalCycleTime = random(0, idleTime);
+        _lines[i].timer.reset();
       }
       _lines[i].show();
     }
@@ -127,7 +136,9 @@ public:
         _lines[i] = Line(i);
         _lines[i].setPath(straights[i]);
         _lines[i].setReverse(true);
-        _lines[i].setPosition(MAX_DEPTH - i * (MAX_DEPTH / NUM_STRAIGHTS));
+        _lines[i].setLengthMultiplier(2);
+        _lines[i].timer.totalCycleTime = random(0, MAX_IDLE_TIME);
+        _lines[i].setPosition(random(0, NUM_LEDS_PER_STRAIGHT));
       }
       break;
     case RAINFALL:
@@ -176,7 +187,8 @@ public:
         _lines[i].setLengthMultiplier(2);
         _lines[i].setFadeType(Line::FADE_COMET);
         _lines[i].setReverse(true);
-        _lines[i].setPosition(MAX_DEPTH - i * (MAX_DEPTH / NUM_STRAIGHTS));
+        _lines[i].timer.totalCycleTime = random(0, MAX_IDLE_TIME);
+        _lines[i].setPosition(random(0, NUM_LEDS_PER_STRAIGHT));
       }
       break;
     case ROTATING_HEXAGONS:
