@@ -23,6 +23,14 @@ private:
   uint8_t _percentBrightness = 0; // percent brightness of the whole pattern
 
   void _showRotatingPong() {
+    static int _prevDensity = density;
+    if (density != _prevDensity) {
+      int offsetStep = map(density, 1, 10, 0, 50);
+      for (int i = 0; i < _numLines; i++) {
+        _lines[i].setPosition(offsetStep * i);
+      }
+      _prevDensity = density;
+    }
     for (int i = 0; i < _numLines; i++) {
       if (_lines[i].isOutOfBounds()) {
         _lines[i].toggleReverse();
@@ -137,7 +145,6 @@ public:
       for (uint8_t i = 0; i < _numLines; i++) {
         _lines[i] = Line(i);
         _lines[i].setPath(straights[i]);
-        _lines[i].setPosition(i * (MAX_DEPTH / NUM_STRAIGHTS));
       }
       break;
     case LASERS:
