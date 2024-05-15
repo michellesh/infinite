@@ -76,6 +76,15 @@ private:
   }
 
   void _showRotatingHexagons() {
+    static int _prevDensity = density;
+    if (density != _prevDensity) {
+      int degreeStep = map(density, 1, 10, 0, 50); // range 0-50 degree offset
+      for (int i = 0; i < _numLines; i++) {
+        _lines[i].setPosition(i * (degreeStep * NUM_LEDS_PER_RING / 360));
+      }
+      _prevDensity = density;
+    }
+
     for (int i = 0; i < _numLines; i++) {
       float position = _lines[i].getPosition();
       Path path = _lines[i].getPath();
