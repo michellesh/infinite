@@ -40,7 +40,7 @@ public:
   static constexpr uint8_t FADE_COMET = 1;
 
   static constexpr Range LENGTH = {
-      DEPTH_SEGMENT_LENGTH, DEPTH_SEGMENT_LENGTH * 3, DEPTH_SEGMENT_LENGTH * 2};
+      DEPTH_SEGMENT_LENGTH, DEPTH_SEGMENT_LENGTH * 6, DEPTH_SEGMENT_LENGTH * 2};
 
   uint8_t getId() { return _id; }
 

@@ -59,15 +59,16 @@ Path straights[NUM_STRAIGHTS];
 #define PATTERN_DOUBLE_SPIRAL 5
 #define PATTERN_ROTATING_PONG 6
 #define PATTERN_LASERS 7
-#define PATTERN_RAINFALL 8
-#define PATTERN_BASKET_WEAVING 9
-#define PATTERN_COMET_TRAILS 10
-#define PATTERN_ROTATING_HEXAGONS 11
-#define PATTERN_COUNTER_ROTATING_HEXAGONS 12
-#define PATTERN_VARIABLE_SPEED_ROTATION 13
-#define PATTERN_FLASHING_HEXAGONS 14
-#define PATTERN_FLASHING_HEXAGONS_WARP 15
-#define NUM_PATTERNS 16
+#define PATTERN_LASERS_ALL_AT_ONCE 8
+#define PATTERN_RAINFALL 9
+#define PATTERN_BASKET_WEAVING 10
+#define PATTERN_COMET_TRAILS 11
+#define PATTERN_ROTATING_HEXAGONS 12
+#define PATTERN_COUNTER_ROTATING_HEXAGONS 13
+#define PATTERN_VARIABLE_SPEED_ROTATION 14
+#define PATTERN_FLASHING_HEXAGONS 15
+#define PATTERN_FLASHING_HEXAGONS_WARP 16
+#define NUM_PATTERNS 17
 int activePattern = 0;
 int speed = 3;
 int overlaySpeed = 8;
@@ -107,6 +108,7 @@ SpiralSubPattern singleSpiral(SpiralSubPattern::SINGLE_SPIRAL);
 SpiralSubPattern doubleSpiral(SpiralSubPattern::DOUBLE_SPIRAL);
 LineSubPattern rotatingPong(LineSubPattern::ROTATING_PONG);
 LineSubPattern lasers(LineSubPattern::LASERS);
+LineSubPattern lasersAllAtOnce(LineSubPattern::LASERS_ALL_AT_ONCE);
 LineSubPattern rainfall(LineSubPattern::RAINFALL);
 LineSubPattern basketWeaving(LineSubPattern::BASKET_WEAVING);
 LineSubPattern cometTrails(LineSubPattern::COMET_TRAILS);
@@ -127,6 +129,7 @@ SubPattern *activePatterns[] = {
   &doubleSpiral,
   &rotatingPong,
   &lasers,
+  &lasersAllAtOnce,
   &rainfall,
   &basketWeaving,
   &cometTrails,

@@ -33,6 +33,15 @@ private:
 
   void _showBasicReset() {
     for (int i = 0; i < _numLines; i++) {
+      if (_lines[i].isFullyOutOfBounds()) {
+        _lines[i].resetPosition();
+      }
+      _lines[i].show();
+    }
+  }
+
+  void _showRandomReset() {
+    for (int i = 0; i < _numLines; i++) {
       if (_lines[i].idle && _lines[i].timer.complete()) {
         _lines[i].resetPosition(random(0, 40));
         _lines[i].idle = false;
@@ -108,13 +117,14 @@ private:
 public:
   static const uint8_t ROTATING_PONG = 0;
   static const uint8_t LASERS = 1;
-  static const uint8_t RAINFALL = 2;
-  static const uint8_t BASKET_WEAVING = 3;
-  static const uint8_t COMET_TRAILS = 4;
-  static const uint8_t ROTATING_HEXAGONS = 5;
-  static const uint8_t COUNTER_ROTATING_HEXAGONS = 6;
-  static const uint8_t VARIABLE_SPEED_ROTATION = 7;
-  static const uint8_t RANDOM_FLASHING_SEGMENTS = 8;
+  static const uint8_t LASERS_ALL_AT_ONCE = 2;
+  static const uint8_t RAINFALL = 3;
+  static const uint8_t BASKET_WEAVING = 4;
+  static const uint8_t COMET_TRAILS = 5;
+  static const uint8_t ROTATING_HEXAGONS = 6;
+  static const uint8_t COUNTER_ROTATING_HEXAGONS = 7;
+  static const uint8_t VARIABLE_SPEED_ROTATION = 8;
+  static const uint8_t RANDOM_FLASHING_SEGMENTS = 9;
 
   LineSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
@@ -139,6 +149,16 @@ public:
         _lines[i].setLengthMultiplier(2);
         _lines[i].timer.totalCycleTime = random(0, MAX_IDLE_TIME);
         _lines[i].setPosition(random(0, NUM_LEDS_PER_STRAIGHT));
+      }
+      break;
+    case LASERS_ALL_AT_ONCE:
+      _numLines = NUM_STRAIGHTS;
+      for (uint8_t i = 0; i < _numLines; i++) {
+        _lines[i] = Line(i);
+        _lines[i].setPath(straights[i]);
+        _lines[i].setReverse(true);
+        _lines[i].setLengthMultiplier(2);
+        _lines[i].setPosition(0);
       }
       break;
     case RAINFALL:
@@ -285,16 +305,19 @@ public:
       _showRotatingPong();
       break;
     case LASERS:
+      _showRandomReset();
+      break;
+    case LASERS_ALL_AT_ONCE:
       _showBasicReset();
       break;
     case RAINFALL:
       _showRainfall();
       break;
     case BASKET_WEAVING:
-      _showBasicReset();
+      _showRandomReset();
       break;
     case COMET_TRAILS:
-      _showBasicReset();
+      _showRandomReset();
       break;
     case ROTATING_HEXAGONS:
       _showRotatingHexagons();
