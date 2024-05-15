@@ -50,15 +50,11 @@ private:
 
   void _showRandomReset() {
     for (int i = 0; i < _numLines; i++) {
-      if (_lines[i].idle && _lines[i].timer.complete()) {
-        _lines[i].resetPosition(random(0, 40));
-        _lines[i].idle = false;
-      }
-      if (_lines[i].isFullyOutOfBounds() && !_lines[i].idle) {
-        _lines[i].idle = true;
-        int idleTime = map(density, 1, 10, MAX_IDLE_TIME, 0);
-        _lines[i].timer.totalCycleTime = random(0, idleTime);
-        _lines[i].timer.reset();
+      if (_lines[i].isFullyOutOfBounds()) {
+        int pathLength = _lines[i].getPath().length;
+        int maxOffset = map(density, 1, 10, pathLength * 7, 0);
+        int offset = random(0, maxOffset);
+        _lines[i].resetPosition(offset);
       }
       _lines[i].show();
     }
@@ -154,7 +150,6 @@ public:
         _lines[i].setPath(straights[i]);
         _lines[i].setReverse(true);
         _lines[i].setLengthMultiplier(2);
-        _lines[i].timer.totalCycleTime = random(0, MAX_IDLE_TIME);
         _lines[i].setPosition(random(0, NUM_LEDS_PER_STRAIGHT));
       }
       break;
@@ -214,7 +209,6 @@ public:
         _lines[i].setLengthMultiplier(2);
         _lines[i].setFadeType(Line::FADE_COMET);
         _lines[i].setReverse(true);
-        _lines[i].timer.totalCycleTime = random(0, MAX_IDLE_TIME);
         _lines[i].setPosition(random(0, NUM_LEDS_PER_STRAIGHT));
       }
       break;

@@ -31,9 +31,6 @@ private:
   }
 
 public:
-  Timer timer = {500};
-  bool idle = false;
-
   Line(uint8_t id = 0) { _id = id; }
 
   static constexpr uint8_t FADE_BOTH_ENDS = 0;
