@@ -72,6 +72,11 @@ const char index_html[] PROGMEM = R"rawliteral(
     <td><input type="range" id="overlayWidthSlider" onchange="sendData('x',this.value)" min="1" max="10" value="%OVERLAYWIDTHVALUE%" step="1" class="slider"></td>
     <td class="valCol"><span id="overlayWidthValue">%OVERLAYWIDTHVALUE%</span></td>
   </tr>
+  <tr>
+    <td class="labelCol"><label id="labelOverlayDensity" for="overlayDensitySlider">Overlay Density</label></td>
+    <td><input type="range" id="overlayDensitySlider" onchange="sendData('y',this.value)" min="1" max="10" value="%OVERLAYDENSITYVALUE%" step="1" class="slider"></td>
+    <td class="valCol"><span id="overlayDensityValue">%OVERLAYDENSITYVALUE%</span></td>
+  </tr>
   </table>
   <div>
     <input type="checkbox" id="reverse" name="reverse" onclick="sendData('r',this.value)" />
@@ -80,7 +85,7 @@ const char index_html[] PROGMEM = R"rawliteral(
 
   <h3>Patterns</h3>
   <div class="buttons">
-    <button type="button" onclick="sendData('n',0)">Solid: Wave Overlay</button>
+    <button type="button" onclick="sendData('n',0)">Wave Overlay</button>
     <div class="break"></div>
     <button type="button" onclick="sendData('n',1)">Twinkle</button>
     <button type="button" onclick="sendData('n',2)">Twinkle: Random Fading Segments</button>
@@ -177,6 +182,10 @@ const char index_html[] PROGMEM = R"rawliteral(
       document.getElementById('overlayWidthValue').innerHTML = dataValue;
       document.getElementById('overlayWidthSlider').value = dataValue;
       break;
+    case 'y':
+      document.getElementById('overlayDensityValue').innerHTML = dataValue;
+      document.getElementById('overlayDensitySlider').value = dataValue;
+      break;
     case 'a':
       const button = document.getElementById('autoBtn');
       if (dataValue == '1') button.style.backgroundColor = '#baffb3';
@@ -246,6 +255,10 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
         overlayWidth = dataValue.toInt();
         ws.textAll(message);
         break;
+      case 'y':
+        overlayDensity = dataValue.toInt();
+        ws.textAll(message);
+        break;
       case 'a':
         autoCyclePalettes = !autoCyclePalettes;
         if (autoCyclePalettes) ws.textAll("a1");
@@ -302,6 +315,9 @@ String processor(const String& var){
   }
   if(var == "OVERLAYWIDTHVALUE"){
     return String(overlayWidth);
+  }
+  if(var == "OVERLAYDENSITYVALUE"){
+    return String(overlayDensity);
   }
   return "";
 }

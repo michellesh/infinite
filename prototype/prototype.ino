@@ -74,6 +74,7 @@ int activePattern = 0;
 int speed = 3;
 int overlaySpeed = 8;
 int overlayWidth = 5;
+int overlayDensity = 3;
 int density = 4;
 int width = 5;
 bool reverse = false;
