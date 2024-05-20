@@ -219,54 +219,54 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
 
     switch (dataType) {
       case 'n':
-        activePattern = dataValue.toInt();
+        handleAction(ACTION_SET_PATTERN, dataValue.toInt());
         ws.textAll(message);
         break;
       case 'p':
-        palette.setPalette(dataValue.toInt());
+        handleAction(ACTION_SET_PALETTE, dataValue.toInt());
         ws.textAll(message);
-        autoCyclePalettes = false;
         ws.textAll("a0");
         break;
       case 't':
-        palette.setSecondsPerPalette(dataValue.toInt());
+        handleAction(ACTION_SET_SECONDS_PER_PALETTE, dataValue.toInt());
         ws.textAll(message);
         break;
       case 'm':
-        palette.setColorMode(dataValue.toInt());
+        handleAction(ACTION_SET_COLOR_MODE, dataValue.toInt());
         ws.textAll(message);
         break;
       case 's':
-        speed = dataValue.toInt();
+        handleAction(ACTION_SET_SPEED, dataValue.toInt());
         ws.textAll(message);
         break;
       case 'd':
-        density = dataValue.toInt();
+        handleAction(ACTION_SET_DENSITY, dataValue.toInt());
         ws.textAll(message);
         break;
       case 'w':
-        width = dataValue.toInt();
+        handleAction(ACTION_SET_WIDTH, dataValue.toInt());
         ws.textAll(message);
         break;
       case 'o':
-        overlaySpeed = dataValue.toInt();
+        handleAction(ACTION_SET_OVERLAY_SPEED, dataValue.toInt());
         ws.textAll(message);
         break;
       case 'x':
-        overlayWidth = dataValue.toInt();
+        handleAction(ACTION_SET_OVERLAY_WIDTH, dataValue.toInt());
         ws.textAll(message);
         break;
       case 'y':
-        overlayDensity = dataValue.toInt();
+        handleAction(ACTION_SET_OVERLAY_DENSITY, dataValue.toInt());
         ws.textAll(message);
         break;
       case 'a':
-        autoCyclePalettes = !autoCyclePalettes;
+        handleAction(ACTION_TOGGLE_AUTO_CYCLE_PALETTES);
         if (autoCyclePalettes) ws.textAll("a1");
         else ws.textAll("a0");
         break;
       case 'r':
-        reverse = !reverse;
+        handleAction(ACTION_TOGGLE_REVERSE);
+        ws.textAll(message);
         break;
     }
   }

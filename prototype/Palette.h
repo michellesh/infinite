@@ -5,7 +5,7 @@ private:
   CRGBPalette16 _currentPalette = *(activePalettes[0]);
   CRGBPalette16 _targetPalette = *(activePalettes[0]);
   uint8_t _activeColorMode = DEPTH_GRADIENT;
-  Timer _paletteCycleTimer = {10000}; // 10 seconds * 1000 ms
+  Timer _paletteCycleTimer = {DEFAULT_SECONDSPERPALETTE * 1000};
 
   void _setNextColorPalette() {
     const uint8_t numberOfPalettes =

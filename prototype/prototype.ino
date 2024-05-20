@@ -10,6 +10,7 @@
 
 #include "Pattern.h"
 #include "SubPattern.h"
+#include "InfiniteShared.h"
 // clang-format on
 
 #define BRIGHTNESS 255
@@ -72,14 +73,16 @@ Path straights[NUM_STRAIGHTS];
 #define PATTERN_FLASHING_HEXAGONS_WARP 18
 #define NUM_PATTERNS 19
 int activePattern = 0;
-int speed = 3;
-int overlaySpeed = 8;
-int overlayWidth = 5;
-int overlayDensity = 3;
-int density = 4;
-int width = 5;
-bool reverse = false;
-bool autoCyclePalettes = true;
+int speed = DEFAULT_SPEED;
+int density = DEFAULT_DENSITY;
+int width = DEFAULT_WIDTH;
+int overlaySpeed = DEFAULT_OVERLAYSPEED;
+int overlayWidth = DEFAULT_OVERLAYWIDTH;
+int overlayDensity = DEFAULT_OVERLAYDENSITY;
+bool reverse = DEFAULT_REVERSE;
+bool autoCyclePalettes = DEFAULT_AUTOCYCLEPALETTES;
+
+msg data;
 
 // clang-format off
 #include "twinkleUtils.h"
@@ -89,7 +92,8 @@ bool autoCyclePalettes = true;
 #include "Palette.h"
 Palette palette;
 
-#include "web_server.h"
+//#include "web_server.h"
+#include "handleAction.h"
 
 #include "Spiral.h"
 #include "SpiralSubPattern.h"
@@ -153,6 +157,13 @@ void setup() {
   delay(500);
   randomSeed(analogRead(0));
 
+  WiFi.mode(WIFI_STA);
+  if (esp_now_init() != ESP_OK) {
+    Serial.println("Error initializing ESP-NOW");
+    return;
+  }
+  esp_now_register_recv_cb(onDataRecv);
+
   int startIndex = 0;
   FastLED.addLeds<WS2813, PIN_1, GRB>(leds, startIndex, NUM_LEDS_PER_STRAIGHT)
       .setCorrection(TypicalLEDStrip)
@@ -211,7 +222,7 @@ void setup() {
     offset += NUM_LEDS_PER_RING;
   }
 
-  setupWebServer();
+  //setupWebServer();
 
   for (int i = 0; i < NUM_PATTERNS; i++) {
     activePatterns[i]->setup();
@@ -240,4 +251,15 @@ void loop() {
   FastLED.setBrightness(BRIGHTNESS);
   FastLED.show();
   ticks++;
+}
+
+void onDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
+  memcpy(&data, incomingData, sizeof(data));
+
+  Serial.print("action: ");
+  Serial.println(data.action);
+  Serial.print("value: ");
+  Serial.println(data.value);
+
+  handleAction(data.action, data.value);
 }
