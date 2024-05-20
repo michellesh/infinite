@@ -42,18 +42,19 @@
 #define DEFAULT_AUTOCYCLEPALETTES true
 #define DEFAULT_SECONDSPERPALETTE 10
 
-// M1: "4C:75:25:64:E5:DC" (receiver on prototype)
-// M2: "A8:42:E3:AB:A6:88" (2nd receiver on prototype)
-// M3: "C8:F0:9E:9F:36:A8" (sender)
+//char macAddressM1[] = "4C:75:25:64:E5:DC"; // (receiver on prototype)
+//char macAddressM2[] = "A8:42:E3:AB:A6:88"; // (2nd receiver on prototype) - cant find this one?
+//char macAddressM3[] = "C8:F0:9E:9F:36:A8"; // (sender)
+//char macAddressM4[] = "A8:42:E3:48:A1:8C"; // (2nd receiver on prototype)
 //
-// B1: ??                  (receiver on prototype)
-// B2: ??                  (2nd receiver on prototype)
-// B3: "FC:B4:67:74:5C:68" (sender)
+//char macAddressB1[] = "00:00:00:00:00:00"; // (receiver on prototype)
+//char macAddressB3[] = "FC:B4:67:74:5C:68"; // (sender)
+
 uint8_t receiverAddress1[] = {0x4C, 0x75, 0x25, 0x64, 0xE5, 0xDC};
-uint8_t receiverAddress2[] = {0xA8, 0x42, 0xE3, 0xAB, 0xA6, 0x88};
+uint8_t receiverAddress2[] = {0xA8, 0x42, 0xE3, 0x48, 0xA1, 0x8C};
 uint8_t senderAddress[] = {0xC8, 0xF0, 0x9E, 0x9F, 0x36, 0xA8};
 char receiverMacAddress1[] = "4C:75:25:64:E5:DC";
-char receiverMacAddress2[] = "A8:42:E3:AB:A6:88";
+char receiverMacAddress2[] = "A8:42:E3:48:A1:8C";
 char senderMacAddress[] = "C8:F0:9E:9F:36:A8";
 
 typedef struct msg {

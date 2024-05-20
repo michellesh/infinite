@@ -66,8 +66,14 @@ void setup() {
   // register peer
   peerInfo.channel = 0;
   peerInfo.encrypt = false;
-  // register first peer
+  // register first receiver
   memcpy(peerInfo.peer_addr, receiverAddress1, 6);
+  if (esp_now_add_peer(&peerInfo) != ESP_OK) {
+    Serial.println("Failed to add peer");
+    return;
+  }
+  // register second receiver
+  memcpy(peerInfo.peer_addr, receiverAddress2, 6);
   if (esp_now_add_peer(&peerInfo) != ESP_OK) {
     Serial.println("Failed to add peer");
     return;
