@@ -3,11 +3,6 @@ void handleAction(uint8_t action, int value = 0) {
     activePattern = value;
   } else if (action == ACTION_SET_PALETTE) {
     palette.setPalette(value);
-    autoCyclePalettes = false;
-  } else if (action == ACTION_TOGGLE_AUTO_CYCLE_PALETTES) {
-    autoCyclePalettes = !autoCyclePalettes;
-  } else if (action == ACTION_SET_SECONDS_PER_PALETTE) {
-    palette.setSecondsPerPalette(value);
   } else if (action == ACTION_SET_COLOR_MODE) {
     palette.setColorMode(value);
   } else if (action == ACTION_SET_SPEED) {

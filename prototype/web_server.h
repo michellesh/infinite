@@ -118,10 +118,6 @@ const char index_html[] PROGMEM = R"rawliteral(
     <button type="button" onclick="sendData('p',2)">Floral</button>
     <button type="button" onclick="sendData('p',3)">Ice</button>
     <button type="button" onclick="sendData('p',4)">Fairy</button>
-    <button type="button" id="autoBtn" onclick="sendData('a',1)">Auto Cycle Palettes</button>
-    <div class="break"></div>
-    <label id="labelAutoChangeTime" for="secondsPerPalette">Seconds per palette on auto </label>
-    <input id="secondsPerPalette" type="number" min="1" max="65535" onchange="sendData('t',this.value)" value="%SECONDSPERPALETTE%">
     <div class="break"></div>
 
     <h3>Color Modes</h3>
@@ -160,9 +156,6 @@ const char index_html[] PROGMEM = R"rawliteral(
     var dataType = event.data.charAt(0);
     var dataValue = event.data.substring(1);
     switch (dataType){
-    case 't':
-      document.getElementById('secondsPerPalette').value = dataValue;
-      break;
     case 's':
       document.getElementById('speedValue').innerHTML = dataValue;
       document.getElementById('speedSlider').value = dataValue;
@@ -186,11 +179,6 @@ const char index_html[] PROGMEM = R"rawliteral(
     case 'y':
       document.getElementById('overlayDensityValue').innerHTML = dataValue;
       document.getElementById('overlayDensitySlider').value = dataValue;
-      break;
-    case 'a':
-      const button = document.getElementById('autoBtn');
-      if (dataValue == '1') button.style.backgroundColor = '#baffb3';
-      else button.style.backgroundColor = '';
       break;
     }
   }
@@ -225,11 +213,6 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       case 'p':
         handleAction(ACTION_SET_PALETTE, dataValue.toInt());
         ws.textAll(message);
-        ws.textAll("a0");
-        break;
-      case 't':
-        handleAction(ACTION_SET_SECONDS_PER_PALETTE, dataValue.toInt());
-        ws.textAll(message);
         break;
       case 'm':
         handleAction(ACTION_SET_COLOR_MODE, dataValue.toInt());
@@ -258,11 +241,6 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
       case 'y':
         handleAction(ACTION_SET_OVERLAY_DENSITY, dataValue.toInt());
         ws.textAll(message);
-        break;
-      case 'a':
-        handleAction(ACTION_TOGGLE_AUTO_CYCLE_PALETTES);
-        if (autoCyclePalettes) ws.textAll("a1");
-        else ws.textAll("a0");
         break;
       case 'r':
         handleAction(ACTION_TOGGLE_REVERSE);
@@ -296,12 +274,6 @@ void initWebSocket() {
 }
 
 String processor(const String& var){
-  if(var == "AUTOCYCLEPALETTES"){
-    return String(autoCyclePalettes);
-  }
-  if(var == "SECONDSPERPALETTE"){
-    return String(palette.getSecondsPerPalette());
-  }
   if(var == "SPEEDVALUE"){
     return String(speed);
   }

@@ -21,6 +21,7 @@ DEFINE_GRADIENT_PALETTE(_fairyPalette){0,   63,  57,  11,  // "QuarterFairy"
 CRGBPalette16 fairyPalette = _fairyPalette;
 
 // clang-format off
+#define NUM_PALETTES 5
 CRGBPalette16* activePalettes[] = {
   &firePalette,
   &oceanPalette,

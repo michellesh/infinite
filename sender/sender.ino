@@ -3,6 +3,8 @@
 #include <WiFi.h>
 #include <esp_now.h>
 
+#include "Timer.h"
+
 #include "InfiniteShared.h"
 // clang-format on
 
@@ -14,15 +16,25 @@ int overlayWidth = DEFAULT_OVERLAYWIDTH;
 int overlayDensity = DEFAULT_OVERLAYDENSITY;
 bool reverse = DEFAULT_REVERSE;
 bool autoCyclePalettes = DEFAULT_AUTOCYCLEPALETTES;
-int secondsPerPalette = DEFAULT_SECONDSPERPALETTE;
 
 msg data;
+
+Timer paletteCycleTimer = {DEFAULT_SECONDSPERPALETTE * 1000};
 
 void handleAction(uint8_t action, int value = 0) {
   Serial.print("action: ");
   Serial.println(action);
   Serial.print("value: ");
   Serial.println(value);
+
+  if (action == ACTION_SET_AUTO_CYCLE_PALETTES) {
+    autoCyclePalettes = value;
+    return;
+  } else if (action == ACTION_SET_SECONDS_PER_PALETTE) {
+    paletteCycleTimer.totalCycleTime = value * 1000;
+    autoCyclePalettes = false;
+    return;
+  }
 
   data.action = action;
   data.value = value;
@@ -81,6 +93,13 @@ void setup() {
 }
 
 void loop() {
+  static int palette = 0;
+  if (autoCyclePalettes && paletteCycleTimer.complete()) {
+    palette = (palette + 1) % NUM_PALETTES;
+    handleAction(ACTION_SET_PALETTE, palette);
+    paletteCycleTimer.reset();
+  }
+
   if (Serial.available() > 0) {
     // Read incoming string until '\n' (newline) character is received
     String receivedString = Serial.readStringUntil('\n');

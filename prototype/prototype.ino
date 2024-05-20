@@ -88,7 +88,6 @@ int overlaySpeed = DEFAULT_OVERLAYSPEED;
 int overlayWidth = DEFAULT_OVERLAYWIDTH;
 int overlayDensity = DEFAULT_OVERLAYDENSITY;
 bool reverse = DEFAULT_REVERSE;
-bool autoCyclePalettes = DEFAULT_AUTOCYCLEPALETTES;
 
 msg data;
 
@@ -310,9 +309,7 @@ void setup() {
 
 void loop() {
   FastLED.clear();
-  if (autoCyclePalettes) {
-    palette.cycle();
-  }
+  palette.cycle();
 
   EVERY_N_SECONDS(1) {
     Serial.print("Local IP address: ");
