@@ -2,6 +2,7 @@
 #include <FastLED.h>
 #include <WiFi.h>
 #include <esp_now.h>
+#include <ESP32Time.h>
 
 #include "Range.h"
 #include "Timer.h"
@@ -167,6 +168,8 @@ SubPattern *activePatterns[] = {
 };
 // clang-format on
 
+ESP32Time rtc;
+
 Timer actionTimer;
 bool actionQueued = false;
 
@@ -174,6 +177,8 @@ void setup() {
   Serial.begin(9600);
   delay(500);
   randomSeed(analogRead(0));
+
+  rtc.setTime(30, 24, 15, 17, 1, 2024); // 17th Jan 2024 15:24:30
 
 #if MODE != SINGLE_BOARD_MODE
   WiFi.mode(WIFI_STA);
@@ -376,8 +381,8 @@ void loop() {
   palette.cycle();
 
   EVERY_N_SECONDS(1) {
-    Serial.print("Local IP address: ");
-    Serial.println(WiFi.localIP());
+    //Serial.print("Local IP address: ");
+    //Serial.println(WiFi.localIP());
   }
 
   if (actionQueued && actionTimer.complete()) {
@@ -399,6 +404,17 @@ void loop() {
 
   activePatterns[activePattern]->show();
 
+  static int prevSecond = -1;
+  static unsigned long prevTicks = ticks;
+  int currentSecond = rtc.getSecond();
+  if (prevSecond != currentSecond) {
+    Serial.print("Frames in last second: ");
+    Serial.println(ticks - prevTicks);
+    prevSecond = currentSecond;
+    prevTicks = ticks;
+  }
+
+  FastLED.setMaxRefreshRate(30);
   FastLED.setBrightness(BRIGHTNESS);
   FastLED.show();
   ticks++;
