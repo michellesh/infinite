@@ -16,6 +16,19 @@
 
 #define BRIGHTNESS 255
 
+#if MODE == XX_RECEIVER_MODE
+#define PIN_STRAIGHT_1 25 // M1
+#define PIN_STRAIGHT_2 26 // M1
+#define PIN_STRAIGHT_3 4  // M2
+#define PIN_STRAIGHT_4 2  // M2
+#define PIN_STRAIGHT_5 4  // M3
+#define PIN_STRAIGHT_6 2  // M3
+#define PIN_RINGS_1_2 4   // M4
+#define PIN_RINGS_3_4 4   // M5
+#define PIN_RINGS_5_6 4   // M6
+#define PIN_RINGS_7_8 4   // M7
+#define PIN_RINGS_9_10 4  // M8
+#else
 #define PIN_STRAIGHT_1 25
 #define PIN_STRAIGHT_2 26
 #define PIN_STRAIGHT_3 33
@@ -24,12 +37,7 @@
 #define PIN_STRAIGHT_6 14
 #define PIN_RINGS_1_2 12
 #define PIN_RINGS_3_4 13
-#if MODE != XX_RECEIVER_MODE
 #define PIN_RINGS_5_6 19
-#define PIN_RINGS_7_8 18
-#define PIN_RINGS_9_10 5
-#else
-#define PIN_RINGS_5_6 4
 #define PIN_RINGS_7_8 18
 #define PIN_RINGS_9_10 5
 #endif
@@ -80,7 +88,7 @@ Path straights[NUM_STRAIGHTS];
 #define PATTERN_FLASHING_HEXAGONS 17
 #define PATTERN_FLASHING_HEXAGONS_WARP 18
 #define NUM_PATTERNS 19
-int activePattern = 0;
+int activePattern = PATTERN_TWINKLE;
 int speed = DEFAULT_SPEED;
 int density = DEFAULT_DENSITY;
 int width = DEFAULT_WIDTH;
@@ -159,6 +167,9 @@ SubPattern *activePatterns[] = {
 };
 // clang-format on
 
+Timer actionTimer;
+bool actionQueued = false;
+
 void setup() {
   Serial.begin(9600);
   delay(500);
@@ -173,117 +184,170 @@ void setup() {
   esp_now_register_recv_cb(onDataRecv);
 #endif
 
-#if MODE != XX_RECEIVER_MODE
-  int startIndex = 0;
-  FastLED.addLeds<WS2813, PIN_STRAIGHT_1, GRB>(leds, startIndex, NUM_LEDS_PER_STRAIGHT)
-      .setCorrection(TypicalLEDStrip)
-      .setDither(BRIGHTNESS < 255);
-  startIndex += NUM_LEDS_PER_STRAIGHT;
-  FastLED.addLeds<WS2813, PIN_STRAIGHT_2, GRB>(leds, startIndex, NUM_LEDS_PER_STRAIGHT)
-      .setCorrection(TypicalLEDStrip)
-      .setDither(BRIGHTNESS < 255);
-  startIndex += NUM_LEDS_PER_STRAIGHT;
-  FastLED.addLeds<WS2813, PIN_STRAIGHT_3, GRB>(leds, startIndex, NUM_LEDS_PER_STRAIGHT)
-      .setCorrection(TypicalLEDStrip)
-      .setDither(BRIGHTNESS < 255);
-  startIndex += NUM_LEDS_PER_STRAIGHT;
-  FastLED.addLeds<WS2813, PIN_STRAIGHT_4, GRB>(leds, startIndex, NUM_LEDS_PER_STRAIGHT)
-      .setCorrection(TypicalLEDStrip)
-      .setDither(BRIGHTNESS < 255);
-  startIndex += NUM_LEDS_PER_STRAIGHT;
-  FastLED.addLeds<WS2813, PIN_STRAIGHT_5, GRB>(leds, startIndex, NUM_LEDS_PER_STRAIGHT)
-      .setCorrection(TypicalLEDStrip)
-      .setDither(BRIGHTNESS < 255);
-  startIndex += NUM_LEDS_PER_STRAIGHT;
-  FastLED.addLeds<WS2813, PIN_STRAIGHT_6, GRB>(leds, startIndex, NUM_LEDS_PER_STRAIGHT)
-      .setCorrection(TypicalLEDStrip)
-      .setDither(BRIGHTNESS < 255);
-  startIndex += NUM_LEDS_PER_STRAIGHT;
-  FastLED.addLeds<WS2813, PIN_RINGS_1_2, GRB>(leds, startIndex, NUM_LEDS_PER_RING * 2)
-      .setCorrection(TypicalLEDStrip)
-      .setDither(BRIGHTNESS < 255);
-  startIndex += NUM_LEDS_PER_RING * 2;
-  FastLED.addLeds<WS2813, PIN_RINGS_3_4, GRB>(leds, startIndex, NUM_LEDS_PER_RING * 2)
-      .setCorrection(TypicalLEDStrip)
-      .setDither(BRIGHTNESS < 255);
-  startIndex += NUM_LEDS_PER_RING * 2;
-  FastLED.addLeds<WS2813, PIN_RINGS_5_6, GRB>(leds, startIndex, NUM_LEDS_PER_RING * 2)
-      .setCorrection(TypicalLEDStrip)
-      .setDither(BRIGHTNESS < 255);
-  startIndex += NUM_LEDS_PER_RING * 2;
-  FastLED.addLeds<WS2813, PIN_RINGS_7_8, GRB>(leds, startIndex, NUM_LEDS_PER_RING * 2)
-      .setCorrection(TypicalLEDStrip)
-      .setDither(BRIGHTNESS < 255);
-  startIndex += NUM_LEDS_PER_RING * 2;
-  FastLED.addLeds<WS2813, PIN_RINGS_9_10, GRB>(leds, startIndex, NUM_LEDS_PER_RING * 2)
-      .setCorrection(TypicalLEDStrip)
-      .setDither(BRIGHTNESS < 255);
-#else
-  byte boardNumber = getBoardNumber();
+#if MODE == XX_RECEIVER_MODE
 
-  if (boardNumber == 1) {
+  if (WiFi.macAddress() == receiverM1) {
 
     int startIndex = 0;
-    FastLED.addLeds<WS2813, PIN_STRAIGHT_1, GRB>(leds, startIndex, NUM_LEDS_PER_STRAIGHT)
-        .setCorrection(TypicalLEDStrip)
-        .setDither(BRIGHTNESS < 255);
-    startIndex += NUM_LEDS_PER_STRAIGHT;
-    FastLED.addLeds<WS2813, PIN_STRAIGHT_2, GRB>(leds, startIndex, NUM_LEDS_PER_STRAIGHT)
-        .setCorrection(TypicalLEDStrip)
-        .setDither(BRIGHTNESS < 255);
-    startIndex += NUM_LEDS_PER_STRAIGHT;
-    FastLED.addLeds<WS2813, PIN_STRAIGHT_3, GRB>(leds, startIndex, NUM_LEDS_PER_STRAIGHT)
-        .setCorrection(TypicalLEDStrip)
-        .setDither(BRIGHTNESS < 255);
-    startIndex += NUM_LEDS_PER_STRAIGHT;
-    FastLED.addLeds<WS2813, PIN_STRAIGHT_4, GRB>(leds, startIndex, NUM_LEDS_PER_STRAIGHT)
-        .setCorrection(TypicalLEDStrip)
-        .setDither(BRIGHTNESS < 255);
-    startIndex += NUM_LEDS_PER_STRAIGHT;
-    FastLED.addLeds<WS2813, PIN_STRAIGHT_5, GRB>(leds, startIndex, NUM_LEDS_PER_STRAIGHT)
-        .setCorrection(TypicalLEDStrip)
-        .setDither(BRIGHTNESS < 255);
-    startIndex += NUM_LEDS_PER_STRAIGHT;
-    FastLED.addLeds<WS2813, PIN_STRAIGHT_6, GRB>(leds, startIndex, NUM_LEDS_PER_STRAIGHT)
-        .setCorrection(TypicalLEDStrip)
-        .setDither(BRIGHTNESS < 255);
-    startIndex += NUM_LEDS_PER_STRAIGHT;
-    FastLED.addLeds<WS2813, PIN_RINGS_1_2, GRB>(leds, startIndex, NUM_LEDS_PER_RING * 2)
-        .setCorrection(TypicalLEDStrip)
-        .setDither(BRIGHTNESS < 255);
-    startIndex += NUM_LEDS_PER_RING * 2;
-    FastLED.addLeds<WS2813, PIN_RINGS_3_4, GRB>(leds, startIndex, NUM_LEDS_PER_RING * 2)
+    FastLED
+        .addLeds<WS2813, PIN_STRAIGHT_1, GRB>(leds, startIndex,
+                                              NUM_LEDS_PER_STRAIGHT)
         .setCorrection(TypicalLEDStrip)
         .setDither(BRIGHTNESS < 255);
 
-    // allocate dummy LEDs to empty pins
-    //FastLED.addLeds<WS2813, 2, GRB>(ledsBlank, 0, NUM_LEDS_PER_RING * 2) // 288
-    //    .setCorrection(TypicalLEDStrip)
-    //    .setDither(BRIGHTNESS < 255);
+    startIndex += NUM_LEDS_PER_STRAIGHT;
+    FastLED
+        .addLeds<WS2813, PIN_STRAIGHT_2, GRB>(leds, startIndex,
+                                              NUM_LEDS_PER_STRAIGHT)
+        .setCorrection(TypicalLEDStrip)
+        .setDither(BRIGHTNESS < 255);
 
-  } else if (boardNumber == 2) {
+  } else if (WiFi.macAddress() == receiverM2) {
+
+    int startIndex = NUM_LEDS_PER_STRAIGHT * 2;
+    FastLED
+        .addLeds<WS2813, PIN_STRAIGHT_3, GRB>(leds, startIndex,
+                                              NUM_LEDS_PER_STRAIGHT)
+        .setCorrection(TypicalLEDStrip)
+        .setDither(BRIGHTNESS < 255);
+
+    startIndex += NUM_LEDS_PER_STRAIGHT;
+    FastLED
+        .addLeds<WS2813, PIN_STRAIGHT_4, GRB>(leds, startIndex,
+                                              NUM_LEDS_PER_STRAIGHT)
+        .setCorrection(TypicalLEDStrip)
+        .setDither(BRIGHTNESS < 255);
+
+  } else if (WiFi.macAddress() == receiverM3) {
+
+    int startIndex = NUM_LEDS_PER_STRAIGHT * 4;
+    FastLED
+        .addLeds<WS2813, PIN_STRAIGHT_5, GRB>(leds, startIndex,
+                                              NUM_LEDS_PER_STRAIGHT)
+        .setCorrection(TypicalLEDStrip)
+        .setDither(BRIGHTNESS < 255);
+
+    startIndex += NUM_LEDS_PER_STRAIGHT;
+    FastLED
+        .addLeds<WS2813, PIN_STRAIGHT_6, GRB>(leds, startIndex,
+                                              NUM_LEDS_PER_STRAIGHT)
+        .setCorrection(TypicalLEDStrip)
+        .setDither(BRIGHTNESS < 255);
+
+  } else if (WiFi.macAddress() == receiverM4) {
+
+    int startIndex = NUM_LEDS_PER_STRAIGHT * 6;
+    FastLED
+        .addLeds<WS2813, PIN_RINGS_1_2, GRB>(leds, startIndex,
+                                             NUM_LEDS_PER_RING * 2)
+        .setCorrection(TypicalLEDStrip)
+        .setDither(BRIGHTNESS < 255);
+
+  } else if (WiFi.macAddress() == receiverM5) {
+
+    int startIndex = NUM_LEDS_PER_STRAIGHT * 6 + NUM_LEDS_PER_RING * 2;
+    FastLED
+        .addLeds<WS2813, PIN_RINGS_3_4, GRB>(leds, startIndex,
+                                             NUM_LEDS_PER_RING * 2)
+        .setCorrection(TypicalLEDStrip)
+        .setDither(BRIGHTNESS < 255);
+
+  } else if (WiFi.macAddress() == receiverM6) {
 
     int startIndex = NUM_LEDS_PER_STRAIGHT * 6 + NUM_LEDS_PER_RING * 4;
-    FastLED.addLeds<WS2813, PIN_RINGS_5_6, GRB>(leds, startIndex, NUM_LEDS_PER_RING * 2)
-        .setCorrection(TypicalLEDStrip)
-        .setDither(BRIGHTNESS < 255);
-    startIndex += NUM_LEDS_PER_RING * 2;
     FastLED
-        .addLeds<WS2813, PIN_RINGS_7_8, GRB>(leds, startIndex, NUM_LEDS_PER_RING * 2)
-        .setCorrection(TypicalLEDStrip)
-        .setDither(BRIGHTNESS < 255);
-    startIndex += NUM_LEDS_PER_RING * 2;
-    FastLED
-        .addLeds<WS2813, PIN_RINGS_9_10, GRB>(leds, startIndex, NUM_LEDS_PER_RING * 2)
+        .addLeds<WS2813, PIN_RINGS_5_6, GRB>(leds, startIndex,
+                                             NUM_LEDS_PER_RING * 2)
         .setCorrection(TypicalLEDStrip)
         .setDither(BRIGHTNESS < 255);
 
-    // allocate dummy LEDs to empty pins
-    //FastLED.addLeds<WS2813, 15, GRB>(ledsBlank, NUM_LEDS_PER_RING * 2, NUM_LEDS_PER_STRAIGHT * 6) // 864
-    //    .setCorrection(TypicalLEDStrip)
-    //    .setDither(BRIGHTNESS < 255);
+  } else if (WiFi.macAddress() == receiverM7) {
 
+    int startIndex = NUM_LEDS_PER_STRAIGHT * 6 + NUM_LEDS_PER_RING * 6;
+    FastLED
+        .addLeds<WS2813, PIN_RINGS_7_8, GRB>(leds, startIndex,
+                                             NUM_LEDS_PER_RING * 2)
+        .setCorrection(TypicalLEDStrip)
+        .setDither(BRIGHTNESS < 255);
+
+  } else if (WiFi.macAddress() == receiverM8) {
+
+    int startIndex = NUM_LEDS_PER_STRAIGHT * 6 + NUM_LEDS_PER_RING * 8;
+    FastLED
+        .addLeds<WS2813, PIN_RINGS_9_10, GRB>(leds, startIndex,
+                                              NUM_LEDS_PER_RING * 2)
+        .setCorrection(TypicalLEDStrip)
+        .setDither(BRIGHTNESS < 255);
   }
+
+#else // SINGLE_BOARD_MODE
+
+  int startIndex = 0;
+  FastLED
+      .addLeds<WS2813, PIN_STRAIGHT_1, GRB>(leds, startIndex,
+                                            NUM_LEDS_PER_STRAIGHT)
+      .setCorrection(TypicalLEDStrip)
+      .setDither(BRIGHTNESS < 255);
+  startIndex += NUM_LEDS_PER_STRAIGHT;
+  FastLED
+      .addLeds<WS2813, PIN_STRAIGHT_2, GRB>(leds, startIndex,
+                                            NUM_LEDS_PER_STRAIGHT)
+      .setCorrection(TypicalLEDStrip)
+      .setDither(BRIGHTNESS < 255);
+  startIndex += NUM_LEDS_PER_STRAIGHT;
+  FastLED
+      .addLeds<WS2813, PIN_STRAIGHT_3, GRB>(leds, startIndex,
+                                            NUM_LEDS_PER_STRAIGHT)
+      .setCorrection(TypicalLEDStrip)
+      .setDither(BRIGHTNESS < 255);
+  startIndex += NUM_LEDS_PER_STRAIGHT;
+  FastLED
+      .addLeds<WS2813, PIN_STRAIGHT_4, GRB>(leds, startIndex,
+                                            NUM_LEDS_PER_STRAIGHT)
+      .setCorrection(TypicalLEDStrip)
+      .setDither(BRIGHTNESS < 255);
+  startIndex += NUM_LEDS_PER_STRAIGHT;
+  FastLED
+      .addLeds<WS2813, PIN_STRAIGHT_5, GRB>(leds, startIndex,
+                                            NUM_LEDS_PER_STRAIGHT)
+      .setCorrection(TypicalLEDStrip)
+      .setDither(BRIGHTNESS < 255);
+  startIndex += NUM_LEDS_PER_STRAIGHT;
+  FastLED
+      .addLeds<WS2813, PIN_STRAIGHT_6, GRB>(leds, startIndex,
+                                            NUM_LEDS_PER_STRAIGHT)
+      .setCorrection(TypicalLEDStrip)
+      .setDither(BRIGHTNESS < 255);
+  startIndex += NUM_LEDS_PER_STRAIGHT;
+  FastLED
+      .addLeds<WS2813, PIN_RINGS_1_2, GRB>(leds, startIndex,
+                                           NUM_LEDS_PER_RING * 2)
+      .setCorrection(TypicalLEDStrip)
+      .setDither(BRIGHTNESS < 255);
+  startIndex += NUM_LEDS_PER_RING * 2;
+  FastLED
+      .addLeds<WS2813, PIN_RINGS_3_4, GRB>(leds, startIndex,
+                                           NUM_LEDS_PER_RING * 2)
+      .setCorrection(TypicalLEDStrip)
+      .setDither(BRIGHTNESS < 255);
+  startIndex += NUM_LEDS_PER_RING * 2;
+  FastLED
+      .addLeds<WS2813, PIN_RINGS_5_6, GRB>(leds, startIndex,
+                                           NUM_LEDS_PER_RING * 2)
+      .setCorrection(TypicalLEDStrip)
+      .setDither(BRIGHTNESS < 255);
+  startIndex += NUM_LEDS_PER_RING * 2;
+  FastLED
+      .addLeds<WS2813, PIN_RINGS_7_8, GRB>(leds, startIndex,
+                                           NUM_LEDS_PER_RING * 2)
+      .setCorrection(TypicalLEDStrip)
+      .setDither(BRIGHTNESS < 255);
+  startIndex += NUM_LEDS_PER_RING * 2;
+  FastLED
+      .addLeds<WS2813, PIN_RINGS_9_10, GRB>(leds, startIndex,
+                                            NUM_LEDS_PER_RING * 2)
+      .setCorrection(TypicalLEDStrip)
+      .setDither(BRIGHTNESS < 255);
 
 #endif
 
@@ -316,6 +380,11 @@ void loop() {
     Serial.println(WiFi.localIP());
   }
 
+  if (actionQueued && actionTimer.complete()) {
+    handleAction(data.action, data.value);
+    actionQueued = false;
+  }
+
   if (activePattern == PATTERN_TWINKLE_OVERLAY ||
       activePattern == PATTERN_SOLID_OVERLAY ||
       activePattern == PATTERN_SOLID_OVERLAY_RAILGUN) {
@@ -342,21 +411,10 @@ void onDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
   Serial.println(data.action);
   Serial.print("value: ");
   Serial.println(data.value);
+  Serial.print("delay: ");
+  Serial.println(data.delay);
 
-  handleAction(data.action, data.value);
-}
-
-byte getBoardNumber() {
-  byte boardNumber = WiFi.macAddress() == receiverMacAddress1   ? 1
-                     : WiFi.macAddress() == receiverMacAddress2 ? 2
-                                                                : 0;
-  if (boardNumber == 0) {
-    Serial.print("MAC address not found: ");
-    Serial.println(WiFi.macAddress());
-  } else {
-    Serial.print("Board number: ");
-    Serial.println(boardNumber);
-  }
-
-  return boardNumber;
+  actionQueued = true;
+  actionTimer.totalCycleTime = data.delay;
+  actionTimer.reset();
 }

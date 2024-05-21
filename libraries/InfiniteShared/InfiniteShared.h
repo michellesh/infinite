@@ -39,27 +39,29 @@
 #define DEFAULT_DENSITY 4
 #define DEFAULT_WIDTH 5
 #define DEFAULT_REVERSE false
-#define DEFAULT_AUTOCYCLEPALETTES true
+#define DEFAULT_AUTOCYCLEPALETTES false
 #define DEFAULT_SECONDSPERPALETTE 10
 
-//char macAddressM1[] = "4C:75:25:64:E5:DC"; // (receiver on prototype)
-//char macAddressM2[] = "A8:42:E3:AB:A6:88"; // (2nd receiver on prototype) - cant find this one?
-//char macAddressM3[] = "C8:F0:9E:9F:36:A8"; // (sender)
-//char macAddressM4[] = "A8:42:E3:48:A1:8C"; // (2nd receiver on prototype)
-//
-//char macAddressB1[] = "00:00:00:00:00:00"; // (receiver on prototype)
-//char macAddressB3[] = "FC:B4:67:74:5C:68"; // (sender)
+#define NUM_PALETTES 5
 
-uint8_t receiverAddress1[] = {0x4C, 0x75, 0x25, 0x64, 0xE5, 0xDC};
-uint8_t receiverAddress2[] = {0xA8, 0x42, 0xE3, 0x48, 0xA1, 0x8C};
-uint8_t senderAddress[] = {0xC8, 0xF0, 0x9E, 0x9F, 0x36, 0xA8};
-char receiverMacAddress1[] = "4C:75:25:64:E5:DC";
-char receiverMacAddress2[] = "A8:42:E3:48:A1:8C";
-char senderMacAddress[] = "C8:F0:9E:9F:36:A8";
+// **OLD M2** char macAddressM2[] = "A8:42:E3:AB:A6:88"; // cant find this one?
+// char receiverB1[] = "00:00:00:00:00:00"; // (receiver on prototype)
+// char senderB3[] = "FC:B4:67:74:5C:68"; // (sender)
+// char senderMS[] = "C8:F0:9E:9F:36:A8"; // (sender)
+
+char receiverM1[] = "4C:75:25:64:E5:DC";
+char receiverM2[] = "A8:42:E3:48:A1:8C";
+char receiverM3[] = "A0:B7:65:63:7D:8C";
+char receiverM4[] = "48:E7:29:C9:F9:F8";
+char receiverM5[] = "FC:B4:67:74:46:04";
+char receiverM6[] = "FC:B4:67:74:5A:38";
+char receiverM7[] = "48:E7:29:C9:74:7C";
+char receiverM8[] = "EC:62:60:32:CC:78";
 
 typedef struct msg {
   uint8_t action;
   int value;
+  unsigned long delay;
 } msg;
 
 esp_err_t send(msg m) { return esp_now_send(0, (uint8_t *)&m, sizeof(msg)); }

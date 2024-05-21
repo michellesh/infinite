@@ -8,6 +8,11 @@
 #include "InfiniteShared.h"
 // clang-format on
 
+#define NUM_RECEIVERS 8
+#define DELAY 100 // delay send between receivers
+
+uint8_t receiverAddresses[NUM_RECEIVERS][6]; // 6 bytes in a mac address
+
 int speed = DEFAULT_SPEED;
 int density = DEFAULT_DENSITY;
 int width = DEFAULT_WIDTH;
@@ -39,12 +44,11 @@ void handleAction(uint8_t action, int value = 0) {
   data.action = action;
   data.value = value;
 
-  esp_err_t result = send(data);
-
-  if (result == ESP_OK) {
-    Serial.println("Sent with success");
-  } else {
-    Serial.println("Error sending the data");
+  for (int i = 0; i < NUM_RECEIVERS; i++) {
+    data.delay = (NUM_RECEIVERS - 1 - i) * DELAY;
+    esp_err_t result =
+        esp_now_send(receiverAddresses[i], (uint8_t *)&data, sizeof(msg));
+    delay(DELAY);
   }
 }
 
@@ -63,6 +67,20 @@ void onDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
                                                 : "Delivery Fail");
 }
 
+void macAddressStrToBytes(const char *macStr, uint8_t *macBytes) {
+  for (int i = 0; i < 6; ++i) {
+    macBytes[i] = strtoul(macStr + 3 * i, nullptr, 16);
+  }
+}
+
+void registerPeer(uint8_t *receiverAddress) {
+  memcpy(peerInfo.peer_addr, receiverAddress, 6);
+  if (esp_now_add_peer(&peerInfo) != ESP_OK) {
+    Serial.print("Failed to add peer");
+    return;
+  }
+}
+
 void setup() {
   Serial.begin(9600);
 
@@ -78,18 +96,24 @@ void setup() {
   // register peer
   peerInfo.channel = 0;
   peerInfo.encrypt = false;
-  // register first receiver
-  memcpy(peerInfo.peer_addr, receiverAddress1, 6);
-  if (esp_now_add_peer(&peerInfo) != ESP_OK) {
-    Serial.println("Failed to add peer");
-    return;
-  }
-  // register second receiver
-  memcpy(peerInfo.peer_addr, receiverAddress2, 6);
-  if (esp_now_add_peer(&peerInfo) != ESP_OK) {
-    Serial.println("Failed to add peer");
-    return;
-  }
+
+  macAddressStrToBytes(receiverM1, receiverAddresses[0]);
+  macAddressStrToBytes(receiverM2, receiverAddresses[1]);
+  macAddressStrToBytes(receiverM3, receiverAddresses[2]);
+  macAddressStrToBytes(receiverM4, receiverAddresses[3]);
+  macAddressStrToBytes(receiverM5, receiverAddresses[4]);
+  macAddressStrToBytes(receiverM6, receiverAddresses[5]);
+  macAddressStrToBytes(receiverM7, receiverAddresses[6]);
+  macAddressStrToBytes(receiverM8, receiverAddresses[7]);
+
+  registerPeer(receiverAddresses[0]);
+  registerPeer(receiverAddresses[1]);
+  registerPeer(receiverAddresses[2]);
+  registerPeer(receiverAddresses[3]);
+  registerPeer(receiverAddresses[4]);
+  registerPeer(receiverAddresses[5]);
+  registerPeer(receiverAddresses[6]);
+  registerPeer(receiverAddresses[7]);
 }
 
 void loop() {

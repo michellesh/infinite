@@ -1,5 +1,6 @@
 void handleAction(uint8_t action, int value = 0) {
   if (action == ACTION_SET_PATTERN) {
+    ticks = 0;
     activePattern = value;
   } else if (action == ACTION_SET_PALETTE) {
     palette.setPalette(value);
