@@ -14,8 +14,11 @@
  *  RX2 (GPIO 16) | TX
  *  TX2 (GPIO 17) | RX
  */
+// clang-format off
 #include <FastLED_NeoMatrix.h>
 #include <arduinoFFT.h>
+#include <ESP32Time.h>
+// clang-format on
 
 #define CMD_PLAY_NEXT 0x01
 #define CMD_PLAY_PREV 0x02
@@ -31,10 +34,11 @@
 #define SINGLE_CYCLE_ON 0x00
 #define SINGLE_CYCLE_OFF 0x01
 
+#define MAX_VOLUME 30
+
 #define AUDIO_IN_PIN 35
 #define SAMPLES 1024
 #define SAMPLING_FREQ 40000
-
 
 #define SAMPLES         1024          // Must be a power of 2
 #define SAMPLING_FREQ   10240         // Hz, must be 40000 or less due to ADC conversion time. Determines maximum frequency that can be analysed by the FFT Fmax=sampleF/2.
@@ -55,7 +59,6 @@ const uint8_t kMatrixHeight = 16;                         // Matrix height
 #define NUM_LEDS       (kMatrixWidth * kMatrixHeight)     // Total number of LEDs
 #define BAR_WIDTH      (kMatrixWidth  / (NUM_BANDS - 1))  // If width >= 8 light 1 LED width per bar, >= 16 light 2 LEDs width bar etc
 
-
 // Sampling and FFT stuff
 unsigned int sampling_period_us;
 byte peak[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};              // The length of these arrays must be >= NUM_BANDS
@@ -67,6 +70,7 @@ unsigned long newTime;
 //ArduinoFFT FFT = ArduinoFFT(vReal, vImag, SAMPLES, SAMPLING_FREQ);
 ArduinoFFT<double> FFT = ArduinoFFT<double>(vReal, vImag, SAMPLES, SAMPLING_FREQ);
 
+ESP32Time rtc;
 
 CRGB leds[NUM_LEDS];
 FastLED_NeoMatrix *matrix = new FastLED_NeoMatrix(leds, kMatrixWidth, kMatrixHeight,
@@ -79,6 +83,8 @@ void setup() {
   Serial2.begin(9600);
   delay(500); // wait chip initialization is complete
 
+  rtc.setTime(30, 24, 15, 17, 1, 2024); // 17th Jan 2024 15:24:30
+
   FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalSMD5050);
   FastLED.setMaxPowerInVoltsAndMilliamps(LED_VOLTS, MAX_MILLIAMPS);
   FastLED.setBrightness(BRIGHTNESS_SETTINGS[1]);
@@ -87,10 +93,10 @@ void setup() {
   mp3_command(CMD_SEL_DEV, DEV_TF); // select the TF card
   delay(200);                       // wait for 200ms
 
-  mp3_command(CMD_SINGLE_CYCLE, SINGLE_CYCLE_ON); // Plays the song on repeat
-  mp3_command(CMD_PLAY, 0x0000); // Play first track
-  //mp3_command(CMD_PLAY_W_INDEX, 3);               // Play track number 3
+  // mp3_command(CMD_PLAY, 0x0000); // Play first track
 
+  // mp3_command(CMD_SINGLE_CYCLE, SINGLE_CYCLE_ON); // Plays the song on repeat
+  // mp3_command(CMD_PLAY_W_INDEX, 3);               // Play track number 3
   // mp3_command(CMD_PAUSE, 0x0000);      // Pause mp3
   // mp3_command(CMD_PLAY_NEXT, 0x0000);  // Play next mp3
   // mp3_command(CMD_PLAY_PREV, 0x0000);  // Play previous mp3
@@ -182,7 +188,71 @@ void loop() {
     oldBarHeights[band] = barHeight;
   }
 
-  Serial.println(sum);
+  // Update milliseconds
+  static unsigned long ms = 0;
+  static unsigned long prevMs = 0;
+  unsigned long currentMs = rtc.getMillis();
+  if (currentMs > prevMs) {
+    ms += (currentMs - prevMs);
+  } else {
+    ms += currentMs + (1000 - prevMs);
+  }
+  prevMs = currentMs;
+
+  EVERY_N_SECONDS(1) {
+    Serial.print("s: ");
+    Serial.println(ms / 1000);
+  }
+
+  // trigger track at given timestamps
+  static int nextTrack = 0;
+  int trackPlayTimes[] = {0, 1000, 12000, 15000};
+  if (ms >= trackPlayTimes[nextTrack]) {
+    Serial.print("play next: ");
+    Serial.println(nextTrack);
+    mp3_command(CMD_PLAY_NEXT, 0x0000);  // Play next mp3
+    nextTrack++;
+  }
+
+  //16 stop, 33 start, 50 stop, 68 start, 86 stop
+  //48s,     99s,      150s,    204s,     258s
+  //every 50s
+
+  static int volume = MAX_VOLUME;
+  static int prevVolume = MAX_VOLUME;
+
+  static int nextFade = 0;
+  int fade[][4] = {{5000, 10000, MAX_VOLUME, 0}, {11000, 16000, 0, MAX_VOLUME}};
+  if (ms >= fade[nextFade][0] && ms <= fade[nextFade][1]) {
+    volume = map(ms, fade[nextFade][0], fade[nextFade][1], fade[nextFade][2], fade[nextFade][3]);
+  } else if (ms > fade[nextFade][1]) {
+    nextFade++;
+  }
+  // fade out between 5 and 10 second timestamps
+  //if (ms >= 5000 && ms <= 10000) {
+  //  volume = map(ms, 5000, 10000, MAX_VOLUME, 0);
+  //}
+
+  // fade in between 15 and 20 second timestamps
+  //if (ms >= 13000 && ms <= 18000) {
+  //  volume = map(ms, 13000, 18000, 0, MAX_VOLUME);
+  //}
+
+  //static int nextCount = 0;
+  //EVERY_N_SECONDS(5) {
+  //  Serial.println("CMD_PLAY_NEXT");
+  //  mp3_command(CMD_PLAY_NEXT, 0x0000);  // Play next mp3
+  //  nextCount++;
+  //  Serial.print("nextCount: ");
+  //  Serial.println(nextCount);
+  //}
+
+  if (volume != prevVolume) {
+    Serial.print("volume: ");
+    Serial.println(volume);
+    mp3_command(CMD_SET_VOLUME, volume);
+    prevVolume = volume;
+  }
 
   FastLED.show();
 }
