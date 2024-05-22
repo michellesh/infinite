@@ -1,24 +1,20 @@
-void handleAction(uint8_t action, int value = 0) {
-  if (action == ACTION_SET_PATTERN) {
+void handleAction() {
+  if (data.pattern != activePattern) {
     ticks = 0;
-    activePattern = value;
-  } else if (action == ACTION_SET_PALETTE) {
-    palette.setPalette(value);
-  } else if (action == ACTION_SET_COLOR_MODE) {
-    palette.setColorMode(value);
-  } else if (action == ACTION_SET_SPEED) {
-    speed = value;
-  } else if (action == ACTION_SET_DENSITY) {
-    density = value;
-  } else if (action == ACTION_SET_WIDTH) {
-    width = value;
-  } else if (action == ACTION_SET_OVERLAY_SPEED) {
-    overlaySpeed = value;
-  } else if (action == ACTION_SET_OVERLAY_WIDTH) {
-    overlayWidth = value;
-  } else if (action == ACTION_SET_OVERLAY_DENSITY) {
-    overlayDensity = value;
-  } else if (action == ACTION_TOGGLE_REVERSE) {
-    reverse = !reverse;
+    activePattern = data.pattern;
   }
+  if (data.palette != palette.getPalette()) {
+    palette.setPalette(data.palette);
+  }
+  if (data.colorMode != palette.getColorMode()) {
+    palette.setColorMode(data.colorMode);
+  }
+
+  speed = data.speed;
+  density = data.density;
+  width = data.width;
+  overlaySpeed = data.overlaySpeed;
+  overlayDensity = data.overlayDensity;
+  overlayWidth = data.overlayWidth;
+  reverse = data.reverse;
 }

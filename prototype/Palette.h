@@ -2,9 +2,10 @@
 
 class Palette {
 private:
-  CRGBPalette16 _currentPalette = *(activePalettes[0]);
-  CRGBPalette16 _targetPalette = *(activePalettes[0]);
-  uint8_t _activeColorMode = DEPTH_GRADIENT;
+  CRGBPalette16 _currentPalette = *(activePalettes[DEFAULT_PALETTE]);
+  CRGBPalette16 _targetPalette = *(activePalettes[DEFAULT_PALETTE]);
+  uint8_t _activeColorMode = DEFAULT_COLORMODE;
+  uint8_t _activePalette = DEFAULT_PALETTE;
 
 public:
   static const uint8_t SOLID = 0;
@@ -21,9 +22,14 @@ public:
 
   void setColorMode(uint8_t colorMode) { _activeColorMode = colorMode; }
 
+  uint8_t getColorMode() { return _activeColorMode; }
+
   void setPalette(uint8_t whichPalette) {
+    _activePalette = whichPalette;
     _targetPalette = *(activePalettes[whichPalette]);
   }
+
+  uint8_t getPalette() { return _activePalette; }
 
   CRGB colorFromPalette(uint8_t paletteIndex) {
     return ColorFromPalette(_currentPalette, paletteIndex);

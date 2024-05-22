@@ -32,6 +32,9 @@
 #define PATTERN_FLASHING_HEXAGONS_WARP 18
 #define NUM_PATTERNS 19
 
+#define DEFAULT_PATTERN PATTERN_TWINKLE
+#define DEFAULT_PALETTE 0
+#define DEFAULT_COLORMODE 2
 #define DEFAULT_SPEED 3
 #define DEFAULT_OVERLAYSPEED 8
 #define DEFAULT_OVERLAYWIDTH 5
@@ -59,9 +62,17 @@ char receiverM7[] = "48:E7:29:C9:74:7C";
 char receiverM8[] = "EC:62:60:32:CC:78";
 
 typedef struct msg {
-  uint8_t action;
-  int value;
-  unsigned long delay;
+  unsigned long delay = 0;
+  int pattern = DEFAULT_PATTERN;
+  int palette = DEFAULT_PALETTE;
+  int colorMode = DEFAULT_COLORMODE;
+  int speed = DEFAULT_SPEED;
+  int density = DEFAULT_DENSITY;
+  int width = DEFAULT_WIDTH;
+  int overlaySpeed = DEFAULT_OVERLAYSPEED;
+  int overlayDensity = DEFAULT_OVERLAYDENSITY;
+  int overlayWidth = DEFAULT_OVERLAYWIDTH;
+  bool reverse = DEFAULT_REVERSE;
 } msg;
 
 esp_err_t send(msg m) { return esp_now_send(0, (uint8_t *)&m, sizeof(msg)); }

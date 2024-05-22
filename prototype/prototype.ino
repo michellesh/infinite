@@ -386,7 +386,7 @@ void loop() {
   }
 
   if (actionQueued && actionTimer.complete()) {
-    handleAction(data.action, data.value);
+    handleAction();
     actionQueued = false;
   }
 
@@ -422,13 +422,6 @@ void loop() {
 
 void onDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
   memcpy(&data, incomingData, sizeof(data));
-
-  Serial.print("action: ");
-  Serial.println(data.action);
-  Serial.print("value: ");
-  Serial.println(data.value);
-  Serial.print("delay: ");
-  Serial.println(data.delay);
 
   actionQueued = true;
   actionTimer.totalCycleTime = data.delay;

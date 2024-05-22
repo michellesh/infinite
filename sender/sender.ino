@@ -1,8 +1,6 @@
-// Source https://RandomNerdTutorials.com/esp-now-one-to-many-esp32-esp8266/
 // clang-format off
 #include <WiFi.h>
 #include <esp_now.h>
-#include <ESP32Time.h>
 
 #include "Timer.h"
 
@@ -25,46 +23,36 @@
 #define MAX_VOLUME 30
 
 #define NUM_RECEIVERS 8
-#define DELAY 100 // delay send between receivers
+#define DELAY 50 // delay send between receivers
 
 uint8_t receiverAddresses[NUM_RECEIVERS][6]; // 6 bytes in a mac address
 
-int speed = DEFAULT_SPEED;
-int density = DEFAULT_DENSITY;
-int width = DEFAULT_WIDTH;
-int overlaySpeed = DEFAULT_OVERLAYSPEED;
-int overlayWidth = DEFAULT_OVERLAYWIDTH;
-int overlayDensity = DEFAULT_OVERLAYDENSITY;
-bool reverse = DEFAULT_REVERSE;
 bool autoCyclePalettes = DEFAULT_AUTOCYCLEPALETTES;
 
 msg data;
+
+#include "Action.h"
+
+Action time(unsigned long timestamp) {
+  Action a = {timestamp};
+  return a;
+}
+
+Action actions[] = {
+    time(5000).track(1).pattern(PATTERN_ROTATING_HEXAGONS).speed(1),
+    time(10000).track(2).pattern(PATTERN_SOLID_OVERLAY),
+    time(15000).track(3).pattern(PATTERN_LASERS_ALL_AT_ONCE).speed(9),
+    time(20000).pattern(PATTERN_LASERS_ALL_AT_ONCE).speed(1),
+};
+
+int numActions = sizeof(actions) / sizeof(actions[0]);
 
 esp_now_peer_info_t peerInfo;
 
 Timer paletteCycleTimer = {DEFAULT_SECONDSPERPALETTE * 1000};
 Timer oneSecondTimer = {1000};
 
-ESP32Time rtc;
-
-void handleAction(uint8_t action, int value = 0) {
-  Serial.print("action: ");
-  Serial.println(action);
-  Serial.print("value: ");
-  Serial.println(value);
-
-  if (action == ACTION_SET_AUTO_CYCLE_PALETTES) {
-    autoCyclePalettes = value;
-    return;
-  } else if (action == ACTION_SET_SECONDS_PER_PALETTE) {
-    paletteCycleTimer.totalCycleTime = value * 1000;
-    autoCyclePalettes = false;
-    return;
-  }
-
-  data.action = action;
-  data.value = value;
-
+void handleAction() {
   for (int i = 0; i < NUM_RECEIVERS; i++) {
     data.delay = (NUM_RECEIVERS - 1 - i) * DELAY;
     esp_err_t result =
@@ -105,8 +93,6 @@ void setup() {
   Serial2.begin(9600);
   delay(200);
 
-  rtc.setTime(30, 24, 15, 17, 1, 2024); // 17th Jan 2024 15:24:30
-
   WiFi.mode(WIFI_STA);
 
   if (esp_now_init() != ESP_OK) {
@@ -139,50 +125,39 @@ void setup() {
   registerPeer(receiverAddresses[7]);
 
   mp3_command(CMD_SEL_DEV, DEV_TF); // select the TF card
-  delay(2000);                       // wait for 200ms
+  delay(200);                       // wait for 200ms
 }
 
 void loop() {
-  static int palette = 0;
-  if (autoCyclePalettes && paletteCycleTimer.complete()) {
-    palette = (palette + 1) % NUM_PALETTES;
-    handleAction(ACTION_SET_PALETTE, palette);
-    paletteCycleTimer.reset();
-  }
-
-  // Update milliseconds
-  static unsigned long ms = 0;
-  static unsigned long prevMs = 0;
-  unsigned long currentMs = rtc.getMillis();
-  if (currentMs > prevMs) {
-    ms += (currentMs - prevMs);
-  } else if (prevMs > currentMs) {
-    ms += currentMs + (1000 - prevMs);
-  }
-  prevMs = currentMs;
+  // static int palette = 0;
+  // if (autoCyclePalettes && paletteCycleTimer.complete()) {
+  //   palette = (palette + 1) % NUM_PALETTES;
+  //   handleAction(ACTION_SET_PALETTE, palette);
+  //   paletteCycleTimer.reset();
+  // }
 
   if (oneSecondTimer.complete()) {
     Serial.print("s: ");
-    Serial.println(ms / 1000);
+    Serial.println(millis() / 1000);
     oneSecondTimer.reset();
   }
 
-  // trigger track at given timestamps
-  static int nextTrack = 0;
-  int trackPlayTimes[] = {0, 5000, 10000, 15000};
-  int patternPlayTimes[] = {0, PATTERN_SOLID_OVERLAY, PATTERN_ROTATING_HEXAGONS, PATTERN_TWINKLE};
-  int numTracks = sizeof(trackPlayTimes) / sizeof(trackPlayTimes[0]);
-  if (ms >= trackPlayTimes[nextTrack] && nextTrack < numTracks) {
-    Serial.print("play index: ");
-    Serial.println(nextTrack);
-    mp3_command(CMD_PLAY_NEXT, 0x0000); // Play next mp3
-    handleAction(ACTION_SET_PATTERN, patternPlayTimes[nextTrack]); // Play pattern
-    nextTrack++;
+  static int nextAction = 0;
+  if (millis() >= actions[nextAction].timestamp && nextAction < numActions) {
+    Serial.print("next action: ");
+    Serial.println(nextAction);
+    actions[nextAction].commitData();
+    handleAction();
+    if (actions[nextAction].setTrack) {
+      mp3_command(CMD_PLAY_W_INDEX, actions[nextAction].trackNumber);
+    }
+    nextAction++;
   }
 
-  //readSerialMonitorInput();
+  // readSerialMonitorInput();
 }
 
+/*
 void readSerialMonitorInput() {
   if (Serial.available() > 0) {
     // Read incoming string until '\n' (newline) character is received
@@ -212,6 +187,7 @@ void readSerialMonitorInput() {
     }
   }
 }
+*/
 
 void mp3_command(int8_t command, int16_t dat) {
   int8_t frame[8] = {0};
