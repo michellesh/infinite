@@ -199,20 +199,23 @@ void loop() {
   }
   prevMs = currentMs;
 
+  Serial.print("currentMs: ");
+  Serial.println(currentMs);
+
   EVERY_N_SECONDS(1) {
     Serial.print("s: ");
     Serial.println(ms / 1000);
   }
 
   // trigger track at given timestamps
-  static int nextTrack = 0;
-  int trackPlayTimes[] = {0, 1000, 12000, 15000};
-  if (ms >= trackPlayTimes[nextTrack]) {
-    Serial.print("play next: ");
-    Serial.println(nextTrack);
-    mp3_command(CMD_PLAY_NEXT, 0x0000);  // Play next mp3
-    nextTrack++;
-  }
+  //static int nextTrack = 0;
+  //int trackPlayTimes[] = {0, 1000, 5000, 8000};
+  //if (ms >= trackPlayTimes[nextTrack]) {
+  //  Serial.print("play next: ");
+  //  Serial.println(nextTrack);
+  //  mp3_command(CMD_PLAY_NEXT, 0x0000);  // Play next mp3
+  //  nextTrack++;
+  //}
 
   //16 stop, 33 start, 50 stop, 68 start, 86 stop
   //48s,     99s,      150s,    204s,     258s
@@ -221,13 +224,14 @@ void loop() {
   static int volume = MAX_VOLUME;
   static int prevVolume = MAX_VOLUME;
 
-  static int nextFade = 0;
-  int fade[][4] = {{5000, 10000, MAX_VOLUME, 0}, {11000, 16000, 0, MAX_VOLUME}};
-  if (ms >= fade[nextFade][0] && ms <= fade[nextFade][1]) {
-    volume = map(ms, fade[nextFade][0], fade[nextFade][1], fade[nextFade][2], fade[nextFade][3]);
-  } else if (ms > fade[nextFade][1]) {
-    nextFade++;
-  }
+  //static int nextFade = 0;
+  //int fade[][4] = {{5000, 10000, MAX_VOLUME, 0}, {11000, 16000, 0, MAX_VOLUME}};
+  //if (ms >= fade[nextFade][0] && ms <= fade[nextFade][1]) {
+  //  volume = map(ms, fade[nextFade][0], fade[nextFade][1], fade[nextFade][2], fade[nextFade][3]);
+  //} else if (ms > fade[nextFade][1]) {
+  //  nextFade++;
+  //}
+
   // fade out between 5 and 10 second timestamps
   //if (ms >= 5000 && ms <= 10000) {
   //  volume = map(ms, 5000, 10000, MAX_VOLUME, 0);
@@ -239,13 +243,13 @@ void loop() {
   //}
 
   //static int nextCount = 0;
-  //EVERY_N_SECONDS(5) {
-  //  Serial.println("CMD_PLAY_NEXT");
-  //  mp3_command(CMD_PLAY_NEXT, 0x0000);  // Play next mp3
+  EVERY_N_SECONDS(3) {
+    Serial.println("CMD_PLAY_NEXT");
+    mp3_command(CMD_PLAY_NEXT, 0x0000);  // Play next mp3
   //  nextCount++;
   //  Serial.print("nextCount: ");
   //  Serial.println(nextCount);
-  //}
+  }
 
   if (volume != prevVolume) {
     Serial.print("volume: ");

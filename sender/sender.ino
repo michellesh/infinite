@@ -2,11 +2,27 @@
 // clang-format off
 #include <WiFi.h>
 #include <esp_now.h>
+#include <ESP32Time.h>
 
 #include "Timer.h"
 
 #include "InfiniteShared.h"
 // clang-format on
+
+#define CMD_PLAY_NEXT 0x01
+#define CMD_PLAY_PREV 0x02
+#define CMD_PLAY_W_INDEX 0x03
+#define CMD_SET_VOLUME 0x06
+#define CMD_SEL_DEV 0x09
+#define CMD_PLAY_W_VOL 0x22
+#define CMD_PLAY 0x0D
+#define CMD_PAUSE 0x0E
+#define CMD_SINGLE_CYCLE 0x19
+#define DEV_TF 0x02
+#define SINGLE_CYCLE_ON 0x00
+#define SINGLE_CYCLE_OFF 0x01
+
+#define MAX_VOLUME 30
 
 #define NUM_RECEIVERS 8
 #define DELAY 100 // delay send between receivers
@@ -24,7 +40,12 @@ bool autoCyclePalettes = DEFAULT_AUTOCYCLEPALETTES;
 
 msg data;
 
+esp_now_peer_info_t peerInfo;
+
 Timer paletteCycleTimer = {DEFAULT_SECONDSPERPALETTE * 1000};
+Timer oneSecondTimer = {1000};
+
+ESP32Time rtc;
 
 void handleAction(uint8_t action, int value = 0) {
   Serial.print("action: ");
@@ -51,8 +72,6 @@ void handleAction(uint8_t action, int value = 0) {
     delay(DELAY);
   }
 }
-
-esp_now_peer_info_t peerInfo;
 
 // callback when data is sent
 void onDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
@@ -83,6 +102,10 @@ void registerPeer(uint8_t *receiverAddress) {
 
 void setup() {
   Serial.begin(9600);
+  Serial2.begin(9600);
+  delay(200);
+
+  rtc.setTime(30, 24, 15, 17, 1, 2024); // 17th Jan 2024 15:24:30
 
   WiFi.mode(WIFI_STA);
 
@@ -114,6 +137,9 @@ void setup() {
   registerPeer(receiverAddresses[5]);
   registerPeer(receiverAddresses[6]);
   registerPeer(receiverAddresses[7]);
+
+  mp3_command(CMD_SEL_DEV, DEV_TF); // select the TF card
+  delay(2000);                       // wait for 200ms
 }
 
 void loop() {
@@ -124,6 +150,40 @@ void loop() {
     paletteCycleTimer.reset();
   }
 
+  // Update milliseconds
+  static unsigned long ms = 0;
+  static unsigned long prevMs = 0;
+  unsigned long currentMs = rtc.getMillis();
+  if (currentMs > prevMs) {
+    ms += (currentMs - prevMs);
+  } else if (prevMs > currentMs) {
+    ms += currentMs + (1000 - prevMs);
+  }
+  prevMs = currentMs;
+
+  if (oneSecondTimer.complete()) {
+    Serial.print("s: ");
+    Serial.println(ms / 1000);
+    oneSecondTimer.reset();
+  }
+
+  // trigger track at given timestamps
+  static int nextTrack = 0;
+  int trackPlayTimes[] = {0, 5000, 10000, 15000};
+  int patternPlayTimes[] = {0, PATTERN_SOLID_OVERLAY, PATTERN_ROTATING_HEXAGONS, PATTERN_TWINKLE};
+  int numTracks = sizeof(trackPlayTimes) / sizeof(trackPlayTimes[0]);
+  if (ms >= trackPlayTimes[nextTrack] && nextTrack < numTracks) {
+    Serial.print("play index: ");
+    Serial.println(nextTrack);
+    mp3_command(CMD_PLAY_NEXT, 0x0000); // Play next mp3
+    handleAction(ACTION_SET_PATTERN, patternPlayTimes[nextTrack]); // Play pattern
+    nextTrack++;
+  }
+
+  //readSerialMonitorInput();
+}
+
+void readSerialMonitorInput() {
   if (Serial.available() > 0) {
     // Read incoming string until '\n' (newline) character is received
     String receivedString = Serial.readStringUntil('\n');
@@ -150,5 +210,21 @@ void loop() {
       // If ':' character is not found, set both integers to 0
       Serial.println("No ':' character found");
     }
+  }
+}
+
+void mp3_command(int8_t command, int16_t dat) {
+  int8_t frame[8] = {0};
+  frame[0] = 0x7e; // starting byte
+  frame[1] = 0xff; // version
+  frame[2] = 0x06; // the number of bytes of the command without starting byte
+                   // and ending byte
+  frame[3] = command;            //
+  frame[4] = 0x00;               // 0x00 = no feedback, 0x01 = feedback
+  frame[5] = (int8_t)(dat >> 8); // data high byte
+  frame[6] = (int8_t)(dat);      // data low byte
+  frame[7] = 0xef;               // ending byte
+  for (uint8_t i = 0; i < 8; i++) {
+    Serial2.write(frame[i]);
   }
 }
