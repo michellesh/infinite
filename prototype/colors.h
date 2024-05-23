@@ -27,7 +27,7 @@ CRGBPalette16* activePalettes[] = {
   &floralPalette,
   &icePalette,
   &fairyPalette
-  // TODO update NUM_PALETTES
+  // TODO update NUM_PALETTES and palette IDs!
 };
 // clang-format on
 

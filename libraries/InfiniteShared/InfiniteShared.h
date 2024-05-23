@@ -51,7 +51,17 @@
 #define DEFAULT_AUTOCYCLEPALETTES false
 #define DEFAULT_SECONDSPERPALETTE 10
 
+#define PALETTE_FIRE 0
+#define PALETTE_OCEAN 1
+#define PALETTE_FLORAL 2
+#define PALETTE_ICE 3
+#define PALETTE_FAIRY 4
 #define NUM_PALETTES 5
+
+#define COLOR_MODE_SOLID 0
+#define COLOR_MODE_INDEX_GRADIENT 1
+#define COLOR_MODE_DEPTH_GRADIENT 2
+#define COLOR_MODE_ANGLE_GRADIENT 3
 
 // **OLD M2** char macAddressM2[] = "A8:42:E3:AB:A6:88"; // cant find this one?
 // char receiverB1[] = "00:00:00:00:00:00"; // (receiver on prototype)

@@ -39,10 +39,21 @@ bool autoCyclePalettes = DEFAULT_AUTOCYCLEPALETTES;
 msg data;
 
 #include "Action.h"
+#include "Fade.h"
 
 Action time(unsigned long timestamp) {
   Action a = {timestamp};
   return a;
+}
+
+Fade fadeIn(unsigned long millisStart, unsigned long millisEnd) {
+  Fade f = {millisStart, millisEnd, 0, MAX_VOLUME};
+  return f;
+}
+
+Fade fadeOut(unsigned long millisStart, unsigned long millisEnd) {
+  Fade f = {millisStart, millisEnd, MAX_VOLUME, 0};
+  return f;
 }
 
 String getTrackName(int trackNumber) {
@@ -99,29 +110,10 @@ int getBPM(int trackNumber) {
   }
 }
 
-// Good BPM match
-// track(5).pattern(PATTERN_ROTATING_HEXAGONS).speed(9.5),
-
-Action actions[] = {
-    time(3000).track(5).pattern(PATTERN_SOLID_OVERLAY).overlaySpeed(9.5),
-    time(5000).track(5).pattern(PATTERN_TWINKLE),
-    time(15000).width(7.5),
-    time(25000).width(10),
-    time(35000).speed(1),
-    time(35536).speed(9.5),
-    time(35000).speed(1),
-    time(35000).speed(9.5),
-    time(35000).speed(1),
-    time(35000).speed(9.5),
-    // time(10000).track(8),
-    // time(15000).track(10),
-    // time(20000).speed(1),
-    // time(21000).speed(9),
-    // time(22000).speed(1),
-    // time(23000).speed(9),
-};
+#include "actions.h"
 
 int numActions = sizeof(actions) / sizeof(actions[0]);
+int numFades = sizeof(fades) / sizeof(fades[0]);
 
 esp_now_peer_info_t peerInfo;
 
@@ -213,6 +205,8 @@ void loop() {
   }
 
   static int currentBPM = 0;
+
+  // Execute next action
   static int nextAction = 0;
   if (millis() >= actions[nextAction].timestamp && nextAction < numActions) {
     Serial.print("next action: ");
@@ -225,6 +219,25 @@ void loop() {
       Serial.println(getTrackName(actions[nextAction].trackNumber));
     }
     nextAction++;
+  }
+
+  // Execute next volume fade
+  static int volume = MAX_VOLUME;
+  static int prevVolume = MAX_VOLUME;
+  static int nextFade = 0;
+  if (nextFade < numFades) {
+    if (millis() >= fades[nextFade].millisStart &&
+        millis() <= fades[nextFade].millisEnd) {
+      volume = fades[nextFade].getVolume();
+    } else if (millis() > fades[nextFade].millisEnd) {
+      nextFade++;
+    }
+  }
+  if (volume != prevVolume) {
+    Serial.print("volume: ");
+    Serial.println(volume);
+    mp3_command(CMD_SET_VOLUME, volume);
+    prevVolume = volume;
   }
 
   // Blink an LED to the beat

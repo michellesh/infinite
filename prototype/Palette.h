@@ -8,10 +8,10 @@ private:
   uint8_t _activePalette = DEFAULT_PALETTE;
 
 public:
-  static const uint8_t SOLID = 0;
-  static const uint8_t INDEX_GRADIENT = 1;
-  static const uint8_t DEPTH_GRADIENT = 2;
-  static const uint8_t ANGLE_GRADIENT = 3;
+  static const uint8_t SOLID = COLOR_MODE_SOLID;
+  static const uint8_t INDEX_GRADIENT = COLOR_MODE_INDEX_GRADIENT;
+  static const uint8_t DEPTH_GRADIENT = COLOR_MODE_DEPTH_GRADIENT;
+  static const uint8_t ANGLE_GRADIENT = COLOR_MODE_ANGLE_GRADIENT;
 
   void cycle() {
 
