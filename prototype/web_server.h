@@ -207,43 +207,53 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
 
     switch (dataType) {
       case 'n':
-        handleAction(ACTION_SET_PATTERN, dataValue.toInt());
+        setData(ACTION_SET_PATTERN, dataValue.toInt());
+        handleAction();
         ws.textAll(message);
         break;
       case 'p':
-        handleAction(ACTION_SET_PALETTE, dataValue.toInt());
+        setData(ACTION_SET_PALETTE, dataValue.toInt());
+        handleAction();
         ws.textAll(message);
         break;
       case 'm':
-        handleAction(ACTION_SET_COLOR_MODE, dataValue.toInt());
+        setData(ACTION_SET_COLOR_MODE, dataValue.toInt());
+        handleAction();
         ws.textAll(message);
         break;
       case 's':
-        handleAction(ACTION_SET_SPEED, dataValue.toInt());
+        setData(ACTION_SET_SPEED, dataValue.toInt());
+        handleAction();
         ws.textAll(message);
         break;
       case 'd':
-        handleAction(ACTION_SET_DENSITY, dataValue.toInt());
+        setData(ACTION_SET_DENSITY, dataValue.toInt());
+        handleAction();
         ws.textAll(message);
         break;
       case 'w':
-        handleAction(ACTION_SET_WIDTH, dataValue.toInt());
+        setData(ACTION_SET_WIDTH, dataValue.toInt());
+        handleAction();
         ws.textAll(message);
         break;
       case 'o':
-        handleAction(ACTION_SET_OVERLAY_SPEED, dataValue.toInt());
+        setData(ACTION_SET_OVERLAY_SPEED, dataValue.toInt());
+        handleAction();
         ws.textAll(message);
         break;
       case 'x':
-        handleAction(ACTION_SET_OVERLAY_WIDTH, dataValue.toInt());
+        setData(ACTION_SET_OVERLAY_WIDTH, dataValue.toInt());
+        handleAction();
         ws.textAll(message);
         break;
       case 'y':
-        handleAction(ACTION_SET_OVERLAY_DENSITY, dataValue.toInt());
+        setData(ACTION_SET_OVERLAY_DENSITY, dataValue.toInt());
+        handleAction();
         ws.textAll(message);
         break;
       case 'r':
-        handleAction(ACTION_TOGGLE_REVERSE);
+        setData(ACTION_TOGGLE_REVERSE);
+        handleAction();
         ws.textAll(message);
         break;
     }

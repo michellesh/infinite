@@ -1,3 +1,9 @@
+#define SINGLE_BOARD_MODE 0 // no sender, single board controlled by web server
+#define X1_RECEIVER_MODE 1  // sender and single receiver
+#define X8_RECEIVER_MODE 2  // sender and two receivers
+
+#define MODE X1_RECEIVER_MODE
+
 #define ACTION_SET_PATTERN 0
 #define ACTION_SET_PALETTE 1
 #define ACTION_SET_AUTO_CYCLE_PALETTES 2
@@ -60,18 +66,20 @@ char receiverM5[] = "FC:B4:67:74:46:04";
 char receiverM6[] = "FC:B4:67:74:5A:38";
 char receiverM7[] = "48:E7:29:C9:74:7C";
 char receiverM8[] = "EC:62:60:32:CC:78";
+char *receivers[] = {receiverM1, receiverM2, receiverM3, receiverM4,
+                     receiverM5, receiverM6, receiverM7, receiverM8};
 
 typedef struct msg {
   unsigned long delay = 0;
   int pattern = DEFAULT_PATTERN;
   int palette = DEFAULT_PALETTE;
   int colorMode = DEFAULT_COLORMODE;
-  int speed = DEFAULT_SPEED;
-  int density = DEFAULT_DENSITY;
-  int width = DEFAULT_WIDTH;
-  int overlaySpeed = DEFAULT_OVERLAYSPEED;
-  int overlayDensity = DEFAULT_OVERLAYDENSITY;
-  int overlayWidth = DEFAULT_OVERLAYWIDTH;
+  float speed = DEFAULT_SPEED;
+  float density = DEFAULT_DENSITY;
+  float width = DEFAULT_WIDTH;
+  float overlaySpeed = DEFAULT_OVERLAYSPEED;
+  float overlayDensity = DEFAULT_OVERLAYDENSITY;
+  float overlayWidth = DEFAULT_OVERLAYWIDTH;
   bool reverse = DEFAULT_REVERSE;
 } msg;
 

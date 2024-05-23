@@ -22,7 +22,12 @@
 
 #define MAX_VOLUME 30
 
+#if MODE == X8_RECEIVER_MODE
 #define NUM_RECEIVERS 8
+#else
+#define NUM_RECEIVERS 1
+#endif
+
 #define DELAY 50 // delay send between receivers
 
 #define LED_PIN 18
@@ -94,15 +99,26 @@ int getBPM(int trackNumber) {
   }
 }
 
+// Good BPM match
+// track(5).pattern(PATTERN_ROTATING_HEXAGONS).speed(9.5),
+
 Action actions[] = {
-    time(3000).track(1).pattern(PATTERN_TWINKLE).density(8),
-    time(5000).track(5).pattern(PATTERN_ROTATING_HEXAGONS).speed(1),
-    time(10000).track(8).pattern(PATTERN_SOLID_OVERLAY),
-    time(15000).track(10).pattern(PATTERN_LASERS_ALL_AT_ONCE).speed(9),
-    time(20000).speed(1),
-    time(21000).speed(9),
-    time(22000).speed(1),
-    time(23000).speed(9),
+    time(3000).track(5).pattern(PATTERN_SOLID_OVERLAY).overlaySpeed(9.5),
+    time(5000).track(5).pattern(PATTERN_TWINKLE),
+    time(15000).width(7.5),
+    time(25000).width(10),
+    time(35000).speed(1),
+    time(35536).speed(9.5),
+    time(35000).speed(1),
+    time(35000).speed(9.5),
+    time(35000).speed(1),
+    time(35000).speed(9.5),
+    // time(10000).track(8),
+    // time(15000).track(10),
+    // time(20000).speed(1),
+    // time(21000).speed(9),
+    // time(22000).speed(1),
+    // time(23000).speed(9),
 };
 
 int numActions = sizeof(actions) / sizeof(actions[0]);
@@ -115,7 +131,11 @@ Timer ledTimer;
 
 void handleAction() {
   for (int i = 0; i < NUM_RECEIVERS; i++) {
+#if MODE == X8_RECEIVER_MODE
     data.delay = (NUM_RECEIVERS - 1 - i) * DELAY;
+#elif MODE == X1_RECEIVER_MODE
+    data.delay = DELAY * 7; // Simulate the delay of all 8 receivers
+#endif
     esp_err_t result =
         esp_now_send(receiverAddresses[i], (uint8_t *)&data, sizeof(msg));
     delay(DELAY);
@@ -167,23 +187,10 @@ void setup() {
   peerInfo.channel = 0;
   peerInfo.encrypt = false;
 
-  macAddressStrToBytes(receiverM1, receiverAddresses[0]);
-  macAddressStrToBytes(receiverM2, receiverAddresses[1]);
-  macAddressStrToBytes(receiverM3, receiverAddresses[2]);
-  macAddressStrToBytes(receiverM4, receiverAddresses[3]);
-  macAddressStrToBytes(receiverM5, receiverAddresses[4]);
-  macAddressStrToBytes(receiverM6, receiverAddresses[5]);
-  macAddressStrToBytes(receiverM7, receiverAddresses[6]);
-  macAddressStrToBytes(receiverM8, receiverAddresses[7]);
-
-  registerPeer(receiverAddresses[0]);
-  registerPeer(receiverAddresses[1]);
-  registerPeer(receiverAddresses[2]);
-  registerPeer(receiverAddresses[3]);
-  registerPeer(receiverAddresses[4]);
-  registerPeer(receiverAddresses[5]);
-  registerPeer(receiverAddresses[6]);
-  registerPeer(receiverAddresses[7]);
+  for (int i = 0; i < NUM_RECEIVERS; i++) {
+    macAddressStrToBytes(receivers[i], receiverAddresses[i]);
+    registerPeer(receiverAddresses[i]);
+  }
 
   mp3_command(CMD_SEL_DEV, DEV_TF); // select the TF card
   delay(200);                       // wait for 200ms
