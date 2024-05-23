@@ -1,5 +1,7 @@
 ### Set up symbolic link to sync changes between repo library and Arduino library
 
+Assuming your github repo is `~/dev/repo` and your Arduino sketchbook location is `~/Documents/Arduino` (see your Arduino IDE settings)
+
 1. First, ensure that the directories `~/dev/repo/libraries/RepoShared/` and `~/Documents/Arduino/libraries/RepoShared/` exist.
 2. Move or create the `RepoShared.h` file in `~/dev/repo/libraries/RepoShared/`.
 3. Open Terminal and navigate to the `~/Documents/Arduino/libraries/RepoShared/` directory.
