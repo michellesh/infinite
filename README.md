@@ -6,9 +6,23 @@ Tubey McTubeface
 
 See file `sender/actions.h`
 
-### Rules
+### Example
 
-1. Every line must start with `time(milliseconds)`. After, commands can be in any order. All commands following one `time` command will be executed at that same timestamp.
+```cpp
+Action actions[] = {
+  time(3000).track(5).pattern(PATTERN_SOLID_OVERLAY).overlaySpeed(9.5),
+  time(8000).pattern(PATTERN_ROTATING_HEXAGONS).speed(9.5).width(10),
+  time(12000).speed(1),
+  time(15000).width(1).speed(6),
+};
+
+Fade fades[] = {
+  fadeOut(5000, 10000),
+  fadeIn(10000, 15000),
+};
+```
+
+1. Every line must start with `time(milliseconds)`. After, commands can be chained in any order. All commands chained to one `time` command will be executed at that same timestamp.
 2. There must be at least 350 milliseconds between each action. This is because there needs to be a delay between sending to each of the 8 receivers. The delay is currently set to 50ms.
 3. Each subsequent timestamp must be greater than the previous.
 4. Negative values are untested. Use `reverse`.
@@ -36,19 +50,3 @@ See file `sender/actions.h`
 | -------- | ----------- |
 | `.fadeOut(startMillis, endMillis)` | Fade volume out starting at `startMillis` reaching volume 0 by `endMillis` |
 | `.fadeIn(startMillis, endMillis)` | Fade volume in starting at `startMillis` reaching max volume by `endMillis` |
-
-### Example
-
-```cpp
-Action actions[] = {
-  time(3000).track(5).pattern(PATTERN_SOLID_OVERLAY).overlaySpeed(9.5),
-  time(8000).pattern(PATTERN_ROTATING_HEXAGONS).speed(9.5).width(10),
-  time(12000).speed(1),
-  time(15000).width(1).speed(6),
-};
-
-Fade fades[] = {
-  fadeOut(5000, 10000),
-  fadeIn(10000, 15000),
-};
-```

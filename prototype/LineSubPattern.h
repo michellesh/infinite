@@ -137,7 +137,8 @@ public:
   static const uint8_t ROTATING_HEXAGONS = 6;
   static const uint8_t COUNTER_ROTATING_HEXAGONS = 7;
   static const uint8_t VARIABLE_SPEED_ROTATION = 8;
-  static const uint8_t RANDOM_FLASHING_SEGMENTS = 9;
+  static const uint8_t VARIABLE_SPEED_ROTATION_END = 9;
+  static const uint8_t RANDOM_FLASHING_SEGMENTS = 10;
 
   LineSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
@@ -260,6 +261,15 @@ public:
         }
       }
       break;
+    case VARIABLE_SPEED_ROTATION_END:
+      _numLines = NUM_RINGS;
+      for (uint8_t i = 0; i < _numLines; i++) {
+        _lines[i] = Line(i);
+        _lines[i].setPath(rings[i]);
+        _lines[i].setLengthMultiplier(0.5);
+        _lines[i].setSpeedMultiplier(mapf(i, 0, _numLines - 1, 0.2, 1));
+      }
+      break;
     case RANDOM_FLASHING_SEGMENTS:
       _numLines =
           NUM_STRAIGHTS * (NUM_RINGS - 1) + NUM_RINGS * (NUM_STRAIGHTS - 1);
@@ -330,12 +340,9 @@ public:
       _showRandomReset();
       break;
     case ROTATING_HEXAGONS:
-      _showRotatingHexagons();
-      break;
     case COUNTER_ROTATING_HEXAGONS:
-      _showRotatingHexagons();
-      break;
     case VARIABLE_SPEED_ROTATION:
+    case VARIABLE_SPEED_ROTATION_END:
       _showRotatingHexagons();
       break;
     case RANDOM_FLASHING_SEGMENTS:

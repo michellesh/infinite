@@ -121,6 +121,7 @@ LineSubPattern rotatingHexagons(LineSubPattern::ROTATING_HEXAGONS);
 LineSubPattern
     counterRotatingHexagons(LineSubPattern::COUNTER_ROTATING_HEXAGONS);
 LineSubPattern variableSpeedRotation(LineSubPattern::VARIABLE_SPEED_ROTATION);
+LineSubPattern variableSpeedRotationEnd(LineSubPattern::VARIABLE_SPEED_ROTATION_END);
 FlashSubPattern flashingHexagons(FlashSubPattern::FLASHING_HEXAGONS);
 FlashSubPattern flashingHexagonsWarp(FlashSubPattern::FLASHING_HEXAGONS_WARP);
 
@@ -143,6 +144,7 @@ SubPattern *activePatterns[] = {
   &rotatingHexagons,
   &counterRotatingHexagons,
   &variableSpeedRotation,
+  &variableSpeedRotationEnd,
   &flashingHexagons,
   &flashingHexagonsWarp
 };
