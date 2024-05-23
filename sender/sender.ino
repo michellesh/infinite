@@ -25,6 +25,8 @@
 #define NUM_RECEIVERS 8
 #define DELAY 50 // delay send between receivers
 
+#define LED_PIN 18
+
 uint8_t receiverAddresses[NUM_RECEIVERS][6]; // 6 bytes in a mac address
 
 bool autoCyclePalettes = DEFAULT_AUTOCYCLEPALETTES;
@@ -38,11 +40,69 @@ Action time(unsigned long timestamp) {
   return a;
 }
 
+String getTrackName(int trackNumber) {
+  switch (trackNumber) {
+  case 1:
+    return "KILLER QUEEN";
+  case 2:
+    return "BOHEMIAN RHAPSODY";
+  case 3:
+    return "FLASH";
+  case 4:
+    return "FAT BOTTOMED GIRLS";
+  case 5:
+    return "ANOTHER ONE BITES THE DUST";
+  case 6:
+    return "BICYCLE RACE";
+  case 7:
+    return "YOU'RE MY BEST FRIEND";
+  case 8:
+    return "DONT STOP ME NOW";
+  case 9:
+    return "SAVE ME";
+  case 10:
+    return "CRAZY LITTLE THING CALLED LOVE";
+  default:
+    return "";
+  }
+}
+
+int getBPM(int trackNumber) {
+  switch (trackNumber) {
+  case 1:
+    return 118; // -> 3 killer queen
+  case 2:
+    return 141; // -> 1 bohemian rhapsody
+  case 3:
+    return 108; // -> 14 flash
+  case 4:
+    return 88; // -> 4 fat bottomed girls
+  case 5:
+    return 112; // -> 2 another one bites the dust
+  case 6:
+    return 168; // -> 5 bicycle race
+  case 7:
+    return 119; // -> 6 you're my best friend
+  case 8:
+    return 156; // -> 7 dont stop me now
+  case 9:
+    return 82; // -> 8 save me
+  case 10:
+    return 77; // -> 9 crazy little thing called love
+  default:
+    return 0;
+  }
+}
+
 Action actions[] = {
-    time(5000).track(1).pattern(PATTERN_ROTATING_HEXAGONS).speed(1),
-    time(10000).track(2).pattern(PATTERN_SOLID_OVERLAY),
-    time(15000).track(3).pattern(PATTERN_LASERS_ALL_AT_ONCE).speed(9),
-    time(20000).pattern(PATTERN_LASERS_ALL_AT_ONCE).speed(1),
+    time(3000).track(1).pattern(PATTERN_TWINKLE).density(8),
+    time(5000).track(5).pattern(PATTERN_ROTATING_HEXAGONS).speed(1),
+    time(10000).track(8).pattern(PATTERN_SOLID_OVERLAY),
+    time(15000).track(10).pattern(PATTERN_LASERS_ALL_AT_ONCE).speed(9),
+    time(20000).speed(1),
+    time(21000).speed(9),
+    time(22000).speed(1),
+    time(23000).speed(9),
 };
 
 int numActions = sizeof(actions) / sizeof(actions[0]);
@@ -51,6 +111,7 @@ esp_now_peer_info_t peerInfo;
 
 Timer paletteCycleTimer = {DEFAULT_SECONDSPERPALETTE * 1000};
 Timer oneSecondTimer = {1000};
+Timer ledTimer;
 
 void handleAction() {
   for (int i = 0; i < NUM_RECEIVERS; i++) {
@@ -126,6 +187,8 @@ void setup() {
 
   mp3_command(CMD_SEL_DEV, DEV_TF); // select the TF card
   delay(200);                       // wait for 200ms
+
+  pinMode(LED_PIN, OUTPUT);
 }
 
 void loop() {
@@ -142,6 +205,7 @@ void loop() {
     oneSecondTimer.reset();
   }
 
+  static int currentBPM = 0;
   static int nextAction = 0;
   if (millis() >= actions[nextAction].timestamp && nextAction < numActions) {
     Serial.print("next action: ");
@@ -150,8 +214,28 @@ void loop() {
     handleAction();
     if (actions[nextAction].setTrack) {
       mp3_command(CMD_PLAY_W_INDEX, actions[nextAction].trackNumber);
+      currentBPM = getBPM(actions[nextAction].trackNumber);
+      Serial.println(getTrackName(actions[nextAction].trackNumber));
     }
     nextAction++;
+  }
+
+  // Blink an LED to the beat
+  if (currentBPM != 0) {
+    unsigned long msPerBeat = 60000 / currentBPM; // one minute is 60000 ms
+    unsigned long flashDuration = 100;
+    static bool ledOn = false;
+    if (ledTimer.complete()) {
+      ledOn = !ledOn;
+      if (ledOn) {
+        digitalWrite(LED_PIN, HIGH);
+      } else {
+        digitalWrite(LED_PIN, LOW);
+      }
+      ledTimer.totalCycleTime =
+          ledOn ? flashDuration : msPerBeat - flashDuration;
+      ledTimer.reset();
+    }
   }
 
   // readSerialMonitorInput();
