@@ -66,7 +66,7 @@ struct Path {
 Path rings[NUM_RINGS];
 Path straights[NUM_STRAIGHTS];
 
-int activePattern = PATTERN_TWINKLE;
+int activePattern = DEFAULT_PATTERN;
 float speed = DEFAULT_SPEED;
 float density = DEFAULT_DENSITY;
 float width = DEFAULT_WIDTH;
@@ -76,6 +76,13 @@ float overlayDensity = DEFAULT_OVERLAYDENSITY;
 bool reverse = DEFAULT_REVERSE;
 
 msg data;
+
+bool beat = false;
+int bpm = 112;
+int beatLength = 60000 / bpm; // 1 beat every 535.7 milliseconds
+int mapBeat(int start, int end) {
+  return map(millis() % beatLength, 0, beatLength, start, end);
+}
 
 // clang-format off
 #include "twinkleUtils.h"
@@ -97,6 +104,8 @@ Palette palette;
 #include "TwinkleSubPattern.h"
 #include "Line.h"
 #include "LineSubPattern.h"
+#include "LineBPM.h"
+#include "LineSubPatternBPM.h"
 #include "Flash.h"
 #include "FlashSubPattern.h"
 #include "SolidSubPattern.h"
@@ -111,9 +120,9 @@ LineSubPattern randomFlashingSegments(LineSubPattern::RANDOM_FLASHING_SEGMENTS);
 TwinkleSubPattern twinkleOverlay(TwinkleSubPattern::TWINKLE_OVERLAY);
 SpiralSubPattern singleSpiral(SpiralSubPattern::SINGLE_SPIRAL);
 SpiralSubPattern doubleSpiral(SpiralSubPattern::DOUBLE_SPIRAL);
-LineSubPattern rotatingPong(LineSubPattern::ROTATING_PONG);
+LineSubPatternBPM rotatingPong(LineSubPatternBPM::ROTATING_PONG);
 LineSubPattern lasers(LineSubPattern::LASERS);
-LineSubPattern lasersAllAtOnce(LineSubPattern::LASERS_ALL_AT_ONCE);
+LineSubPatternBPM lasersAllAtOnce(LineSubPatternBPM::LASERS_ALL_AT_ONCE);
 LineSubPattern rainfall(LineSubPattern::RAINFALL);
 LineSubPattern basketWeaving(LineSubPattern::BASKET_WEAVING);
 LineSubPattern cometTrails(LineSubPattern::COMET_TRAILS);
@@ -121,7 +130,8 @@ LineSubPattern rotatingHexagons(LineSubPattern::ROTATING_HEXAGONS);
 LineSubPattern
     counterRotatingHexagons(LineSubPattern::COUNTER_ROTATING_HEXAGONS);
 LineSubPattern variableSpeedRotation(LineSubPattern::VARIABLE_SPEED_ROTATION);
-LineSubPattern variableSpeedRotationEnd(LineSubPattern::VARIABLE_SPEED_ROTATION_END);
+LineSubPattern
+    variableSpeedRotationEnd(LineSubPattern::VARIABLE_SPEED_ROTATION_END);
 FlashSubPattern flashingHexagons(FlashSubPattern::FLASHING_HEXAGONS);
 FlashSubPattern flashingHexagonsWarp(FlashSubPattern::FLASHING_HEXAGONS_WARP);
 
@@ -360,10 +370,20 @@ void loop() {
   FastLED.clear();
   palette.cycle();
 
+  if (beat) {
+    beat = false;
+  }
+  static int prevMod = 0;
+  int mod = millis() % beatLength;
+  if (mod < prevMod) {
+    beat = true;
+  }
+  prevMod = mod;
+
 #if MODE == SINGLE_BOARD_MODE
   EVERY_N_SECONDS(1) {
-    Serial.print("Local IP address: ");
-    Serial.println(WiFi.localIP());
+    //Serial.print("Local IP address: ");
+    //Serial.println(WiFi.localIP());
   }
 #endif
 
@@ -386,15 +406,15 @@ void loop() {
 
   activePatterns[activePattern]->show();
 
-  static int prevSecond = -1;
-  static unsigned long prevTicks = ticks;
-  int currentSecond = millis() / 1000;
-  if (prevSecond != currentSecond) {
-    Serial.print("Frames in last second: ");
-    Serial.println(ticks - prevTicks);
-    prevSecond = currentSecond;
-    prevTicks = ticks;
-  }
+  //static int prevSecond = -1;
+  //static unsigned long prevTicks = ticks;
+  //int currentSecond = millis() / 1000;
+  //if (prevSecond != currentSecond) {
+  //  Serial.print("Frames in last second: ");
+  //  Serial.println(ticks - prevTicks);
+  //  prevSecond = currentSecond;
+  //  prevTicks = ticks;
+  //}
 
   FastLED.setMaxRefreshRate(30);
   FastLED.setBrightness(BRIGHTNESS);
