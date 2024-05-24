@@ -34,7 +34,12 @@ private:
     }
     for (int i = 0; i < _numLines; i++) {
       _lines[i].show();
-      _lines[i].reverseOnWrap();
+      if (_lines[i].isFullyOutOfBounds()) {
+        _lines[i].toggleReverse();
+        _lines[i].ignoreNewPosition();
+      } else {
+        _lines[i].commitNewPosition();
+      }
     }
   }
 
@@ -145,8 +150,10 @@ public:
     case ROTATING_PONG:
       _numLines = NUM_STRAIGHTS;
       for (uint8_t i = 0; i < _numLines; i++) {
+        int offsetStep = map(density, 1, 10, 0, 50);
         _lines[i] = LineBPM(i);
         _lines[i].setPath(straights[i]);
+        _lines[i].setOffset(offsetStep * i);
       }
       break;
     //case LASERS:
@@ -156,7 +163,7 @@ public:
     //    _lines[i].setPath(straights[i]);
     //    _lines[i].setReverse(true);
     //    _lines[i].setLengthMultiplier(2);
-    //    _lines[i].setPosition(random(0, NUM_LEDS_PER_STRAIGHT));
+    //    _lines[i].setOffset(random(0, NUM_LEDS_PER_STRAIGHT));
     //  }
     //  break;
     case LASERS_ALL_AT_ONCE:

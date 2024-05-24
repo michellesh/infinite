@@ -104,20 +104,17 @@ public:
 
   void resetPrevPosition() { _prevPosition = 0; }
 
-  void reverseOnWrap() {
-    bool toggled = false;
-    if (!isReversed() && _position > _prevPosition) {
-      toggleReverse();
-      toggled = true;
-    } else if (isReversed() && _position < _prevPosition) {
-      toggleReverse();
-      toggled = true;
-    }
-    if (toggled) {
-      _position = _prevPosition;
-    } else {
-      _prevPosition = _position;
-    }
+  bool isFullyOutOfBounds() {
+    return (!isReversed() && _position > _prevPosition) ||
+           (isReversed() && _position < _prevPosition);
+  }
+
+  void ignoreNewPosition() {
+    _position = _prevPosition;
+  }
+
+  void commitNewPosition() {
+    _prevPosition = _position;
   }
 
   //void showPathFixed(int maxTwinkles, bool isFlickering, bool flickerState) {
