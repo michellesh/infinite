@@ -7,8 +7,6 @@
 #include "FS.h"
 #include "SD.h"
 
-#include "Timer.h"
-
 // Digital I/O used
 #define SD_CS 5
 #define SPI_MOSI 23 // SD Card
@@ -19,18 +17,16 @@
 #define I2S_BCLK 27 // I2S
 #define I2S_LRC 26
 
-// #define VolPin 13
+#define MAX_VOLUME 21
+#define MAX_FILES 100
 
 Audio audio;
 
-uint8_t Volume; // range is 0 to 21
-
 File rootDir;
-
-#define MAX_FILES 100
 
 char *fileNames[MAX_FILES];
 int fileCount = 0;
+int trackNumber = 0;
 
 void setup() {
   pinMode(SD_CS, OUTPUT);
@@ -38,112 +34,54 @@ void setup() {
   SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
   Serial.begin(9600);
   if (!SD.begin(SD_CS)) {
-    Serial.println("Error talking to SD card!");
+    Serial.println("Card Mount Failed!");
     while (true)
       ; // end program
   }
   audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
+
   rootDir = SD.open("/");
-  PlayNextSong(); // Play next song, which will be the first at this point
-
-
-  audio.setVolume(
-      21); // GetVolume()); // Check volume level and adjust if necassary
-}
-
-Timer timer = {1000};
-
-void loop() {
-  audio.loop();
-
-  static bool lowVol = false;
-  if (timer.complete()) {
-    // Serial.println("Play next");
-    // audio.connecttoFS(SD, entry.name());
-    lowVol = !lowVol;
-    //audio.setVolume(lowVol ? 10 : 21);
-    timer.reset();
+  if (!rootDir) {
+    Serial.println("Failed to open root directory");
+    return;
   }
+  // Ensure the directory is a valid directory
+  if (!rootDir.isDirectory()) {
+    Serial.println("Root is not a directory");
+    return;
+  }
+
+  listFiles(rootDir);
+
+  // Print the file names
+  Serial.println("MP3 files found on SD card:");
+  for (int i = 0; i < fileCount; i++) {
+    Serial.println(fileNames[i]);
+  }
+
+  audio.setVolume(MAX_VOLUME);
+
+  playTrack(0);
 }
+
+void loop() { audio.loop(); }
 
 void audio_eof_mp3(const char *info) { // end of file
-  PlayNextSong();
-}
-
-void PlayNextSong() {
-  bool SongFound = false;
-  bool DirRewound = false;
-
-  while (SongFound == false) {
-    File entry = rootDir.openNextFile();
-    if (!entry) // no more files
-    {
-      if (DirRewound == true) // If we've already rewound once then there are no
-                              // songs to play in this DIR
-      {
-        Serial.println("No MP3 files found to play");
-        entry.close();
-        return;
-      }
-      // else we've reached the end of all files in this directory, just rewind
-      // back to beginning
-      rootDir.rewindDirectory(); // reset back to beginning
-      DirRewound = true;         // Flag that we've rewound
-    } else {
-      if (!entry.isDirectory()) // only enter this if not a DIR
-      {
-        if (MusicFile(entry.name())) // Only enter if one of the acceptable
-                                     // music files
-        {
-          Serial.print("Playing ");
-          Serial.println(entry.name());
-          // audio.connecttoSD(entry.name()); // Play the file
-          audio.connecttoFS(SD, entry.name()); // SD
-          // audio.connecttoFS(SD_MMC, "/test.wav"); // SD_MMC
-          // audio.connecttoFS(SPIFFS, "/test.wav"); // SPIFFS
-
-          SongFound = true;
-        }
-      }
-    }
-    entry.close();
+  trackNumber++;
+  if (trackNumber < fileCount) {
+    playTrack(trackNumber);
   }
 }
 
-bool MusicFile(String FileName) {
-  // returns true if file is one of the supported file types, i.e. mp3,aac
-  String ext;
-  ext = FileName.substring(FileName.indexOf('.') + 1);
-  if ((ext == "mp3") | (ext == "aac"))
-    return true;
-  else
-    return false;
+void playTrack(int index) {
+  Serial.print("playing ");
+  Serial.println(fileNames[index]);
+  audio.connecttoFS(SD, fileNames[index]);
 }
 
-// uint8_t GetVolume() {
-//   // looks at the ADC pin that the potentiometer is connected to.
-//   // returns the value as a volume setting
-//   // The esp32's ADC has linerality problems at top and bottom we will ignore
-//   // them and only respond to values in the middle range
-//
-//   uint16_t VolumeSettingReading;
-//
-//   VolumeSettingReading = analogRead(VolPin);
-//   if (VolumeSettingReading < 25) // because of problems mentioned above,
-//                                  // anything below 25 will be 0 volume
-//     return 0;
-//   if (VolumeSettingReading > 4000) // because of problems mentioned above,
-//                                    // anything above 4000 will be 21 volume
-//     return 21;
-//   // If we get this far we are in the middle range that should be linear
-//   // 500-4000
-//   return uint8_t(((VolumeSettingReading - 25) /
-//                   190)); // this will give the correct 0-21 range
-// }
-
-void listFiles() {
+void listFiles(File dir) {
   while (true) {
-    File entry = rootDir.openNextFile();
+    File entry = dir.openNextFile();
     if (!entry) {
       // No more files
       break;
