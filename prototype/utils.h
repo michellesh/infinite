@@ -65,3 +65,18 @@ float sawtooth(float minValue, float maxValue, unsigned long waveLength = 50,
   float t = (float)(ticks + waveLengthOffset) / waveLength;
   return mapf(t - floor(t), 0, 1, minValue, maxValue);
 }
+
+void shuffle(int array[], int size) {
+  // Initialize random seed
+  randomSeed(analogRead(0));
+
+  for (int i = size - 1; i > 0; i--) {
+    // Pick a random index from 0 to i
+    int j = random(0, i + 1);
+
+    // Swap array[i] with the element at random index
+    int temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+}

@@ -30,7 +30,7 @@
 
 #define DELAY 50 // delay send between receivers
 
-#define LED_PIN 18
+#define LED_PIN 4
 
 uint8_t receiverAddresses[NUM_RECEIVERS][6]; // 6 bytes in a mac address
 

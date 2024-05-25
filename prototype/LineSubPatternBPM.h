@@ -5,6 +5,8 @@
 
 #define MAX_IDLE_TIME 2000
 
+int order[] = {0, 1, 2, 3, 4, 5};
+
 // struct Flicker {
 //   int id = 0;
 //   bool state = false;
@@ -49,17 +51,43 @@ private:
     }
   }
 
-  //void _showRandomReset() {
-  //  for (int i = 0; i < _numLines; i++) {
-  //    if (_lines[i].isFullyOutOfBounds()) {
-  //      int pathLength = _lines[i].getPath().length;
-  //      int maxOffset = map(density, 1, 10, pathLength * 7, 0);
-  //      int offset = random(0, maxOffset);
-  //      _lines[i].resetPosition(offset);
-  //    }
-  //    _lines[i].show();
-  //  }
-  //}
+  void _showOneByOne() {
+    static int active = 0;
+    if (beat) {
+      active++;
+      if (active == _numLines) {
+        active = 0;
+        shuffle(order, 6);
+      }
+    }
+    for (int i = 0; i < _numLines; i++) {
+      if (i == order[active]) {
+        _lines[i].show();
+      }
+    }
+  }
+
+  void _showTwoByTwo() {
+    static int active = 0;
+    static bool again = true;
+    if (beat) {
+      if (!again) {
+        active++;
+        if (active == _numLines) {
+          active = 0;
+          shuffle(order, 6);
+        }
+        again = true;
+      } else {
+        again = false;
+      }
+    }
+    for (int i = 0; i < _numLines; i++) {
+      if (i == order[active]) {
+        _lines[i].show();
+      }
+    }
+  }
 
   //void _showRainfall() {
   //  for (int i = 0; i < _numLines; i++) {
@@ -131,15 +159,16 @@ private:
 public:
   static const uint8_t ROTATING_PONG = 0;
   static const uint8_t LASERS = 1;
-  static const uint8_t LASERS_ALL_AT_ONCE = 2;
-  static const uint8_t RAINFALL = 3;
-  static const uint8_t BASKET_WEAVING = 4;
-  static const uint8_t COMET_TRAILS = 5;
-  static const uint8_t ROTATING_HEXAGONS = 6;
-  static const uint8_t COUNTER_ROTATING_HEXAGONS = 7;
-  static const uint8_t VARIABLE_SPEED_ROTATION = 8;
-  static const uint8_t VARIABLE_SPEED_ROTATION_END = 9;
-  static const uint8_t RANDOM_FLASHING_SEGMENTS = 10;
+  static const uint8_t LASERS_DOUBLES = 2;
+  static const uint8_t LASERS_ALL_AT_ONCE = 3;
+  static const uint8_t RAINFALL = 4;
+  static const uint8_t BASKET_WEAVING = 5;
+  static const uint8_t COMET_TRAILS = 6;
+  static const uint8_t ROTATING_HEXAGONS = 7;
+  static const uint8_t COUNTER_ROTATING_HEXAGONS = 8;
+  static const uint8_t VARIABLE_SPEED_ROTATION = 9;
+  static const uint8_t VARIABLE_SPEED_ROTATION_END = 10;
+  static const uint8_t RANDOM_FLASHING_SEGMENTS = 11;
 
   LineSubPatternBPM(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
@@ -156,24 +185,22 @@ public:
         _lines[i].setOffset(offsetStep * i);
       }
       break;
-    //case LASERS:
-    //  _numLines = NUM_STRAIGHTS;
-    //  for (uint8_t i = 0; i < _numLines; i++) {
-    //    _lines[i] = LineBPM(i);
-    //    _lines[i].setPath(straights[i]);
-    //    _lines[i].setReverse(true);
-    //    _lines[i].setLengthMultiplier(2);
-    //    _lines[i].setOffset(random(0, NUM_LEDS_PER_STRAIGHT));
-    //  }
-    //  break;
+    case LASERS:
+    case LASERS_DOUBLES:
+      _numLines = NUM_STRAIGHTS;
+      shuffle(order, 6);
+      for (uint8_t i = 0; i < _numLines; i++) {
+        _lines[i] = LineBPM(i);
+        _lines[i].setPath(straights[i]);
+        _lines[i].setLengthMultiplier(2);
+      }
+      break;
     case LASERS_ALL_AT_ONCE:
       _numLines = NUM_STRAIGHTS;
       for (uint8_t i = 0; i < _numLines; i++) {
         _lines[i] = LineBPM(i);
         _lines[i].setPath(straights[i]);
-        //_lines[i].setReverse(true);
         _lines[i].setLengthMultiplier(2);
-        //_lines[i].setPosition(0);
       }
       break;
     //case RAINFALL:
@@ -327,9 +354,12 @@ public:
     case ROTATING_PONG:
       _showRotatingPong();
       break;
-    //case LASERS:
-    //  _showRandomReset();
-    //  break;
+    case LASERS:
+      _showOneByOne();
+      break;
+    case LASERS_DOUBLES:
+      _showTwoByTwo();
+      break;
     case LASERS_ALL_AT_ONCE:
       _showBasicReset();
       break;

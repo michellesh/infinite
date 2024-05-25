@@ -75,7 +75,7 @@ public:
 
   void setOffset(int offset) { _offset = offset; }
 
-  //Path getPath() { return _path; }
+  Path getPath() { return _path; }
 
   bool isReversed() { return _speedMultiplier * (reverse ? -1 : 1) < 0; }
 

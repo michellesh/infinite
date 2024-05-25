@@ -98,18 +98,19 @@ const char index_html[] PROGMEM = R"rawliteral(
     <div class="break"></div>
     <button type="button" onclick="sendData('n',8)">Lines: Rotating Pong</button>
     <button type="button" onclick="sendData('n',9)">Lines: Lasers</button>
-    <button type="button" onclick="sendData('n',10)">Lines: Lasers All At Once</button>
-    <button type="button" onclick="sendData('n',11)">Lines: Rainfall</button>
-    <button type="button" onclick="sendData('n',12)">Lines: Basket Weaving</button>
-    <button type="button" onclick="sendData('n',13)">Lines: Comet Trails</button>
+    <button type="button" onclick="sendData('n',10)">Lines: Lasers Doubles</button>
+    <button type="button" onclick="sendData('n',11)">Lines: Lasers All At Once</button>
+    <button type="button" onclick="sendData('n',12)">Lines: Rainfall</button>
+    <button type="button" onclick="sendData('n',13)">Lines: Basket Weaving</button>
+    <button type="button" onclick="sendData('n',14)">Lines: Comet Trails</button>
     <div class="break"></div>
-    <button type="button" onclick="sendData('n',14)">Spinning: Rotating Hexagons</button>
-    <button type="button" onclick="sendData('n',15)">Spinning: Counter Rotating Hexagons</button>
-    <button type="button" onclick="sendData('n',16)">Spinning: Variable Speed Rotation</button>
-    <button type="button" onclick="sendData('n',17)">Spinning: Variable Speed Rotation End</button>
+    <button type="button" onclick="sendData('n',15)">Spinning: Rotating Hexagons</button>
+    <button type="button" onclick="sendData('n',16)">Spinning: Counter Rotating Hexagons</button>
+    <button type="button" onclick="sendData('n',17)">Spinning: Variable Speed Rotation</button>
+    <button type="button" onclick="sendData('n',18)">Spinning: Variable Speed Rotation End</button>
     <div class="break"></div>
-    <button type="button" onclick="sendData('n',18)">Flashing Hexagons</button>
-    <button type="button" onclick="sendData('n',19)">Flashing Hexagons Warp</button>
+    <button type="button" onclick="sendData('n',19)">Flashing Hexagons</button>
+    <button type="button" onclick="sendData('n',20)">Flashing Hexagons Warp</button>
     <div class="break"></div>
 
     <h3>Color Palettes</h3>

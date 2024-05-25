@@ -121,7 +121,8 @@ TwinkleSubPattern twinkleOverlay(TwinkleSubPattern::TWINKLE_OVERLAY);
 SpiralSubPattern singleSpiral(SpiralSubPattern::SINGLE_SPIRAL);
 SpiralSubPattern doubleSpiral(SpiralSubPattern::DOUBLE_SPIRAL);
 LineSubPatternBPM rotatingPong(LineSubPatternBPM::ROTATING_PONG);
-LineSubPattern lasers(LineSubPattern::LASERS);
+LineSubPatternBPM lasers(LineSubPatternBPM::LASERS);
+LineSubPatternBPM lasersDoubles(LineSubPatternBPM::LASERS_DOUBLES);
 LineSubPatternBPM lasersAllAtOnce(LineSubPatternBPM::LASERS_ALL_AT_ONCE);
 LineSubPattern rainfall(LineSubPattern::RAINFALL);
 LineSubPattern basketWeaving(LineSubPattern::BASKET_WEAVING);
@@ -147,6 +148,7 @@ SubPattern *activePatterns[] = {
   &doubleSpiral,
   &rotatingPong,
   &lasers,
+  &lasersDoubles,
   &lasersAllAtOnce,
   &rainfall,
   &basketWeaving,

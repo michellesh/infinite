@@ -11,10 +11,9 @@ Action actions[] = {
 };
 
 Fade fades[] = {
-  fadeOut(5000, 10000),
-  fadeIn(10000, 15000),
+    fadeOut(5000, 10000),
+    fadeIn(10000, 15000),
 };
 
 // Queen - BPM match
 // track(5).pattern(PATTERN_ROTATING_HEXAGONS).speed(9.5),
-
