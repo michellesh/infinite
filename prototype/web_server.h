@@ -30,7 +30,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     table { width: 100%%; }
     h2 { font-size: 2.3rem; text-align: center }
     p { font-size: 1.9rem; }
-    .buttons { display: flex; flex-wrap: wrap; }
+    .buttons { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3em; }
     .break { flex-basis: 100%%; height: 10px; }
     .labelCol { width: 80px; }
     .valCol { width: 40px; padding-left: 14px; }
@@ -45,6 +45,12 @@ const char index_html[] PROGMEM = R"rawliteral(
 </head>
 <body>
   <h2>Infinitube! :-O</h2>
+
+  <div class="buttons">
+  <button id="startTimerBtn" type="button" onclick="sendData('u',0)">Play Sequence</button>
+  <div id="timer">0.000</div><div>seconds</div>
+  <div class="break"></div>
+  </div>
 
   <label id="labelBPM" for="bpm">BPM </label>
   <input id="bpm" type="number" min="1" max="65535" onchange="sendData('b',this.value)" value="%BPMVALUE%">
@@ -244,6 +250,15 @@ const char index_html[] PROGMEM = R"rawliteral(
         e.target.select();
       });
     });
+    let interval = -1;
+    document.getElementById("startTimerBtn").addEventListener("click", e => {
+      if (interval > 0) { clearInterval(interval); }
+      var startTime = Date.now();
+      interval = setInterval(function() {
+        var elapsedTime = Date.now() - startTime;
+        document.getElementById("timer").innerHTML = (elapsedTime / 1000).toFixed(3);
+      }, 100);
+    });
   }
 
   function sendData(type, val) {
@@ -358,6 +373,11 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
         break;
       case 'z':
         brightness = dataValue.toInt();
+        ws.textAll(message);
+        break;
+      case 'u':
+        startTime = millis();
+        nextAction = 0;
         ws.textAll(message);
         break;
     }

@@ -36,26 +36,6 @@ uint8_t receiverAddresses[NUM_RECEIVERS][6]; // 6 bytes in a mac address
 
 bool autoCyclePalettes = DEFAULT_AUTOCYCLEPALETTES;
 
-msg data;
-
-#include "Action.h"
-#include "Fade.h"
-
-Action time(unsigned long timestamp) {
-  Action a = {timestamp};
-  return a;
-}
-
-Fade fadeIn(unsigned long millisStart, unsigned long millisEnd) {
-  Fade f = {millisStart, millisEnd, 0, MAX_VOLUME};
-  return f;
-}
-
-Fade fadeOut(unsigned long millisStart, unsigned long millisEnd) {
-  Fade f = {millisStart, millisEnd, MAX_VOLUME, 0};
-  return f;
-}
-
 String getTrackName(int trackNumber) {
   switch (trackNumber) {
   case 1:
@@ -109,11 +89,6 @@ int getBPM(int trackNumber) {
     return 0;
   }
 }
-
-#include "actions.h"
-
-int numActions = sizeof(actions) / sizeof(actions[0]);
-int numFades = sizeof(fades) / sizeof(fades[0]);
 
 esp_now_peer_info_t peerInfo;
 

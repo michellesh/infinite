@@ -1,6 +1,5 @@
 void waveOverlay() {
   int width = map(overlayWidth, 1, 10, MAX_DEPTH / 3, MAX_DEPTH * 2);
-  int waveLength = map(overlaySpeed, 1, 10, 100, 10);
   int offset = map(overlayDensity, 1, 10, MAX_DEPTH, 0) + width / 2;
   int startPosition = reverse ? -offset : MAX_DEPTH + offset;
   int endPosition = reverse ? MAX_DEPTH + offset : -offset;

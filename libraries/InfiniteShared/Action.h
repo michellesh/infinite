@@ -14,6 +14,7 @@ struct Action {
   bool setOverlayDensity;
   bool setOverlayWidth;
   bool setReverse;
+  bool setBPM;
 
   Action track(uint8_t x) {
     trackNumber = x;
@@ -81,6 +82,12 @@ struct Action {
     return *this;
   }
 
+  Action bpm(int x) {
+    actionData.bpm = x;
+    setBPM = true;
+    return *this;
+  }
+
   void commitData() {
     if (setPattern) {
       data.pattern = actionData.pattern;
@@ -111,6 +118,9 @@ struct Action {
     }
     if (setReverse) {
       data.reverse = actionData.reverse;
+    }
+    if (setBPM) {
+      data.bpm = actionData.bpm;
     }
   }
 };

@@ -86,7 +86,8 @@ int mapBeat(int start, int end) {
   return map(millis() % beatLength(), 0, beatLength(), start, end);
 }
 
-msg data;
+unsigned long startTime = 0;
+int nextAction = numActions; // actions dont fire until nextAction < numActions
 
 // clang-format off
 #include "twinkleUtils.h"
@@ -392,6 +393,15 @@ void loop() {
   EVERY_N_SECONDS(1) {
     // Serial.print("Local IP address: ");
     // Serial.println(WiFi.localIP());
+  }
+
+  unsigned long elapsedTime = millis() - startTime;
+  if (elapsedTime >= actions[nextAction].timestamp && nextAction < numActions) {
+    Serial.print("next action: ");
+    Serial.println(nextAction);
+    actions[nextAction].commitData();
+    handleAction();
+    nextAction++;
   }
 #endif
 

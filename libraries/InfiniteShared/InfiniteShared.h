@@ -101,3 +101,31 @@ typedef struct msg {
 } msg;
 
 esp_err_t send(msg m) { return esp_now_send(0, (uint8_t *)&m, sizeof(msg)); }
+
+// Choreography stuff
+#define MAX_VOLUME 21
+
+msg data;
+
+#include "Action.h"
+#include "Fade.h"
+
+Action time(unsigned long timestamp = 0) {
+  Action a = {timestamp};
+  return a;
+}
+
+Fade fadeIn(unsigned long millisStart, unsigned long millisEnd) {
+  Fade f = {millisStart, millisEnd, 0, MAX_VOLUME};
+  return f;
+}
+
+Fade fadeOut(unsigned long millisStart, unsigned long millisEnd) {
+  Fade f = {millisStart, millisEnd, MAX_VOLUME, 0};
+  return f;
+}
+
+#include "actions.h"
+
+int numActions = sizeof(actions) / sizeof(actions[0]);
+int numFades = sizeof(fades) / sizeof(fades[0]);

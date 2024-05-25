@@ -33,9 +33,10 @@ Fade fades[] = {
 | -------- | ----------- |
 | `.time(milliseconds)` | Create an action at this timestamp. |
 | `.track(int trackNumber)` | Set the track. Should be in same order as SD card. For first track use `.track(1)` (no zeros) |
-| `.pattern(int patternId)`  | Set the pattern<br><br>`PATTERN_SOLID_OVERLAY`<br>`PATTERN_SOLID_OVERLAY_RAILGUN`<br>`PATTERN_TWINKLE`<br>`PATTERN_RANDOM_FADING_SEGMENTS`<br>`PATTERN_RANDOM_FLASHING_SEGMENTS`<br>`PATTERN_TWINKLE_OVERLAY`<br>`PATTERN_SINGLE_SPIRAL`<br>`PATTERN_DOUBLE_SPIRAL`<br>`PATTERN_ROTATING_PONG`<br>`PATTERN_LASERS`<br>`PATTERN_LASERS_ALL_AT_ONCE`<br>`PATTERN_RAINFALL`<br>`PATTERN_BASKET_WEAVING`<br>`PATTERN_COMET_TRAILS`<br>`PATTERN_ROTATING_HEXAGONS`<br>`PATTERN_COUNTER_ROTATING_HEXAGONS`<br>`PATTERN_VARIABLE_SPEED_ROTATION`<br>`PATTERN_FLASHING_HEXAGONS`<br>`PATTERN_FLASHING_HEXAGONS_WARP` |
+| `.pattern(int patternId)`  | Set the pattern<br><br>`PATTERN_SOLID_OVERLAY`<br>`PATTERN_SOLID_OVERLAY_RAILGUN`<br>`PATTERN_TWINKLE`<br>`PATTERN_RANDOM_FADING_SEGMENTS`<br>`PATTERN_RANDOM_FLASHING_SEGMENTS`<br>`PATTERN_TWINKLE_OVERLAY`<br>`PATTERN_SINGLE_SPIRAL`<br>`PATTERN_DOUBLE_SPIRAL`<br>`PATTERN_ROTATING_PONG`<br>`PATTERN_LASERS`<br>`PATTERN_LASERS_DOUBLES`<br>`PATTERN_LASERS_ALL_AT_ONCE`<br>`PATTERN_RAINFALL`<br>`PATTERN_BASKET_WEAVING`<br>`PATTERN_COMET_TRAILS`<br>`PATTERN_ROTATING_HEXAGONS`<br>`PATTERN_COUNTER_ROTATING_HEXAGONS`<br>`PATTERN_VARIABLE_SPEED_ROTATION`<br>`PATTERN_FLASHING_HEXAGONS`<br>`PATTERN_FLASHING_HEXAGONS_WARP` |
 | `.palette(int paletteId)` | Set the color palette<br><br>`PALETTE_FIRE`<br>`PALETTE_OCEAN`<br>`PALETTE_FLORAL`<br>`PALETTE_ICE`<br>`PALETTE_FAIRY` |
 | `.colorMode(int colorModeId)` | Set the color mode<br><br>`COLOR_MODE_SOLID`<br>`COLOR_MODE_INDEX_GRADIENT`<br>`COLOR_MODE_DEPTH_GRADIENT`<br>`COLOR_MODE_ANGLE_GRADIENT` |
+| `.bpm(int value)` | Set the bpm |
 | `.speed(float value)` | Set the speed 1-10 |
 | `.density(float value)` | Set the density 1-10 |
 | `.width(float value)` | Set the width 1-10 |
