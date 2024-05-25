@@ -46,6 +46,9 @@ const char index_html[] PROGMEM = R"rawliteral(
 <body>
   <h2>Infinitube! :-O</h2>
 
+  <label id="labelBPM" for="bpm">BPM </label>
+  <input id="bpm" type="number" min="1" max="65535" onchange="sendData('b',this.value)" value="%BPMVALUE%">
+
   <table border="0">
   <tr>
     <td class="labelCol"><label id="labelSpeed" for="speedSlider">Speed</label></td>
@@ -208,6 +211,11 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
     String dataValue = message.substring(1);
 
     switch (dataType) {
+      case 'b':
+        setData(ACTION_SET_BPM, dataValue.toInt());
+        handleAction();
+        ws.textAll(message);
+        break;
       case 'n':
         setData(ACTION_SET_PATTERN, dataValue.toInt());
         handleAction();
@@ -286,6 +294,9 @@ void initWebSocket() {
 }
 
 String processor(const String& var){
+  if(var == "BPMVALUE"){
+    return String(bpm);
+  }
   if(var == "SPEEDVALUE"){
     return String(speed);
   }

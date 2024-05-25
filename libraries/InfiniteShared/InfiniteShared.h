@@ -16,6 +16,7 @@
 #define ACTION_SET_OVERLAY_WIDTH 9
 #define ACTION_SET_OVERLAY_DENSITY 10
 #define ACTION_TOGGLE_REVERSE 11
+#define ACTION_SET_BPM 12
 
 #define PATTERN_SOLID_OVERLAY 0
 #define PATTERN_SOLID_OVERLAY_RAILGUN 1
@@ -52,6 +53,7 @@
 #define DEFAULT_REVERSE false
 #define DEFAULT_AUTOCYCLEPALETTES false
 #define DEFAULT_SECONDSPERPALETTE 10
+#define DEFAULT_BPM 112
 
 #define PALETTE_FIRE 0
 #define PALETTE_OCEAN 1
@@ -93,6 +95,7 @@ typedef struct msg {
   float overlayDensity = DEFAULT_OVERLAYDENSITY;
   float overlayWidth = DEFAULT_OVERLAYWIDTH;
   bool reverse = DEFAULT_REVERSE;
+  int bpm = DEFAULT_BPM;
 } msg;
 
 esp_err_t send(msg m) { return esp_now_send(0, (uint8_t *)&m, sizeof(msg)); }

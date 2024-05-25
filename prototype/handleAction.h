@@ -17,6 +17,7 @@ void handleAction() {
   overlayDensity = data.overlayDensity;
   overlayWidth = data.overlayWidth;
   reverse = data.reverse;
+  bpm = data.bpm;
 }
 
 void setData(int action, int value = 0) {
@@ -50,6 +51,9 @@ void setData(int action, int value = 0) {
     break;
   case ACTION_TOGGLE_REVERSE:
     data.reverse = !data.reverse;
+    break;
+  case ACTION_SET_BPM:
+    data.bpm = value;
     break;
   default:
     break;

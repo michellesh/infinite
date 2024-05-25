@@ -75,14 +75,14 @@ float overlayWidth = DEFAULT_OVERLAYWIDTH;
 float overlayDensity = DEFAULT_OVERLAYDENSITY;
 bool reverse = DEFAULT_REVERSE;
 
-msg data;
-
 bool beat = false;
-int bpm = 112;
-int beatLength = 60000 / bpm; // 1 beat every 535.7 milliseconds
+int bpm = DEFAULT_BPM;
+int beatLength() { return 60000 / bpm; } // 1 beat every 535.7 milliseconds
 int mapBeat(int start, int end) {
-  return map(millis() % beatLength, 0, beatLength, start, end);
+  return map(millis() % beatLength(), 0, beatLength(), start, end);
 }
+
+msg data;
 
 // clang-format off
 #include "twinkleUtils.h"
@@ -376,7 +376,7 @@ void loop() {
     beat = false;
   }
   static int prevMod = 0;
-  int mod = millis() % beatLength;
+  int mod = millis() % beatLength();
   if (mod < prevMod) {
     beat = true;
   }
@@ -384,8 +384,8 @@ void loop() {
 
 #if MODE == SINGLE_BOARD_MODE
   EVERY_N_SECONDS(1) {
-    //Serial.print("Local IP address: ");
-    //Serial.println(WiFi.localIP());
+    // Serial.print("Local IP address: ");
+    // Serial.println(WiFi.localIP());
   }
 #endif
 
@@ -408,15 +408,15 @@ void loop() {
 
   activePatterns[activePattern]->show();
 
-  //static int prevSecond = -1;
-  //static unsigned long prevTicks = ticks;
-  //int currentSecond = millis() / 1000;
-  //if (prevSecond != currentSecond) {
-  //  Serial.print("Frames in last second: ");
-  //  Serial.println(ticks - prevTicks);
-  //  prevSecond = currentSecond;
-  //  prevTicks = ticks;
-  //}
+  // static int prevSecond = -1;
+  // static unsigned long prevTicks = ticks;
+  // int currentSecond = millis() / 1000;
+  // if (prevSecond != currentSecond) {
+  //   Serial.print("Frames in last second: ");
+  //   Serial.println(ticks - prevTicks);
+  //   prevSecond = currentSecond;
+  //   prevTicks = ticks;
+  // }
 
   FastLED.setMaxRefreshRate(30);
   FastLED.setBrightness(BRIGHTNESS);
