@@ -4,9 +4,9 @@ Tubey McTubeface
 
 ## Actions reference
 
-See file `sender/actions.h`
-
 ### Example
+
+See `libraries/InfiniteShared/actions.h`
 
 ```cpp
 Action actions[] = {
@@ -25,7 +25,7 @@ Fade fades[] = {
 ```
 
 1. Every line must start with `time(milliseconds)`. After, commands can be chained in any order. All commands chained to one `time` command will be executed at that same timestamp.
-2. Each action retains the state of previous action.
+2. Each subsequent action retains the state of previous action.
 3. There must be at least 350 milliseconds between each action. This is because there needs to be a delay between sending to each of the 8 receivers. The delay is currently set to 50ms per receiver.
 4. Actions must be in order - each subsequent timestamp must be greater than the previous.
 5. Negative values are untested. Use `reverse`.
