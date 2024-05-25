@@ -238,7 +238,7 @@ const char index_html[] PROGMEM = R"rawliteral(
 
   function onLoad(event) {
     initWebSocket();
-    const rgbInputIds = ['r1', 'g1', 'b1', 'r2', 'g2', 'b2', 'r3', 'g3', 'b3'];
+    const rgbInputIds = ['r1', 'g1', 'b1', 'r2', 'g2', 'b2', 'r3', 'g3', 'b3', 'bpm'];
     rgbInputIds.forEach(rgbInputId => {
       document.getElementById(rgbInputId).addEventListener("focus", e => {
         e.target.select();
