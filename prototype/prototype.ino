@@ -133,7 +133,7 @@ LineSubPatternBPM lasersAllAtOnce(LineSubPatternBPM::LASERS_ALL_AT_ONCE);
 LineSubPattern rainfall(LineSubPattern::RAINFALL);
 LineSubPattern basketWeaving(LineSubPattern::BASKET_WEAVING);
 LineSubPattern cometTrails(LineSubPattern::COMET_TRAILS);
-LineSubPattern rotatingHexagons(LineSubPattern::ROTATING_HEXAGONS);
+LineSubPatternBPM rotatingHexagons(LineSubPatternBPM::ROTATING_HEXAGONS);
 LineSubPattern
     counterRotatingHexagons(LineSubPattern::COUNTER_ROTATING_HEXAGONS);
 LineSubPattern variableSpeedRotation(LineSubPattern::VARIABLE_SPEED_ROTATION);

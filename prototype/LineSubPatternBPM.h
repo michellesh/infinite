@@ -104,29 +104,19 @@ private:
   //  }
   //}
 
-  //void _showRotatingHexagons() {
-  //  static int _prevDensity = density;
-  //  if (density != _prevDensity) {
-  //    int degreeStep = map(density, 1, 10, 0, 50); // range 0-50 degree offset
-  //    for (int i = 0; i < _numLines; i++) {
-  //      _lines[i].setPosition(i * (degreeStep * NUM_LEDS_PER_RING / 360));
-  //    }
-  //    _prevDensity = density;
-  //  }
-
-  //  for (int i = 0; i < _numLines; i++) {
-  //    float position = _lines[i].getPosition();
-  //    Path path = _lines[i].getPath();
-  //    bool isReversed = _lines[i].isReversed();
-  //    float length = _lines[i].getLength();
-  //    if (position >= (path.length) && !isReversed) {
-  //      _lines[i].setPosition(position - path.length);
-  //    } else if (position < 0 && isReversed) {
-  //      _lines[i].setPosition(position + path.length - 1);
-  //    }
-  //    _lines[i].showRepeat();
-  //  }
-  //}
+  void _showRotatingHexagons() {
+    static int _prevDensity = density;
+    if (density != _prevDensity) {
+      int degreeStep = map(density, 1, 10, 0, 50); // range 0-50 degree offset
+      for (int i = 0; i < _numLines; i++) {
+        _lines[i].setOffset(i * (degreeStep * NUM_LEDS_PER_RING / 360));
+      }
+      _prevDensity = density;
+    }
+    for (int i = 0; i < _numLines; i++) {
+      _lines[i].showRepeat();
+    }
+  }
 
   // void _showRandomFlashingSegments() {
   //   for (int i = 0; i < NUM_FLICKERS; i++) {
@@ -252,17 +242,16 @@ public:
     //    _lines[i].setPosition(random(0, NUM_LEDS_PER_STRAIGHT));
     //  }
     //  break;
-    //case ROTATING_HEXAGONS:
-    //  _numLines = NUM_RINGS;
-    //  for (uint8_t i = 0; i < _numLines; i++) {
-    //    _lines[i] = LineBPM(i);
-    //    _lines[i].setSpeedMultiplier(0.5);
-    //    _lines[i].setPath(rings[i]);
-    //    _lines[i].setLengthMultiplier(0.5);
-    //    _lines[i].setPosition(i *
-    //                          (10 * NUM_LEDS_PER_RING / 360)); // 10 "degrees"
-    //  }
-    //  break;
+    case ROTATING_HEXAGONS:
+      _numLines = NUM_RINGS;
+      for (uint8_t i = 0; i < _numLines; i++) {
+        _lines[i] = LineBPM(i);
+        int degreeStep = map(density, 1, 10, 0, 50); // range 0-50 degree offset
+        _lines[i].setOffset(i * (degreeStep * NUM_LEDS_PER_RING / 360));
+        _lines[i].setPath(rings[i]);
+        _lines[i].setLengthMultiplier(0.5);
+      }
+      break;
     //case COUNTER_ROTATING_HEXAGONS:
     //  _numLines = NUM_RINGS;
     //  for (uint8_t i = 0; i < _numLines; i++) {
@@ -372,12 +361,12 @@ public:
     //case COMET_TRAILS:
     //  _showRandomReset();
     //  break;
-    //case ROTATING_HEXAGONS:
+    case ROTATING_HEXAGONS:
     //case COUNTER_ROTATING_HEXAGONS:
     //case VARIABLE_SPEED_ROTATION:
     //case VARIABLE_SPEED_ROTATION_END:
-    //  _showRotatingHexagons();
-    //  break;
+      _showRotatingHexagons();
+      break;
     // case RANDOM_FLASHING_SEGMENTS:
     //   _showRandomFlashingSegments();
     //   break;

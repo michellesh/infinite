@@ -13,8 +13,11 @@ private:
   //  return (float)speed * _speedMultiplier * (reverse ? -1 : 1);
   //}
 
-  void _updatePosition() {
-    int endPosition = _path.length + getLength();
+  void _updatePosition(bool includeLineLength = true) {
+    int endPosition = _path.length;
+    if (includeLineLength) {
+      endPosition += getLength();
+    }
     _position =
         isReversed() ? mapBeat(0, endPosition) : mapBeat(endPosition, 0);
     if (isReversed()) {
@@ -109,13 +112,9 @@ public:
            (isReversed() && _position < _prevPosition);
   }
 
-  void ignoreNewPosition() {
-    _position = _prevPosition;
-  }
+  void ignoreNewPosition() { _position = _prevPosition; }
 
-  void commitNewPosition() {
-    _prevPosition = _position;
-  }
+  void commitNewPosition() { _prevPosition = _position; }
 
   //void showPathFixed(int maxTwinkles, bool isFlickering, bool flickerState) {
   //  int s = (float)speed * _speedMultiplier;
@@ -150,24 +149,24 @@ public:
     _updatePosition();
   }
 
-  //void showRepeat() {
-  //  int _length = getLength();
-  //  int numLinesOnPath = floor(_path.length / (_length * 2));
-  //  int increment = _path.length / numLinesOnPath;
-  //  for (int indexOnPath = 0; indexOnPath < _path.length;
-  //       indexOnPath += increment) {
-  //    for (int indexOnLine = 0; indexOnLine < getLength(); indexOnLine++) {
-  //      int index = indexOnPath + indexOnLine + _position;
-  //      if (index > _path.length)
-  //        index -= _path.length;
-  //      if (index >= 0 && index < _path.length) {
-  //        CRGB color = palette.getColor(_path.offset + indexOnPath);
-  //        uint8_t distInGroup = map(indexOnLine, 0, _length, 0, 255);
-  //        _path.leds[index] = color.nscale8(basicFade(distInGroup));
-  //      }
-  //    }
-  //  }
+  void showRepeat() {
+    int _length = getLength();
+    int numLinesOnPath = floor(_path.length / (_length * 2));
+    int increment = _path.length / numLinesOnPath;
+    for (int indexOnPath = 0; indexOnPath < _path.length;
+         indexOnPath += increment) {
+      for (int indexOnLine = 0; indexOnLine < getLength(); indexOnLine++) {
+        int index = indexOnPath + indexOnLine + _position;
+        if (index > _path.length)
+          index -= _path.length;
+        if (index >= 0 && index < _path.length) {
+          CRGB color = palette.getColor(_path.offset + indexOnPath);
+          uint8_t distInGroup = map(indexOnLine, 0, _length, 0, 255);
+          _path.leds[index] = color.nscale8(basicFade(distInGroup));
+        }
+      }
+    }
 
-  //  _updatePosition();
-  //}
+    _updatePosition(false);
+  }
 };
