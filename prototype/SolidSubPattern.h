@@ -4,8 +4,9 @@ private:
   uint8_t _percentBrightness = 0; // percent brightness of the whole pattern
 
 public:
-  static const uint8_t SOLID_OVERLAY = 0;
-  static const uint8_t SOLID_OVERLAY_RAILGUN = 1;
+  static const uint8_t SOLID = 0;
+  static const uint8_t SOLID_OVERLAY = 1;
+  static const uint8_t SOLID_OVERLAY_RAILGUN = 2;
 
   SolidSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
@@ -19,6 +20,11 @@ public:
 
   virtual void show() {
     switch (_activeSubPattern) {
+    case SOLID:
+      for (int i = 0; i < NUM_LEDS; i++) {
+        leds[i] = palette.getColor(i);
+      }
+      break;
     case SOLID_OVERLAY:
       for (int i = 0; i < NUM_LEDS; i++) {
         leds[i] = palette.getColor(i).nscale8(overlayBrightness[i]);

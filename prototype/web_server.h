@@ -88,32 +88,33 @@ const char index_html[] PROGMEM = R"rawliteral(
 
   <h3>Patterns</h3>
   <div class="buttons">
-    <button type="button" onclick="sendData('n',0)">Wave Overlay</button>
-    <button type="button" onclick="sendData('n',1)">Wave Overlay Railgun</button>
+    <button type="button" onclick="sendData('n',0)">Solid</button>
+    <button type="button" onclick="sendData('n',1)">Wave Overlay</button>
+    <button type="button" onclick="sendData('n',2)">Wave Overlay Railgun</button>
     <div class="break"></div>
-    <button type="button" onclick="sendData('n',2)">Twinkle</button>
-    <button type="button" onclick="sendData('n',3)">Twinkle: Random Fading Segments</button>
-    <button type="button" onclick="sendData('n',4)">Twinkle: Random Flashing Segments</button>
-    <button type="button" onclick="sendData('n',5)">Twinkle: Wave Overlay</button>
+    <button type="button" onclick="sendData('n',3)">Twinkle</button>
+    <button type="button" onclick="sendData('n',4)">Twinkle: Random Fading Segments</button>
+    <button type="button" onclick="sendData('n',5)">Twinkle: Random Flashing Segments</button>
+    <button type="button" onclick="sendData('n',6)">Twinkle: Wave Overlay</button>
     <div class="break"></div>
-    <button type="button" onclick="sendData('n',6)">Spiral: Single</button>
-    <button type="button" onclick="sendData('n',7)">Spiral: Double</button>
+    <button type="button" onclick="sendData('n',7)">Spiral: Single</button>
+    <button type="button" onclick="sendData('n',8)">Spiral: Double</button>
     <div class="break"></div>
-    <button type="button" onclick="sendData('n',8)">Lines: Rotating Pong</button>
-    <button type="button" onclick="sendData('n',9)">Lines: Lasers</button>
-    <button type="button" onclick="sendData('n',10)">Lines: Lasers Doubles</button>
-    <button type="button" onclick="sendData('n',11)">Lines: Lasers All At Once</button>
-    <button type="button" onclick="sendData('n',12)">Lines: Rainfall</button>
-    <button type="button" onclick="sendData('n',13)">Lines: Basket Weaving</button>
-    <button type="button" onclick="sendData('n',14)">Lines: Comet Trails</button>
+    <button type="button" onclick="sendData('n',9)">Lines: Rotating Pong</button>
+    <button type="button" onclick="sendData('n',10)">Lines: Lasers</button>
+    <button type="button" onclick="sendData('n',11)">Lines: Lasers Doubles</button>
+    <button type="button" onclick="sendData('n',12)">Lines: Lasers All At Once</button>
+    <button type="button" onclick="sendData('n',13)">Lines: Rainfall</button>
+    <button type="button" onclick="sendData('n',14)">Lines: Basket Weaving</button>
+    <button type="button" onclick="sendData('n',15)">Lines: Comet Trails</button>
     <div class="break"></div>
-    <button type="button" onclick="sendData('n',15)">Spinning: Rotating Hexagons</button>
-    <button type="button" onclick="sendData('n',16)">Spinning: Counter Rotating Hexagons</button>
-    <button type="button" onclick="sendData('n',17)">Spinning: Variable Speed Rotation</button>
-    <button type="button" onclick="sendData('n',18)">Spinning: Variable Speed Rotation End</button>
+    <button type="button" onclick="sendData('n',16)">Spinning: Rotating Hexagons</button>
+    <button type="button" onclick="sendData('n',17)">Spinning: Counter Rotating Hexagons</button>
+    <button type="button" onclick="sendData('n',18)">Spinning: Variable Speed Rotation</button>
+    <button type="button" onclick="sendData('n',19)">Spinning: Variable Speed Rotation End</button>
     <div class="break"></div>
-    <button type="button" onclick="sendData('n',19)">Flashing Hexagons</button>
-    <button type="button" onclick="sendData('n',20)">Flashing Hexagons Warp</button>
+    <button type="button" onclick="sendData('n',20)">Flashing Hexagons</button>
+    <button type="button" onclick="sendData('n',21)">Flashing Hexagons Warp</button>
     <div class="break"></div>
 
     <h3>Color Palettes</h3>
@@ -132,6 +133,49 @@ const char index_html[] PROGMEM = R"rawliteral(
     <button type="button" onclick="sendData('m',2)">Depth Gradient</button>
     <button type="button" onclick="sendData('m',3)">Angle Gradient</button>
     <div class="break"></div>
+
+    <h3>Custom Color Gradient</h3>
+    <div class="break"></div>
+    <button type="button" onclick="sendData('m',4)">Custom Gradient</button>
+    <div class="break"></div>
+
+    <div style="flex:0.2;">Front:</div>
+    <label for="r1">R </label>
+    <input id="r1" type="number" min="1" max="255" onchange="sendData('e',this.value)" value="%R1VALUE%">
+    <label for="g1">G </label>
+    <input id="g1" type="number" min="1" max="255" onchange="sendData('f',this.value)" value="%G1VALUE%">
+    <label for="b1">B </label>
+    <input id="b1" type="number" min="1" max="255" onchange="sendData('g',this.value)" value="%B1VALUE%">
+
+    <div class="break"></div>
+
+    <div style="flex:0.2;">Middle:</div>
+    <label for="r2">R </label>
+    <input id="r2" type="number" min="1" max="255" onchange="sendData('h',this.value)" value="%R2VALUE%">
+    <label for="g2">G </label>
+    <input id="g2" type="number" min="1" max="255" onchange="sendData('i',this.value)" value="%G2VALUE%">
+    <label for="b2">B </label>
+    <input id="b2" type="number" min="1" max="255" onchange="sendData('j',this.value)" value="%B2VALUE%">
+
+    <div class="break"></div>
+
+    <div style="flex:0.2;">Back:</div>
+    <label for="r3">R </label>
+    <input id="r3" type="number" min="1" max="255" onchange="sendData('k',this.value)" value="%R3VALUE%">
+    <label for="g3">G </label>
+    <input id="g3" type="number" min="1" max="255" onchange="sendData('l',this.value)" value="%G3VALUE%">
+    <label for="b3">B </label>
+    <input id="b3" type="number" min="1" max="255" onchange="sendData('q',this.value)" value="%B3VALUE%">
+
+    <div class="break"></div>
+
+    <table border="0">
+    <tr>
+      <td class="labelCol"><label id="labelBrightness" for="brightnessSlider">Brightness</label></td>
+      <td><input type="range" id="brightnessSlider" onchange="sendData('z',this.value)" min="1" max="255" value="%BRIGHTNESSVALUE%" step="1" class="slider"></td>
+      <td class="valCol"><span id="brightnessValue">%BRIGHTNESSVALUE%</span></td>
+    </tr>
+    </table>
   </div>
 
 <script>
@@ -185,11 +229,21 @@ const char index_html[] PROGMEM = R"rawliteral(
       document.getElementById('overlayDensityValue').innerHTML = dataValue;
       document.getElementById('overlayDensitySlider').value = dataValue;
       break;
+    case 'z':
+      document.getElementById('brightnessValue').innerHTML = dataValue;
+      document.getElementById('brightnessSlider').value = dataValue;
+      break;
     }
   }
 
   function onLoad(event) {
     initWebSocket();
+    const rgbInputIds = ['r1', 'g1', 'b1', 'r2', 'g2', 'b2', 'r3', 'g3', 'b3'];
+    rgbInputIds.forEach(rgbInputId => {
+      document.getElementById(rgbInputId).addEventListener("focus", e => {
+        e.target.select();
+      });
+    });
   }
 
   function sendData(type, val) {
@@ -266,6 +320,46 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
         handleAction();
         ws.textAll(message);
         break;
+      case 'e':
+        customColor1.r = dataValue.toInt();
+        ws.textAll(message);
+        break;
+      case 'f':
+        customColor1.g = dataValue.toInt();
+        ws.textAll(message);
+        break;
+      case 'g':
+        customColor1.b = dataValue.toInt();
+        ws.textAll(message);
+        break;
+      case 'h':
+        customColor2.r = dataValue.toInt();
+        ws.textAll(message);
+        break;
+      case 'i':
+        customColor2.g = dataValue.toInt();
+        ws.textAll(message);
+        break;
+      case 'j':
+        customColor2.b = dataValue.toInt();
+        ws.textAll(message);
+        break;
+      case 'k':
+        customColor3.r = dataValue.toInt();
+        ws.textAll(message);
+        break;
+      case 'l':
+        customColor3.g = dataValue.toInt();
+        ws.textAll(message);
+        break;
+      case 'q':
+        customColor3.b = dataValue.toInt();
+        ws.textAll(message);
+        break;
+      case 'z':
+        brightness = dataValue.toInt();
+        ws.textAll(message);
+        break;
     }
   }
 }
@@ -314,6 +408,36 @@ String processor(const String& var){
   }
   if(var == "OVERLAYDENSITYVALUE"){
     return String(overlayDensity);
+  }
+  if(var == "R1VALUE"){
+    return String(customColor1.r);
+  }
+  if(var == "G1VALUE"){
+    return String(customColor1.g);
+  }
+  if(var == "B1VALUE"){
+    return String(customColor1.b);
+  }
+  if(var == "R2VALUE"){
+    return String(customColor2.r);
+  }
+  if(var == "G2VALUE"){
+    return String(customColor2.g);
+  }
+  if(var == "B2VALUE"){
+    return String(customColor2.b);
+  }
+  if(var == "R3VALUE"){
+    return String(customColor3.r);
+  }
+  if(var == "G3VALUE"){
+    return String(customColor3.g);
+  }
+  if(var == "B3VALUE"){
+    return String(customColor3.b);
+  }
+  if(var == "BRIGHTNESSVALUE"){
+    return String(brightness);
   }
   return "";
 }

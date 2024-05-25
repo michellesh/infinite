@@ -12,6 +12,7 @@ public:
   static const uint8_t INDEX_GRADIENT = COLOR_MODE_INDEX_GRADIENT;
   static const uint8_t DEPTH_GRADIENT = COLOR_MODE_DEPTH_GRADIENT;
   static const uint8_t ANGLE_GRADIENT = COLOR_MODE_ANGLE_GRADIENT;
+  static const uint8_t CUSTOM_GRADIENT = COLOR_MODE_CUSTOM_GRADIENT;
 
   void cycle() {
 
@@ -49,6 +50,16 @@ public:
     case ANGLE_GRADIENT: {
       paletteIndex = map(ledAngle(i), 0, 360, 0, MAX_PALETTE_INDEX);
       break;
+    }
+    case CUSTOM_GRADIENT: {
+      float depth = ledDepth(i);
+      if (depth < MAX_DEPTH / 2) {
+        float percent = mapf(depth, 0, MAX_DEPTH / 2, 0, 1);
+        return getColorBetween(customColor1, customColor2, percent);
+      } else {
+        float percent = mapf(depth, MAX_DEPTH / 2, MAX_DEPTH, 0, 1);
+        return getColorBetween(customColor2, customColor3, percent);
+      }
     }
     default:
       break;

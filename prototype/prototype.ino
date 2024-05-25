@@ -66,6 +66,7 @@ struct Path {
 Path rings[NUM_RINGS];
 Path straights[NUM_STRAIGHTS];
 
+int brightness = BRIGHTNESS;
 int activePattern = DEFAULT_PATTERN;
 float speed = DEFAULT_SPEED;
 float density = DEFAULT_DENSITY;
@@ -74,6 +75,9 @@ float overlaySpeed = DEFAULT_OVERLAYSPEED;
 float overlayWidth = DEFAULT_OVERLAYWIDTH;
 float overlayDensity = DEFAULT_OVERLAYDENSITY;
 bool reverse = DEFAULT_REVERSE;
+CRGB customColor1 = CRGB(100, 100, 100);
+CRGB customColor2 = CRGB(0, 0, 100);
+CRGB customColor3 = CRGB(0, 100, 100);
 
 bool beat = false;
 int bpm = DEFAULT_BPM;
@@ -111,6 +115,7 @@ Palette palette;
 #include "SolidSubPattern.h"
 // clang-format on
 
+SolidSubPattern solid(SolidSubPattern::SOLID);
 SolidSubPattern solidOverlay(SolidSubPattern::SOLID_OVERLAY);
 SolidSubPattern solidOverlayRailgun(SolidSubPattern::SOLID_OVERLAY_RAILGUN);
 TwinkleSubPattern twinkle(TwinkleSubPattern::TWINKLE);
@@ -138,6 +143,7 @@ FlashSubPattern flashingHexagonsWarp(FlashSubPattern::FLASHING_HEXAGONS_WARP);
 
 // clang-format off
 SubPattern *activePatterns[] = {
+  &solid,
   &solidOverlay,
   &solidOverlayRailgun,
   &twinkle,
@@ -419,7 +425,7 @@ void loop() {
   // }
 
   FastLED.setMaxRefreshRate(30);
-  FastLED.setBrightness(BRIGHTNESS);
+  FastLED.setBrightness(brightness);
   FastLED.show();
   ticks++;
 }
