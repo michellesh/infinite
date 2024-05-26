@@ -5,6 +5,10 @@
 
 #define MAX_IDLE_TIME 2000
 
+// Spinning hexagon patterns speed multiplier range
+// min and max are range for variable speeds
+RangeF spinningSpeedMultiplier = {0.25, 0.5, 0.5}; // min, max, default
+
 int order[] = {0, 1, 2, 3, 4, 5};
 
 // struct Flicker {
@@ -104,6 +108,8 @@ private:
   //  }
   //}
 
+  // ROTATING_HEXAGONS
+  // COUNTER_ROTATING_HEXAGONS
   void _showRotatingHexagonsOffset() {
     static int _prevDensity = density;
     if (density != _prevDensity) {
@@ -123,6 +129,8 @@ private:
     }
   }
 
+  // VARIABLE_SPEED_ROTATION
+  // VARIABLE_SPEED_ROTATION_END
   void _showRotatingHexagons() {
     for (int i = 0; i < _numLines; i++) {
       _lines[i].showRepeat();
@@ -264,6 +272,7 @@ public:
         _lines[i].setOffset(i * (degreeStep * NUM_LEDS_PER_RING / 360));
         _lines[i].setPath(rings[i]);
         _lines[i].setLengthMultiplier(0.5);
+        _lines[i].setSpeedMultiplier(spinningSpeedMultiplier.DFLT);
         _lines[i].setReverse(false);
       }
       break;
@@ -273,6 +282,7 @@ public:
         _lines[i] = LineBPM(i);
         _lines[i].setPath(rings[i]);
         _lines[i].setLengthMultiplier(0.5);
+        _lines[i].setSpeedMultiplier(spinningSpeedMultiplier.DFLT);
         int degreeStep = map(density, 1, 10, 0, 50); // range 0-50 degree offset
         _lines[i].setOffset(i * (degreeStep * NUM_LEDS_PER_RING / 360));
         _lines[i].setReverse(i % 2 == 0);
@@ -286,10 +296,13 @@ public:
         _lines[i].setLengthMultiplier(0.5);
         _lines[i].setReverse(false);
         if (i < _numLines / 2) {
-          _lines[i].setSpeedMultiplier(mapf(i, 0, _numLines / 2 - 1, 0.5, 1));
+          _lines[i].setSpeedMultiplier(mapf(i, 0, _numLines / 2 - 1,
+                                            spinningSpeedMultiplier.MIN,
+                                            spinningSpeedMultiplier.MAX));
         } else {
-          _lines[i].setSpeedMultiplier(
-              mapf(i, _numLines / 2, _numLines - 1, 1, 0.5));
+          _lines[i].setSpeedMultiplier(mapf(i, _numLines / 2, _numLines - 1,
+                                            spinningSpeedMultiplier.MAX,
+                                            spinningSpeedMultiplier.MIN));
         }
       }
       break;
@@ -299,7 +312,9 @@ public:
         _lines[i] = LineBPM(i);
         _lines[i].setPath(rings[i]);
         _lines[i].setLengthMultiplier(0.5);
-        _lines[i].setSpeedMultiplier(mapf(i, 0, _numLines - 1, 0.5, 1));
+        _lines[i].setSpeedMultiplier(mapf(i, 0, _numLines - 1,
+                                          spinningSpeedMultiplier.MIN,
+                                          spinningSpeedMultiplier.MAX));
         _lines[i].setReverse(false);
       }
       break;

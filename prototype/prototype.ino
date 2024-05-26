@@ -81,7 +81,7 @@ CRGB customColor3 = CRGB(0, 100, 100);
 
 bool beat = false;
 int bpm = DEFAULT_BPM;
-unsigned long loopMillis;
+unsigned long loopMillis = 0;
 int beatLength(float multiplier = 1.0) {
   return 60000 / (bpm * multiplier); // eg. bpm 112 = 1 beat every 535.7 ms
 }
@@ -384,8 +384,14 @@ void loop() {
   FastLED.clear();
   palette.cycle();
 
-  loopMillis = millis();
+  // use loopMillis instead of millis so that everything calculated on one
+  // iteration of a loop references the same point in time
+  static unsigned long prevMillis = millis();
+  loopMillis += millis() - prevMillis;
+  prevMillis = millis();
 
+  // set 'beat' to true for one loop iteration every time millis passes one
+  // duration of bpm
   if (beat) {
     beat = false;
   }

@@ -21,13 +21,15 @@ private:
     }
     _position = isReversed() ? mapBeat(0, endPosition, _speedMultiplier)
                              : mapBeat(endPosition, 0, _speedMultiplier);
-    if (isReversed()) {
-      _position += _offset;
-      _position = (int)_position % endPosition;
-    } else {
-      _position -= _offset;
-      _position += endPosition * 2;
-      _position = (int)_position % endPosition;
+    if (_offset != 0) {
+      if (isReversed()) {
+        _position += _offset;
+        _position = (int)_position % endPosition;
+      } else {
+        _position -= _offset;
+        _position += endPosition * 2;
+        _position = (int)_position % endPosition;
+      }
     }
   }
 

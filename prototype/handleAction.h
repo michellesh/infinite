@@ -1,7 +1,11 @@
 void handleAction() {
   if (data.pattern != activePattern) {
-    ticks = 0;
     activePattern = data.pattern;
+    ticks = 0;
+    // every time we start a new pattern, start at time 0
+    // when millis() gets really large, mapping the current progress of a beat
+    // using % results in more variation,
+    loopMillis = 0;
   }
   if (data.palette != palette.getPalette()) {
     palette.setPalette(data.palette);
