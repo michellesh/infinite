@@ -81,9 +81,13 @@ CRGB customColor3 = CRGB(0, 100, 100);
 
 bool beat = false;
 int bpm = DEFAULT_BPM;
-int beatLength() { return 60000 / bpm; } // 1 beat every 535.7 milliseconds
-int mapBeat(int start, int end) {
-  return map(millis() % beatLength(), 0, beatLength(), start, end);
+unsigned long loopMillis;
+int beatLength(float multiplier = 1.0) {
+  return 60000 / (bpm * multiplier); // eg. bpm 112 = 1 beat every 535.7 ms
+}
+int mapBeat(int start, int end, float multiplier = 1.0) {
+  return map(loopMillis % beatLength(multiplier), 0, beatLength(multiplier),
+             start, end);
 }
 
 unsigned long startTime = 0;
@@ -134,11 +138,12 @@ LineSubPattern rainfall(LineSubPattern::RAINFALL);
 LineSubPattern basketWeaving(LineSubPattern::BASKET_WEAVING);
 LineSubPattern cometTrails(LineSubPattern::COMET_TRAILS);
 LineSubPatternBPM rotatingHexagons(LineSubPatternBPM::ROTATING_HEXAGONS);
-LineSubPattern
-    counterRotatingHexagons(LineSubPattern::COUNTER_ROTATING_HEXAGONS);
-LineSubPattern variableSpeedRotation(LineSubPattern::VARIABLE_SPEED_ROTATION);
-LineSubPattern
-    variableSpeedRotationEnd(LineSubPattern::VARIABLE_SPEED_ROTATION_END);
+LineSubPatternBPM
+    counterRotatingHexagons(LineSubPatternBPM::COUNTER_ROTATING_HEXAGONS);
+LineSubPatternBPM
+    variableSpeedRotation(LineSubPatternBPM::VARIABLE_SPEED_ROTATION);
+LineSubPatternBPM
+    variableSpeedRotationEnd(LineSubPatternBPM::VARIABLE_SPEED_ROTATION_END);
 FlashSubPattern flashingHexagons(FlashSubPattern::FLASHING_HEXAGONS);
 FlashSubPattern flashingHexagonsWarp(FlashSubPattern::FLASHING_HEXAGONS_WARP);
 
@@ -378,6 +383,8 @@ void setup() {
 void loop() {
   FastLED.clear();
   palette.cycle();
+
+  loopMillis = millis();
 
   if (beat) {
     beat = false;

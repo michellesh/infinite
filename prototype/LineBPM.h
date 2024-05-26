@@ -2,11 +2,12 @@ class LineBPM : public Pattern {
 private:
   uint8_t _id = 0;
   //uint8_t _fadeType = FADE_BOTH_ENDS;
-  float _speedMultiplier = 1; // TODO really just -1 or 1 now
+  float _speedMultiplier = 1;
   float _lengthMultiplier = 1;
   float _prevPosition = 0;
   float _position = 0;
   int _offset = 0;
+  bool _reverse = reverse;
   Path _path;
 
   //float _getSpeed() {
@@ -18,8 +19,8 @@ private:
     if (includeLineLength) {
       endPosition += getLength();
     }
-    _position =
-        isReversed() ? mapBeat(0, endPosition) : mapBeat(endPosition, 0);
+    _position = isReversed() ? mapBeat(0, endPosition, _speedMultiplier)
+                             : mapBeat(endPosition, 0, _speedMultiplier);
     if (isReversed()) {
       _position += _offset;
       _position = (int)_position % endPosition;
@@ -58,9 +59,9 @@ public:
 
   //uint8_t getId() { return _id; }
 
-  //void setSpeedMultiplier(float speedMultiplier) {
-  //  _speedMultiplier = speedMultiplier;
-  //}
+  void setSpeedMultiplier(float speedMultiplier) {
+    _speedMultiplier = speedMultiplier;
+  }
 
   void setLengthMultiplier(float lengthMultiplier) {
     _lengthMultiplier = lengthMultiplier;
@@ -80,14 +81,11 @@ public:
 
   Path getPath() { return _path; }
 
-  bool isReversed() { return _speedMultiplier * (reverse ? -1 : 1) < 0; }
+  bool isReversed() { return _reverse ^ reverse; } // XOR
 
-  //void setReverse(bool reverse) {
-  //  _speedMultiplier =
-  //      reverse ? abs(_speedMultiplier) * -1 : abs(_speedMultiplier);
-  //}
+  void setReverse(bool r) { _reverse = r; }
 
-  void toggleReverse() { _speedMultiplier *= -1; }
+  void toggleReverse() { _reverse = !_reverse; }
 
   //void setFadeType(uint8_t fadeType) { _fadeType = fadeType; }
 

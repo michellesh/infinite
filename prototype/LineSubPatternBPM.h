@@ -104,7 +104,7 @@ private:
   //  }
   //}
 
-  void _showRotatingHexagons() {
+  void _showRotatingHexagonsOffset() {
     static int _prevDensity = density;
     if (density != _prevDensity) {
       int degreeStep = map(density, 1, 10, 0, 50); // range 0-50 degree offset
@@ -113,6 +113,17 @@ private:
       }
       _prevDensity = density;
     }
+    for (int i = 0; i < _numLines; i++) {
+      _lines[i].showRepeat();
+      if (beat) {
+        Serial.print(i);
+        Serial.print(": ");
+        Serial.println(_lines[i].isReversed());
+      }
+    }
+  }
+
+  void _showRotatingHexagons() {
     for (int i = 0; i < _numLines; i++) {
       _lines[i].showRepeat();
     }
@@ -173,6 +184,7 @@ public:
         _lines[i] = LineBPM(i);
         _lines[i].setPath(straights[i]);
         _lines[i].setOffset(offsetStep * i);
+        _lines[i].setReverse(false);
       }
       break;
     case LASERS:
@@ -183,6 +195,7 @@ public:
         _lines[i] = LineBPM(i);
         _lines[i].setPath(straights[i]);
         _lines[i].setLengthMultiplier(2);
+        _lines[i].setReverse(false);
       }
       break;
     case LASERS_ALL_AT_ONCE:
@@ -191,6 +204,7 @@ public:
         _lines[i] = LineBPM(i);
         _lines[i].setPath(straights[i]);
         _lines[i].setLengthMultiplier(2);
+        _lines[i].setReverse(false);
       }
       break;
     //case RAINFALL:
@@ -250,45 +264,45 @@ public:
         _lines[i].setOffset(i * (degreeStep * NUM_LEDS_PER_RING / 360));
         _lines[i].setPath(rings[i]);
         _lines[i].setLengthMultiplier(0.5);
+        _lines[i].setReverse(false);
       }
       break;
-    //case COUNTER_ROTATING_HEXAGONS:
-    //  _numLines = NUM_RINGS;
-    //  for (uint8_t i = 0; i < _numLines; i++) {
-    //    _lines[i] = LineBPM(i);
-    //    _lines[i].setSpeedMultiplier(0.5);
-    //    _lines[i].setPath(rings[i]);
-    //    _lines[i].setLengthMultiplier(0.5);
-    //    if (i % 2 == 0) {
-    //      _lines[i].setReverse(true);
-    //    }
-    //    _lines[i].setPosition(i *
-    //                          (10 * NUM_LEDS_PER_RING / 360)); // 10 "degrees"
-    //  }
-    //  break;
-    //case VARIABLE_SPEED_ROTATION:
-    //  _numLines = NUM_RINGS;
-    //  for (uint8_t i = 0; i < _numLines; i++) {
-    //    _lines[i] = LineBPM(i);
-    //    _lines[i].setPath(rings[i]);
-    //    _lines[i].setLengthMultiplier(0.5);
-    //    if (i < _numLines / 2) {
-    //      _lines[i].setSpeedMultiplier(mapf(i, 0, _numLines / 2 - 1, 0.2, 1));
-    //    } else {
-    //      _lines[i].setSpeedMultiplier(
-    //          mapf(i, _numLines / 2, _numLines - 1, 1, 0.2));
-    //    }
-    //  }
-    //  break;
-    //case VARIABLE_SPEED_ROTATION_END:
-    //  _numLines = NUM_RINGS;
-    //  for (uint8_t i = 0; i < _numLines; i++) {
-    //    _lines[i] = LineBPM(i);
-    //    _lines[i].setPath(rings[i]);
-    //    _lines[i].setLengthMultiplier(0.5);
-    //    _lines[i].setSpeedMultiplier(mapf(i, 0, _numLines - 1, 0.2, 1));
-    //  }
-    //  break;
+    case COUNTER_ROTATING_HEXAGONS:
+      _numLines = NUM_RINGS;
+      for (uint8_t i = 0; i < _numLines; i++) {
+        _lines[i] = LineBPM(i);
+        _lines[i].setPath(rings[i]);
+        _lines[i].setLengthMultiplier(0.5);
+        int degreeStep = map(density, 1, 10, 0, 50); // range 0-50 degree offset
+        _lines[i].setOffset(i * (degreeStep * NUM_LEDS_PER_RING / 360));
+        _lines[i].setReverse(i % 2 == 0);
+      }
+      break;
+    case VARIABLE_SPEED_ROTATION:
+      _numLines = NUM_RINGS;
+      for (uint8_t i = 0; i < _numLines; i++) {
+        _lines[i] = LineBPM(i);
+        _lines[i].setPath(rings[i]);
+        _lines[i].setLengthMultiplier(0.5);
+        _lines[i].setReverse(false);
+        if (i < _numLines / 2) {
+          _lines[i].setSpeedMultiplier(mapf(i, 0, _numLines / 2 - 1, 0.5, 1));
+        } else {
+          _lines[i].setSpeedMultiplier(
+              mapf(i, _numLines / 2, _numLines - 1, 1, 0.5));
+        }
+      }
+      break;
+    case VARIABLE_SPEED_ROTATION_END:
+      _numLines = NUM_RINGS;
+      for (uint8_t i = 0; i < _numLines; i++) {
+        _lines[i] = LineBPM(i);
+        _lines[i].setPath(rings[i]);
+        _lines[i].setLengthMultiplier(0.5);
+        _lines[i].setSpeedMultiplier(mapf(i, 0, _numLines - 1, 0.5, 1));
+        _lines[i].setReverse(false);
+      }
+      break;
     //case RANDOM_FLASHING_SEGMENTS:
     //  _numLines =
     //      NUM_STRAIGHTS * (NUM_RINGS - 1) + NUM_RINGS * (NUM_STRAIGHTS - 1);
@@ -362,9 +376,11 @@ public:
     //  _showRandomReset();
     //  break;
     case ROTATING_HEXAGONS:
-    //case COUNTER_ROTATING_HEXAGONS:
-    //case VARIABLE_SPEED_ROTATION:
-    //case VARIABLE_SPEED_ROTATION_END:
+    case COUNTER_ROTATING_HEXAGONS:
+      _showRotatingHexagonsOffset();
+      break;
+    case VARIABLE_SPEED_ROTATION:
+    case VARIABLE_SPEED_ROTATION_END:
       _showRotatingHexagons();
       break;
     // case RANDOM_FLASHING_SEGMENTS:
