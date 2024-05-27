@@ -137,8 +137,8 @@ LineSubPatternBPM lasersAllAtOnce(LineSubPatternBPM::LASERS_ALL_AT_ONCE);
 LineSubPatternBPM
     rainfallCycleOnBeat(LineSubPatternBPM::RAINFALL_CYCLE_ON_BEAT);
 LineSubPatternBPM rainfallFallOnBeat(LineSubPatternBPM::RAINFALL_FALL_ON_BEAT);
-LineSubPattern basketWeaving(LineSubPattern::BASKET_WEAVING);
-LineSubPattern cometTrails(LineSubPattern::COMET_TRAILS);
+LineSubPatternBPM basketWeaving(LineSubPatternBPM::BASKET_WEAVING);
+LineSubPatternBPM cometTrails(LineSubPatternBPM::COMET_TRAILS);
 LineSubPatternBPM rotatingHexagons(LineSubPatternBPM::ROTATING_HEXAGONS);
 LineSubPatternBPM
     counterRotatingHexagons(LineSubPatternBPM::COUNTER_ROTATING_HEXAGONS);

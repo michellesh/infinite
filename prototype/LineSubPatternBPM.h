@@ -59,20 +59,16 @@ private:
   }
 
   // LASERS
+  // COMET_TRAILS
   void _showOneByOne() {
     static int active = 0;
-    if (beat) {
-      active++;
-      if (active == _numLines) {
-        active = 0;
-        shuffleIndexes(order, _numLines);
-      }
+    float nextPosition = _lines[order[active]].getPosition();
+    if (_lines[order[active]].isFullyOutOfBounds(nextPosition)) {
+      active = (active + 1) % _numLines;
+      _lines[order[active]].resetPrevPosition();
     }
-    for (int i = 0; i < _numLines; i++) {
-      if (i == order[active]) {
-        _lines[i].show();
-      }
-    }
+    _lines[order[active]].show(nextPosition);
+    _lines[order[active]].commitNewPosition();
   }
 
   // RAINFALL_FALL_ON_BEAT
@@ -91,23 +87,18 @@ private:
   void _showTwoByTwo() {
     static int active = 0;
     static bool again = true;
-    if (beat) {
+    float nextPosition = _lines[order[active]].getPosition();
+    if (_lines[order[active]].isFullyOutOfBounds(nextPosition)) {
       if (!again) {
-        active++;
-        if (active == _numLines) {
-          active = 0;
-          shuffleIndexes(order, _numLines);
-        }
+        active = (active + 1) % _numLines;
         again = true;
       } else {
         again = false;
       }
+      _lines[order[active]].resetPrevPosition();
     }
-    for (int i = 0; i < _numLines; i++) {
-      if (i == order[active]) {
-        _lines[i].show();
-      }
-    }
+    _lines[order[active]].show(nextPosition);
+    _lines[order[active]].commitNewPosition();
   }
 
   // ROTATING_HEXAGONS
@@ -256,36 +247,37 @@ public:
         }
       }
       break;
-    //case BASKET_WEAVING:
-    //  _numLines = NUM_STRAIGHTS + NUM_RINGS;
-    //  for (uint8_t i = 0; i < NUM_STRAIGHTS; i++) {
-    //    _lines[i] = LineBPM(i);
-    //    _lines[i].setPath(straights[i]);
-    //    _lines[i].setReverse(true);
-    //    _lines[i].setPosition(MAX_DEPTH - i * (MAX_DEPTH / NUM_STRAIGHTS));
-    //  }
-    //  for (uint8_t i = NUM_STRAIGHTS; i < _numLines; i++) {
-    //    _lines[i] = LineBPM(i);
-    //    _lines[i].setSpeedMultiplier(0.5);
-    //    _lines[i].setPath(rings[i - NUM_STRAIGHTS]);
-    //    _lines[i].setReverse(true);
-    //    _lines[i].setPosition(360 - (i - NUM_STRAIGHTS) * (360 / NUM_RINGS));
-    //    // TODO this shouldn't be 360
-    //    // although that might be why it starts with a delay which is neat
-    //  }
-    //  break;
-    //case COMET_TRAILS:
-    //  _numLines = NUM_STRAIGHTS;
-    //  for (uint8_t i = 0; i < _numLines; i++) {
-    //    _lines[i] = LineBPM(i);
-    //    _lines[i].setSpeedMultiplier(0.2);
-    //    _lines[i].setPath(straights[i]);
-    //    _lines[i].setLengthMultiplier(2);
-    //    _lines[i].setFadeType(LineBPM::FADE_COMET);
-    //    _lines[i].setReverse(true);
-    //    _lines[i].setPosition(random(0, NUM_LEDS_PER_STRAIGHT));
-    //  }
-    //  break;
+    case BASKET_WEAVING:
+      _numLines = NUM_STRAIGHTS + NUM_RINGS;
+      shuffleIndexes(order, _numLines);
+      for (uint8_t i = 0; i < NUM_STRAIGHTS; i++) {
+        _lines[i] = LineBPM(i);
+        _lines[i].setPath(straights[i]);
+        _lines[i].setReverse(true);
+        _lines[i].setOffset(MAX_DEPTH - i * (MAX_DEPTH / NUM_STRAIGHTS));
+      }
+      for (uint8_t i = NUM_STRAIGHTS; i < _numLines; i++) {
+        _lines[i] = LineBPM(i);
+        _lines[i].setSpeedMultiplier(0.25);
+        _lines[i].setPath(rings[i - NUM_STRAIGHTS]);
+        _lines[i].setReverse(true);
+        _lines[i].setOffset(order[i] * (NUM_LEDS_PER_RING / NUM_RINGS));
+      }
+      break;
+    case COMET_TRAILS:
+      // playing lasers pattern then comet trails makes the comets only on one straight?
+      // playing any other line pattern then comet trails makes new comets interrupt the next comet
+      _numLines = NUM_STRAIGHTS;
+      shuffleIndexes(order, _numLines);
+      for (uint8_t i = 0; i < _numLines; i++) {
+        _lines[i] = LineBPM(i);
+        _lines[i].setSpeedMultiplier(0.5);
+        _lines[i].setPath(straights[i]);
+        _lines[i].setLengthMultiplier(2);
+        _lines[i].setFadeType(LineBPM::FADE_COMET);
+        //_lines[i].setOffset(random(0, NUM_LEDS_PER_STRAIGHT));
+      }
+      break;
     case ROTATING_HEXAGONS:
       _numLines = NUM_RINGS;
       for (uint8_t i = 0; i < _numLines; i++) {
@@ -397,6 +389,7 @@ public:
       _showRotatingPong();
       break;
     case LASERS:
+    case COMET_TRAILS:
       _showOneByOne();
       break;
     case LASERS_DOUBLES:
@@ -404,17 +397,12 @@ public:
       break;
     case LASERS_ALL_AT_ONCE:
     case RAINFALL_CYCLE_ON_BEAT:
+    case BASKET_WEAVING:
       _showLines();
       break;
     case RAINFALL_FALL_ON_BEAT:
       _showRainfall();
       break;
-    //case BASKET_WEAVING:
-    //  _showRandomReset();
-    //  break;
-    //case COMET_TRAILS:
-    //  _showRandomReset();
-    //  break;
     case ROTATING_HEXAGONS:
     case COUNTER_ROTATING_HEXAGONS:
       _showRotatingHexagonsOffset();
