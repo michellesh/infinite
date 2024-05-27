@@ -107,8 +107,6 @@ Palette palette;
 #include "web_server.h"
 #endif
 
-#include "Spiral.h"
-#include "SpiralSubPattern.h"
 #include "Twinkle.h"
 #include "TwinkleSubPattern.h"
 #include "Line.h"
@@ -126,8 +124,6 @@ TwinkleSubPattern
     randomFadingSegments(TwinkleSubPattern::RANDOM_FADING_SEGMENTS);
 LineSubPattern randomFlashingSegments(LineSubPattern::RANDOM_FLASHING_SEGMENTS);
 TwinkleSubPattern twinkleOverlay(TwinkleSubPattern::TWINKLE_OVERLAY);
-SpiralSubPattern singleSpiral(SpiralSubPattern::SINGLE_SPIRAL);
-SpiralSubPattern doubleSpiral(SpiralSubPattern::DOUBLE_SPIRAL);
 LineSubPattern rotatingPong(LineSubPattern::ROTATING_PONG);
 LineSubPattern lasers(LineSubPattern::LASERS);
 LineSubPattern lasersDoubles(LineSubPattern::LASERS_DOUBLES);
@@ -156,8 +152,6 @@ SubPattern *activePatterns[] = {
   &randomFadingSegments,
   &randomFlashingSegments,
   &twinkleOverlay,
-  &singleSpiral,
-  &doubleSpiral,
   &rotatingPong,
   &lasers,
   &lasersDoubles,

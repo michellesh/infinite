@@ -103,9 +103,6 @@ const char index_html[] PROGMEM = R"rawliteral(
     <button type="button" onclick="sendData('n',5)">Twinkle: Random Flashing Segments</button>
     <button type="button" onclick="sendData('n',6)">*Twinkle: Wave Overlay</button>
     <div class="break"></div>
-    <button type="button" onclick="sendData('n',7)">Spiral: Single</button>
-    <button type="button" onclick="sendData('n',8)">Spiral: Double</button>
-    <div class="break"></div>
     <button type="button" onclick="sendData('n',9)">*Lines: Rotating Pong</button>
     <button type="button" onclick="sendData('n',10)">*Lines: Lasers</button>
     <button type="button" onclick="sendData('n',11)">*Lines: Lasers Doubles</button>
