@@ -9,7 +9,7 @@
 // min and max are range for variable speeds
 RangeF spinningSpeedMultiplier = {0.25, 0.5, 0.5}; // min, max, default
 
-int order[] = {0, 1, 2, 3, 4, 5};
+int order[MAX_LINES];
 
 // struct Flicker {
 //   int id = 0;
@@ -28,6 +28,7 @@ private:
   uint8_t _activeSubPattern = 0;
   uint8_t _percentBrightness = 0; // percent brightness of the whole pattern
 
+  // ROTATING_PONG
   void _showRotatingPong() {
     static int _prevDensity = 0;
     if (density != _prevDensity) {
@@ -49,19 +50,22 @@ private:
     }
   }
 
-  void _showBasicReset() {
+  // LASERS_ALL_AT_ONCE
+  // RAINFALL_CYCLE_ON_BEAT
+  void _showLines() {
     for (int i = 0; i < _numLines; i++) {
       _lines[i].show();
     }
   }
 
+  // LASERS
   void _showOneByOne() {
     static int active = 0;
     if (beat) {
       active++;
       if (active == _numLines) {
         active = 0;
-        shuffle(order, 6);
+        shuffleIndexes(order, _numLines);
       }
     }
     for (int i = 0; i < _numLines; i++) {
@@ -71,6 +75,19 @@ private:
     }
   }
 
+  // RAINFALL_FALL_ON_BEAT
+  void _showRainfall() {
+    if (beat) {
+      shuffleIndexes(order, _numLines);
+    }
+    for (int i = 0; i < _numLines; i++) {
+      if (i % 2 == 0) {
+        _lines[order[i]].show();
+      }
+    }
+  }
+
+  // LASERS_DOUBLES
   void _showTwoByTwo() {
     static int active = 0;
     static bool again = true;
@@ -79,7 +96,7 @@ private:
         active++;
         if (active == _numLines) {
           active = 0;
-          shuffle(order, 6);
+          shuffleIndexes(order, _numLines);
         }
         again = true;
       } else {
@@ -92,21 +109,6 @@ private:
       }
     }
   }
-
-  //void _showRainfall() {
-  //  for (int i = 0; i < _numLines; i++) {
-  //    if (_lines[i].isFullyOutOfBounds()) {
-  //      int r = random(0, 50);
-  //      if (_lines[i].isReversed()) { // even numbered rings
-  //        int max = NUM_LEDS_PER_RING / 2 + _lines[i].getLength();
-  //        _lines[i].setPosition(max + r);
-  //      } else {
-  //        _lines[i].setPosition(-r);
-  //      }
-  //    }
-  //    _lines[i].show();
-  //  }
-  //}
 
   // ROTATING_HEXAGONS
   // COUNTER_ROTATING_HEXAGONS
@@ -170,14 +172,15 @@ public:
   static const uint8_t LASERS = 1;
   static const uint8_t LASERS_DOUBLES = 2;
   static const uint8_t LASERS_ALL_AT_ONCE = 3;
-  static const uint8_t RAINFALL = 4;
-  static const uint8_t BASKET_WEAVING = 5;
-  static const uint8_t COMET_TRAILS = 6;
-  static const uint8_t ROTATING_HEXAGONS = 7;
-  static const uint8_t COUNTER_ROTATING_HEXAGONS = 8;
-  static const uint8_t VARIABLE_SPEED_ROTATION = 9;
-  static const uint8_t VARIABLE_SPEED_ROTATION_END = 10;
-  static const uint8_t RANDOM_FLASHING_SEGMENTS = 11;
+  static const uint8_t RAINFALL_CYCLE_ON_BEAT = 4;
+  static const uint8_t RAINFALL_FALL_ON_BEAT = 5;
+  static const uint8_t BASKET_WEAVING = 6;
+  static const uint8_t COMET_TRAILS = 7;
+  static const uint8_t ROTATING_HEXAGONS = 8;
+  static const uint8_t COUNTER_ROTATING_HEXAGONS = 9;
+  static const uint8_t VARIABLE_SPEED_ROTATION = 10;
+  static const uint8_t VARIABLE_SPEED_ROTATION_END = 11;
+  static const uint8_t RANDOM_FLASHING_SEGMENTS = 12;
 
   LineSubPatternBPM(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
@@ -198,7 +201,7 @@ public:
     case LASERS:
     case LASERS_DOUBLES:
       _numLines = NUM_STRAIGHTS;
-      shuffle(order, 6);
+      shuffleIndexes(order, _numLines);
       for (uint8_t i = 0; i < _numLines; i++) {
         _lines[i] = LineBPM(i);
         _lines[i].setPath(straights[i]);
@@ -216,24 +219,43 @@ public:
       }
       break;
     //case RAINFALL:
-    //  _numLines = NUM_RINGS;
-    //  for (uint8_t i = 0; i < _numLines; i++) {
-    //    _lines[i] = LineBPM(i);
-    //    _lines[i].setSpeedMultiplier(0.5);
-    //    if (i % 2 == 0) {
-    //      int offset = rings[i].offset;
-    //      Path path = {&leds[offset], NUM_LEDS_PER_RING / 2, offset};
-    //      _lines[i].setPath(path);
-    //      _lines[i].setPosition(NUM_LEDS_PER_RING / 2 + _lines[i].getLength());
-    //      _lines[i].setReverse(true);
-    //    } else {
-    //      int offset = rings[i].offset + NUM_LEDS_PER_RING / 2;
-    //      Path path = {&leds[offset], NUM_LEDS_PER_RING / 2, offset};
-    //      _lines[i].setPath(path);
-    //      _lines[i].setPosition(0);
-    //    }
-    //  }
-    //  break;
+    case RAINFALL_CYCLE_ON_BEAT:
+      _numLines = NUM_RINGS;
+      for (uint8_t i = 0; i < _numLines; i++) {
+        _lines[i] = LineBPM(i);
+        _lines[i].setSpeedMultiplier(0.5);
+        _lines[i].setOffset(random(0, NUM_LEDS_PER_RING));
+        if (i % 2 == 0) {
+          int offset = rings[i].offset;
+          Path path = {&leds[offset], NUM_LEDS_PER_RING / 2, offset};
+          _lines[i].setPath(path);
+          _lines[i].setReverse(false);
+        } else {
+          int offset = rings[i].offset + NUM_LEDS_PER_RING / 2 - 1;
+          Path path = {&leds[offset], NUM_LEDS_PER_RING / 2, offset};
+          _lines[i].setPath(path);
+          _lines[i].setReverse(true);
+        }
+      }
+      break;
+    case RAINFALL_FALL_ON_BEAT:
+      _numLines = NUM_RINGS;
+      shuffleIndexes(order, _numLines);
+      for (uint8_t i = 0; i < _numLines; i++) {
+        _lines[i] = LineBPM(i);
+        if (i % 2 == 0) {
+          int offset = rings[i].offset;
+          Path path = {&leds[offset], NUM_LEDS_PER_RING / 2, offset};
+          _lines[i].setPath(path);
+          _lines[i].setReverse(false);
+        } else {
+          int offset = rings[i].offset + NUM_LEDS_PER_RING / 2;
+          Path path = {&leds[offset], NUM_LEDS_PER_RING / 2, offset};
+          _lines[i].setPath(path);
+          _lines[i].setReverse(true);
+        }
+      }
+      break;
     //case BASKET_WEAVING:
     //  _numLines = NUM_STRAIGHTS + NUM_RINGS;
     //  for (uint8_t i = 0; i < NUM_STRAIGHTS; i++) {
@@ -295,6 +317,7 @@ public:
         _lines[i].setPath(rings[i]);
         _lines[i].setLengthMultiplier(0.5);
         _lines[i].setReverse(false);
+        _lines[i].setOffset(0);
         if (i < _numLines / 2) {
           _lines[i].setSpeedMultiplier(mapf(i, 0, _numLines / 2 - 1,
                                             spinningSpeedMultiplier.MIN,
@@ -312,6 +335,7 @@ public:
         _lines[i] = LineBPM(i);
         _lines[i].setPath(rings[i]);
         _lines[i].setLengthMultiplier(0.5);
+        _lines[i].setOffset(0);
         _lines[i].setSpeedMultiplier(mapf(i, 0, _numLines - 1,
                                           spinningSpeedMultiplier.MIN,
                                           spinningSpeedMultiplier.MAX));
@@ -379,11 +403,12 @@ public:
       _showTwoByTwo();
       break;
     case LASERS_ALL_AT_ONCE:
-      _showBasicReset();
+    case RAINFALL_CYCLE_ON_BEAT:
+      _showLines();
       break;
-    //case RAINFALL:
-    //  _showRainfall();
-    //  break;
+    case RAINFALL_FALL_ON_BEAT:
+      _showRainfall();
+      break;
     //case BASKET_WEAVING:
     //  _showRandomReset();
     //  break;

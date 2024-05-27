@@ -81,6 +81,13 @@ void shuffle(int array[], int size) {
   }
 }
 
+void shuffleIndexes(int array[], int size) {
+  for (int i = 0; i < size; i++) {
+    array[i] = i;
+  }
+  shuffle(array, size);
+}
+
 CRGB getColorBetween(CRGB color1, CRGB color2, float percent = 0.5) {
   return CRGB(color1.r + percent * (color2.r - color1.r),
               color1.g + percent * (color2.g - color1.g),

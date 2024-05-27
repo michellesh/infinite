@@ -134,7 +134,9 @@ LineSubPatternBPM rotatingPong(LineSubPatternBPM::ROTATING_PONG);
 LineSubPatternBPM lasers(LineSubPatternBPM::LASERS);
 LineSubPatternBPM lasersDoubles(LineSubPatternBPM::LASERS_DOUBLES);
 LineSubPatternBPM lasersAllAtOnce(LineSubPatternBPM::LASERS_ALL_AT_ONCE);
-LineSubPattern rainfall(LineSubPattern::RAINFALL);
+LineSubPatternBPM
+    rainfallCycleOnBeat(LineSubPatternBPM::RAINFALL_CYCLE_ON_BEAT);
+LineSubPatternBPM rainfallFallOnBeat(LineSubPatternBPM::RAINFALL_FALL_ON_BEAT);
 LineSubPattern basketWeaving(LineSubPattern::BASKET_WEAVING);
 LineSubPattern cometTrails(LineSubPattern::COMET_TRAILS);
 LineSubPatternBPM rotatingHexagons(LineSubPatternBPM::ROTATING_HEXAGONS);
@@ -162,7 +164,8 @@ SubPattern *activePatterns[] = {
   &lasers,
   &lasersDoubles,
   &lasersAllAtOnce,
-  &rainfall,
+  &rainfallCycleOnBeat,
+  &rainfallFallOnBeat,
   &basketWeaving,
   &cometTrails,
   &rotatingHexagons,
