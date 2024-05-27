@@ -123,6 +123,7 @@ TwinkleSubPattern twinkle(TwinkleSubPattern::TWINKLE);
 TwinkleSubPattern
     randomFadingSegments(TwinkleSubPattern::RANDOM_FADING_SEGMENTS);
 LineSubPattern randomFlashingSegments(LineSubPattern::RANDOM_FLASHING_SEGMENTS);
+LineSubPattern randomFlashingSegmentsGlitch(LineSubPattern::RANDOM_FLASHING_SEGMENTS_GLITCH);
 TwinkleSubPattern twinkleOverlay(TwinkleSubPattern::TWINKLE_OVERLAY);
 LineSubPattern rotatingPong(LineSubPattern::ROTATING_PONG);
 LineSubPattern lasers(LineSubPattern::LASERS);
@@ -151,6 +152,7 @@ SubPattern *activePatterns[] = {
   &twinkle,
   &randomFadingSegments,
   &randomFlashingSegments,
+  &randomFlashingSegmentsGlitch,
   &twinkleOverlay,
   &rotatingPong,
   &lasers,

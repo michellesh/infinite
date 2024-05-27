@@ -125,8 +125,8 @@ private:
     }
   }
 
-  // RANDOM_FLASHING_SEGMENTS
-  void _showRandomFlashingSegments() {
+  // RANDOM_FLASHING_SEGMENTS_GLITCH
+  void _showRandomFlashingSegmentsGlitch() {
     for (int i = 0; i < NUM_FLICKERS; i++) {
       if (flickers[i].idTimer.complete()) {
         flickers[i].idle = !flickers[i].idle;
@@ -154,6 +154,13 @@ private:
     }
   }
 
+  // RANDOM_FLASHING_SEGMENTS
+  void _showRandomFlashingSegments() {
+    for (int i = 0; i < _numLines; i++) {
+      _lines[i].showPathFixed(_numLines, false, true);
+    }
+  }
+
 public:
   static const uint8_t ROTATING_PONG = 0;
   static const uint8_t LASERS = 1;
@@ -168,6 +175,7 @@ public:
   static const uint8_t VARIABLE_SPEED_ROTATION = 10;
   static const uint8_t VARIABLE_SPEED_ROTATION_END = 11;
   static const uint8_t RANDOM_FLASHING_SEGMENTS = 12;
+  static const uint8_t RANDOM_FLASHING_SEGMENTS_GLITCH = 13;
 
   LineSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
@@ -327,6 +335,7 @@ public:
       }
       break;
     case RANDOM_FLASHING_SEGMENTS:
+    case RANDOM_FLASHING_SEGMENTS_GLITCH:
       _numLines =
           NUM_STRAIGHTS * (NUM_RINGS - 1) + NUM_RINGS * (NUM_STRAIGHTS - 1);
       for (uint8_t i = 0; i < NUM_STRAIGHTS; i++) {
@@ -405,6 +414,9 @@ public:
       break;
     case RANDOM_FLASHING_SEGMENTS:
       _showRandomFlashingSegments();
+      break;
+    case RANDOM_FLASHING_SEGMENTS_GLITCH:
+      _showRandomFlashingSegmentsGlitch();
       break;
     default:
       break;
