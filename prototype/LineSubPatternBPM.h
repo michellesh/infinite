@@ -11,15 +11,15 @@ RangeF spinningSpeedMultiplier = {0.25, 0.5, 0.5}; // min, max, default
 
 int order[MAX_LINES];
 
-// struct Flicker {
-//   int id = 0;
-//   bool state = false;
-//   bool idle = false;
-//   Timer idTimer = {1000};
-//   Timer stateTimer = {10};
-// };
-//
-// Flicker flickers[NUM_FLICKERS];
+struct Flicker {
+  int id = 0;
+  bool state = false;
+  bool idle = false;
+  Timer idTimer = {1000};
+  Timer stateTimer = {10};
+};
+
+Flicker flickers[NUM_FLICKERS];
 
 class LineSubPatternBPM : public SubPattern {
 private:
@@ -52,6 +52,7 @@ private:
 
   // LASERS_ALL_AT_ONCE
   // RAINFALL_CYCLE_ON_BEAT
+  // BASKET_WEAVING
   void _showLines() {
     for (int i = 0; i < _numLines; i++) {
       _lines[i].show();
@@ -71,18 +72,6 @@ private:
     _lines[order[active]].commitNewPosition();
   }
 
-  // RAINFALL_FALL_ON_BEAT
-  void _showRainfall() {
-    if (beat) {
-      shuffleIndexes(order, _numLines);
-    }
-    for (int i = 0; i < _numLines; i++) {
-      if (i % 2 == 0) {
-        _lines[order[i]].show();
-      }
-    }
-  }
-
   // LASERS_DOUBLES
   void _showTwoByTwo() {
     static int active = 0;
@@ -99,6 +88,18 @@ private:
     }
     _lines[order[active]].show(nextPosition);
     _lines[order[active]].commitNewPosition();
+  }
+
+  // RAINFALL_FALL_ON_BEAT
+  void _showRainfall() {
+    if (beat) {
+      shuffleIndexes(order, _numLines);
+    }
+    for (int i = 0; i < _numLines; i++) {
+      if (i % 2 == 0) {
+        _lines[order[i]].show();
+      }
+    }
   }
 
   // ROTATING_HEXAGONS
@@ -130,33 +131,34 @@ private:
     }
   }
 
-  // void _showRandomFlashingSegments() {
-  //   for (int i = 0; i < NUM_FLICKERS; i++) {
-  //     if (flickers[i].idTimer.complete()) {
-  //       flickers[i].idle = !flickers[i].idle;
-  //       flickers[i].id = random(0, _numLines - 1);
-  //       flickers[i].stateTimer.totalCycleTime = random(10, 100);
-  //       flickers[i].idTimer.totalCycleTime = random(600, 1200);
-  //       flickers[i].idTimer.reset();
-  //     }
-  //     if (flickers[i].stateTimer.complete()) {
-  //       flickers[i].state = !flickers[i].state;
-  //       flickers[i].stateTimer.reset();
-  //     }
-  //   }
+  // RANDOM_FLASHING_SEGMENTS
+  void _showRandomFlashingSegments() {
+    for (int i = 0; i < NUM_FLICKERS; i++) {
+      if (flickers[i].idTimer.complete()) {
+        flickers[i].idle = !flickers[i].idle;
+        flickers[i].id = random(0, _numLines - 1);
+        flickers[i].stateTimer.totalCycleTime = random(10, 100);
+        flickers[i].idTimer.totalCycleTime = random(600, 1200);
+        flickers[i].idTimer.reset();
+      }
+      if (flickers[i].stateTimer.complete()) {
+        flickers[i].state = !flickers[i].state;
+        flickers[i].stateTimer.reset();
+      }
+    }
 
-  //  for (int i = 0; i < _numLines; i++) {
-  //    bool isFlickering = false;
-  //    bool flickerState = false;
-  //    for (int j = 0; j < NUM_FLICKERS; j++) {
-  //      if (!flickers[j].idle && flickers[j].id == i) {
-  //        isFlickering = true;
-  //        flickerState = flickers[j].state;
-  //      }
-  //    }
-  //    _lines[i].showPathFixed(_numLines, isFlickering, flickerState);
-  //  }
-  //}
+    for (int i = 0; i < _numLines; i++) {
+      bool isFlickering = false;
+      bool flickerState = false;
+      for (int j = 0; j < NUM_FLICKERS; j++) {
+        if (!flickers[j].idle && flickers[j].id == i) {
+          isFlickering = true;
+          flickerState = flickers[j].state;
+        }
+      }
+      _lines[i].showPathFixed(_numLines, isFlickering, flickerState);
+    }
+  }
 
 public:
   static const uint8_t ROTATING_PONG = 0;
@@ -334,41 +336,41 @@ public:
         _lines[i].setReverse(false);
       }
       break;
-    //case RANDOM_FLASHING_SEGMENTS:
-    //  _numLines =
-    //      NUM_STRAIGHTS * (NUM_RINGS - 1) + NUM_RINGS * (NUM_STRAIGHTS - 1);
-    //  for (uint8_t i = 0; i < NUM_STRAIGHTS; i++) {
-    //    int totalLength = 0;
-    //    int segmentLength = (NUM_LEDS_PER_STRAIGHT / (NUM_RINGS - 1));
-    //    for (uint8_t j = 0; j < NUM_RINGS - 1; j++) {
-    //      int length = j == NUM_RINGS - 2 ? straights[i].length - totalLength
-    //                                      : segmentLength;
-    //      Path p = {&straights[i].leds[j * segmentLength], length,
-    //                straights[i].offset + j * segmentLength};
-    //      int lineIndex = i * (NUM_RINGS - 1) + j;
-    //      _lines[lineIndex] = LineBPM(lineIndex);
-    //      _lines[lineIndex].setPath(p);
-    //      _lines[lineIndex].setSpeedMultiplier(1.5);
-    //      totalLength += segmentLength;
-    //    }
-    //  }
-    //  for (uint8_t i = 0; i < NUM_RINGS; i++) {
-    //    int totalLength = 0;
-    //    int segmentLength = NUM_LEDS_PER_RING / (NUM_STRAIGHTS - 1);
-    //    for (uint8_t j = 0; j < NUM_STRAIGHTS - 1; j++) {
-    //      int length = j == NUM_STRAIGHTS - 2 ? rings[i].length - totalLength
-    //                                          : segmentLength;
-    //      Path p = {&rings[i].leds[j * segmentLength], length,
-    //                rings[i].offset + j * segmentLength};
-    //      int lineIndex =
-    //          (NUM_STRAIGHTS * (NUM_RINGS - 1)) + i * (NUM_STRAIGHTS - 1) + j;
-    //      _lines[lineIndex] = LineBPM(lineIndex);
-    //      _lines[lineIndex].setPath(p);
-    //      _lines[lineIndex].setSpeedMultiplier(1.5);
-    //      totalLength += segmentLength;
-    //    }
-    //  }
-    //  break;
+    case RANDOM_FLASHING_SEGMENTS:
+      _numLines =
+          NUM_STRAIGHTS * (NUM_RINGS - 1) + NUM_RINGS * (NUM_STRAIGHTS - 1);
+      for (uint8_t i = 0; i < NUM_STRAIGHTS; i++) {
+        int totalLength = 0;
+        int segmentLength = (NUM_LEDS_PER_STRAIGHT / (NUM_RINGS - 1));
+        for (uint8_t j = 0; j < NUM_RINGS - 1; j++) {
+          int length = j == NUM_RINGS - 2 ? straights[i].length - totalLength
+                                          : segmentLength;
+          Path p = {&straights[i].leds[j * segmentLength], length,
+                    straights[i].offset + j * segmentLength};
+          int lineIndex = i * (NUM_RINGS - 1) + j;
+          _lines[lineIndex] = LineBPM(lineIndex);
+          _lines[lineIndex].setPath(p);
+          _lines[lineIndex].setSpeedMultiplier(1.5);
+          totalLength += segmentLength;
+        }
+      }
+      for (uint8_t i = 0; i < NUM_RINGS; i++) {
+        int totalLength = 0;
+        int segmentLength = NUM_LEDS_PER_RING / (NUM_STRAIGHTS - 1);
+        for (uint8_t j = 0; j < NUM_STRAIGHTS - 1; j++) {
+          int length = j == NUM_STRAIGHTS - 2 ? rings[i].length - totalLength
+                                              : segmentLength;
+          Path p = {&rings[i].leds[j * segmentLength], length,
+                    rings[i].offset + j * segmentLength};
+          int lineIndex =
+              (NUM_STRAIGHTS * (NUM_RINGS - 1)) + i * (NUM_STRAIGHTS - 1) + j;
+          _lines[lineIndex] = LineBPM(lineIndex);
+          _lines[lineIndex].setPath(p);
+          _lines[lineIndex].setSpeedMultiplier(1.5);
+          totalLength += segmentLength;
+        }
+      }
+      break;
     default:
       break;
     }
@@ -411,9 +413,9 @@ public:
     case VARIABLE_SPEED_ROTATION_END:
       _showRotatingHexagons();
       break;
-    // case RANDOM_FLASHING_SEGMENTS:
-    //   _showRandomFlashingSegments();
-    //   break;
+     case RANDOM_FLASHING_SEGMENTS:
+       _showRandomFlashingSegments();
+       break;
     default:
       break;
     }

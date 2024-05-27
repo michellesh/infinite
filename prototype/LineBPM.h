@@ -136,19 +136,19 @@ public:
 
   void commitNewPosition() { _prevPosition = _position; }
 
-  //void showPathFixed(int maxTwinkles, bool isFlickering, bool flickerState) {
-  //  int s = (float)speed * _speedMultiplier;
-  //  twinkleSome(maxTwinkles, min(s, MAX_TWINKLE_SPEED),
-  //              map(density, 1, 10, 1, MAX_TWINKLE_DENSITY));
+  void showPathFixed(int maxTwinkles, bool isFlickering, bool flickerState) {
+    int s = (float)speed * _speedMultiplier;
+    twinkleSome(maxTwinkles, min(s, MAX_TWINKLE_SPEED),
+                map(density, 1, 10, 1, MAX_TWINKLE_DENSITY));
 
-  //  // No position, just shows entire path
-  //  for (int i = 0; i < _path.length; i++) {
-  //    uint8_t brightness = isFlickering ? (flickerState ? 255 : 0)
-  //                         : twinkleBrightness[_id] < 127 ? 0
-  //                                                        : 255;
-  //    _path.leds[i] = palette.getColor(_path.offset + i).nscale8(brightness);
-  //  }
-  //}
+    // No position, just shows entire path
+    for (int i = 0; i < _path.length; i++) {
+      uint8_t brightness = isFlickering ? (flickerState ? 255 : 0)
+                           : twinkleBrightness[_id] < 127 ? 0
+                                                          : 255;
+      _path.leds[i] = palette.getColor(_path.offset + i).nscale8(brightness);
+    }
+  }
 
   void show(float nextPosition) {
     _show();

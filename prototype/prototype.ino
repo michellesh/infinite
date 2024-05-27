@@ -111,8 +111,8 @@ Palette palette;
 #include "SpiralSubPattern.h"
 #include "Twinkle.h"
 #include "TwinkleSubPattern.h"
-#include "Line.h"
-#include "LineSubPattern.h"
+//#include "Line.h"
+//#include "LineSubPattern.h"
 #include "LineBPM.h"
 #include "LineSubPatternBPM.h"
 #include "Flash.h"
@@ -126,7 +126,7 @@ SolidSubPattern solidOverlayRailgun(SolidSubPattern::SOLID_OVERLAY_RAILGUN);
 TwinkleSubPattern twinkle(TwinkleSubPattern::TWINKLE);
 TwinkleSubPattern
     randomFadingSegments(TwinkleSubPattern::RANDOM_FADING_SEGMENTS);
-LineSubPattern randomFlashingSegments(LineSubPattern::RANDOM_FLASHING_SEGMENTS);
+LineSubPatternBPM randomFlashingSegments(LineSubPatternBPM::RANDOM_FLASHING_SEGMENTS);
 TwinkleSubPattern twinkleOverlay(TwinkleSubPattern::TWINKLE_OVERLAY);
 SpiralSubPattern singleSpiral(SpiralSubPattern::SINGLE_SPIRAL);
 SpiralSubPattern doubleSpiral(SpiralSubPattern::DOUBLE_SPIRAL);
