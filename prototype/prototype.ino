@@ -111,10 +111,8 @@ Palette palette;
 #include "SpiralSubPattern.h"
 #include "Twinkle.h"
 #include "TwinkleSubPattern.h"
-//#include "Line.h"
-//#include "LineSubPattern.h"
-#include "LineBPM.h"
-#include "LineSubPatternBPM.h"
+#include "Line.h"
+#include "LineSubPattern.h"
 #include "Flash.h"
 #include "FlashSubPattern.h"
 #include "SolidSubPattern.h"
@@ -126,26 +124,26 @@ SolidSubPattern solidOverlayRailgun(SolidSubPattern::SOLID_OVERLAY_RAILGUN);
 TwinkleSubPattern twinkle(TwinkleSubPattern::TWINKLE);
 TwinkleSubPattern
     randomFadingSegments(TwinkleSubPattern::RANDOM_FADING_SEGMENTS);
-LineSubPatternBPM randomFlashingSegments(LineSubPatternBPM::RANDOM_FLASHING_SEGMENTS);
+LineSubPattern randomFlashingSegments(LineSubPattern::RANDOM_FLASHING_SEGMENTS);
 TwinkleSubPattern twinkleOverlay(TwinkleSubPattern::TWINKLE_OVERLAY);
 SpiralSubPattern singleSpiral(SpiralSubPattern::SINGLE_SPIRAL);
 SpiralSubPattern doubleSpiral(SpiralSubPattern::DOUBLE_SPIRAL);
-LineSubPatternBPM rotatingPong(LineSubPatternBPM::ROTATING_PONG);
-LineSubPatternBPM lasers(LineSubPatternBPM::LASERS);
-LineSubPatternBPM lasersDoubles(LineSubPatternBPM::LASERS_DOUBLES);
-LineSubPatternBPM lasersAllAtOnce(LineSubPatternBPM::LASERS_ALL_AT_ONCE);
-LineSubPatternBPM
-    rainfallCycleOnBeat(LineSubPatternBPM::RAINFALL_CYCLE_ON_BEAT);
-LineSubPatternBPM rainfallFallOnBeat(LineSubPatternBPM::RAINFALL_FALL_ON_BEAT);
-LineSubPatternBPM basketWeaving(LineSubPatternBPM::BASKET_WEAVING);
-LineSubPatternBPM cometTrails(LineSubPatternBPM::COMET_TRAILS);
-LineSubPatternBPM rotatingHexagons(LineSubPatternBPM::ROTATING_HEXAGONS);
-LineSubPatternBPM
-    counterRotatingHexagons(LineSubPatternBPM::COUNTER_ROTATING_HEXAGONS);
-LineSubPatternBPM
-    variableSpeedRotation(LineSubPatternBPM::VARIABLE_SPEED_ROTATION);
-LineSubPatternBPM
-    variableSpeedRotationEnd(LineSubPatternBPM::VARIABLE_SPEED_ROTATION_END);
+LineSubPattern rotatingPong(LineSubPattern::ROTATING_PONG);
+LineSubPattern lasers(LineSubPattern::LASERS);
+LineSubPattern lasersDoubles(LineSubPattern::LASERS_DOUBLES);
+LineSubPattern lasersAllAtOnce(LineSubPattern::LASERS_ALL_AT_ONCE);
+LineSubPattern
+    rainfallCycleOnBeat(LineSubPattern::RAINFALL_CYCLE_ON_BEAT);
+LineSubPattern rainfallFallOnBeat(LineSubPattern::RAINFALL_FALL_ON_BEAT);
+LineSubPattern basketWeaving(LineSubPattern::BASKET_WEAVING);
+LineSubPattern cometTrails(LineSubPattern::COMET_TRAILS);
+LineSubPattern rotatingHexagons(LineSubPattern::ROTATING_HEXAGONS);
+LineSubPattern
+    counterRotatingHexagons(LineSubPattern::COUNTER_ROTATING_HEXAGONS);
+LineSubPattern
+    variableSpeedRotation(LineSubPattern::VARIABLE_SPEED_ROTATION);
+LineSubPattern
+    variableSpeedRotationEnd(LineSubPattern::VARIABLE_SPEED_ROTATION_END);
 FlashSubPattern flashingHexagons(FlashSubPattern::FLASHING_HEXAGONS);
 FlashSubPattern flashingHexagonsWarp(FlashSubPattern::FLASHING_HEXAGONS_WARP);
 

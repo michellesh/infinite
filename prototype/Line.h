@@ -4,14 +4,11 @@ private:
   uint8_t _fadeType = FADE_BOTH_ENDS;
   float _speedMultiplier = 1;
   float _lengthMultiplier = 1;
+  float _prevPosition = 0;
   float _position = 0;
+  int _offset = 0;
+  bool _reverse = reverse;
   Path _path;
-
-  float _getSpeed() {
-    return (float)speed * _speedMultiplier * (reverse ? -1 : 1);
-  }
-
-  void _updatePosition() { _position = _position + _getSpeed(); }
 
   uint8_t _getBrightness(int indexOnPath, int indexOnLine) {
     int _length = getLength();
@@ -30,6 +27,23 @@ private:
     return addFadeShape(map(indexOnLine, 0, _length, 0, 255));
   }
 
+  void _show() {
+    if (_fadeType == FADE_COMET) {
+      twinkleSome(NUM_LEDS, 5, 6);
+    }
+
+    // show this Line at current position and add tail of length
+    for (int indexOnLine = 0; indexOnLine < getLength(); indexOnLine++) {
+      int indexOnPath =
+          _position - indexOnLine; // tail extends backwards behind position
+      if (indexOnPath > 0 && indexOnPath < _path.length) {
+        uint8_t brightness = _getBrightness(indexOnPath, indexOnLine);
+        _path.leds[indexOnPath] =
+            palette.getColor(_path.offset + indexOnPath).nscale8(brightness);
+      }
+    }
+  }
+
 public:
   Line(uint8_t id = 0) { _id = id; }
 
@@ -38,8 +52,6 @@ public:
 
   static constexpr Range LENGTH = {
       DEPTH_SEGMENT_LENGTH, DEPTH_SEGMENT_LENGTH * 6, DEPTH_SEGMENT_LENGTH * 2};
-
-  uint8_t getId() { return _id; }
 
   void setSpeedMultiplier(float speedMultiplier) {
     _speedMultiplier = speedMultiplier;
@@ -53,38 +65,51 @@ public:
     return map(width, 1, 10, LENGTH.MIN, LENGTH.MAX) * _lengthMultiplier;
   }
 
-  void setPosition(float position) { _position = position; }
-
-  float getPosition() { return _position; }
+  float getPosition(bool includeLineLength = true) {
+    int endPosition = _path.length;
+    if (includeLineLength) {
+      endPosition += getLength();
+    }
+    float newPosition = isReversed()
+                            ? mapBeat(0, endPosition, _speedMultiplier)
+                            : mapBeat(endPosition, 0, _speedMultiplier);
+    if (isReversed()) {
+      newPosition += _offset;
+      newPosition = (int)newPosition % endPosition;
+    } else {
+      newPosition -= _offset;
+      newPosition += endPosition * 2;
+      newPosition = (int)newPosition % endPosition;
+    }
+    return newPosition;
+  }
 
   void setPath(Path path) { _path = path; }
 
+  void setOffset(int offset) { _offset = offset; }
+
   Path getPath() { return _path; }
 
-  bool isReversed() { return _speedMultiplier * (reverse ? -1 : 1) < 0; }
+  bool isReversed() { return _reverse ^ reverse; } // XOR
 
-  void setReverse(bool reverse) {
-    _speedMultiplier =
-        reverse ? abs(_speedMultiplier) * -1 : abs(_speedMultiplier);
-  }
+  void setReverse(bool r) { _reverse = r; }
 
-  void toggleReverse() { _speedMultiplier *= -1; }
+  void toggleReverse() { _reverse = !_reverse; }
 
   void setFadeType(uint8_t fadeType) { _fadeType = fadeType; }
 
-  bool isOutOfBounds() {
-    return (_position >= _path.length && !isReversed()) ||
-           (_position < getLength() && isReversed());
+  void resetPrevPosition() { _prevPosition = 0; }
+
+  bool isFullyOutOfBounds(float position) {
+    return (!isReversed() && position > _prevPosition) ||
+           (isReversed() && position < _prevPosition);
   }
 
-  bool isFullyOutOfBounds() {
-    return (_position >= _path.length + getLength() && !isReversed()) ||
-           (_position < 0 && isReversed());
-  }
+  bool isFullyOutOfBounds() { return isFullyOutOfBounds(_position); }
 
-  void resetPosition(int offset = 0) {
-    setPosition(isReversed() ? _path.length + getLength() + offset : -offset);
-  }
+  void ignoreNewPosition() { _position = _prevPosition; }
+
+  void commitNewPosition() { _prevPosition = _position; }
 
   void showPathFixed(int maxTwinkles, bool isFlickering, bool flickerState) {
     int s = (float)speed * _speedMultiplier;
@@ -100,23 +125,14 @@ public:
     }
   }
 
+  void show(float nextPosition) {
+    _show();
+    _position = nextPosition;
+  }
+
   void show() {
-    if (_fadeType == FADE_COMET) {
-      twinkleSome(NUM_LEDS, 5, 6);
-    }
-
-    // show this Line at current position and add tail of length
-    for (int indexOnLine = 0; indexOnLine < getLength(); indexOnLine++) {
-      int indexOnPath =
-          _position - indexOnLine; // tail extends backwards behind position
-      if (indexOnPath > 0 && indexOnPath < _path.length) {
-        uint8_t brightness = _getBrightness(indexOnPath, indexOnLine);
-        _path.leds[indexOnPath] =
-            palette.getColor(_path.offset + indexOnPath).nscale8(brightness);
-      }
-    }
-
-    _updatePosition();
+    _show();
+    _position = getPosition();
   }
 
   void showRepeat() {
@@ -137,6 +153,6 @@ public:
       }
     }
 
-    _updatePosition();
+    _position = getPosition(false);
   }
 };
