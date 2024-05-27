@@ -52,7 +52,7 @@ const char index_html[] PROGMEM = R"rawliteral(
   <div class="break"></div>
   </div>
 
-  <label id="labelBPM" for="bpm">BPM </label>
+  <label id="labelBPM" for="bpm">BPM* </label>
   <input id="bpm" type="number" min="1" max="65535" onchange="sendData('b',this.value)" value="%BPMVALUE%">
 
   <table border="0">
@@ -95,30 +95,30 @@ const char index_html[] PROGMEM = R"rawliteral(
   <h3>Patterns</h3>
   <div class="buttons">
     <button type="button" onclick="sendData('n',0)">Solid</button>
-    <button type="button" onclick="sendData('n',1)">Wave Overlay</button>
-    <button type="button" onclick="sendData('n',2)">Wave Overlay Railgun</button>
+    <button type="button" onclick="sendData('n',1)">*Wave Overlay</button>
+    <button type="button" onclick="sendData('n',2)">*Wave Overlay Railgun</button>
     <div class="break"></div>
     <button type="button" onclick="sendData('n',3)">Twinkle</button>
     <button type="button" onclick="sendData('n',4)">Twinkle: Random Fading Segments</button>
     <button type="button" onclick="sendData('n',5)">Twinkle: Random Flashing Segments</button>
-    <button type="button" onclick="sendData('n',6)">Twinkle: Wave Overlay</button>
+    <button type="button" onclick="sendData('n',6)">*Twinkle: Wave Overlay</button>
     <div class="break"></div>
     <button type="button" onclick="sendData('n',7)">Spiral: Single</button>
     <button type="button" onclick="sendData('n',8)">Spiral: Double</button>
     <div class="break"></div>
-    <button type="button" onclick="sendData('n',9)">Lines: Rotating Pong</button>
-    <button type="button" onclick="sendData('n',10)">Lines: Lasers</button>
-    <button type="button" onclick="sendData('n',11)">Lines: Lasers Doubles</button>
-    <button type="button" onclick="sendData('n',12)">Lines: Lasers All At Once</button>
-    <button type="button" onclick="sendData('n',13)">Lines: Rainfall Cycle On Beat</button>
-    <button type="button" onclick="sendData('n',14)">Lines: Rainfall Fall On Beat</button>
-    <button type="button" onclick="sendData('n',15)">Lines: Basket Weaving</button>
-    <button type="button" onclick="sendData('n',16)">Lines: Comet Trails</button>
+    <button type="button" onclick="sendData('n',9)">*Lines: Rotating Pong</button>
+    <button type="button" onclick="sendData('n',10)">*Lines: Lasers</button>
+    <button type="button" onclick="sendData('n',11)">*Lines: Lasers Doubles</button>
+    <button type="button" onclick="sendData('n',12)">*Lines: Lasers All At Once</button>
+    <button type="button" onclick="sendData('n',13)">*Lines: Rainfall Cycle On Beat</button>
+    <button type="button" onclick="sendData('n',14)">*Lines: Rainfall Fall On Beat</button>
+    <button type="button" onclick="sendData('n',15)">*Lines: Basket Weaving</button>
+    <button type="button" onclick="sendData('n',16)">*Lines: Comet Trails</button>
     <div class="break"></div>
-    <button type="button" onclick="sendData('n',17)">Spinning: Rotating Hexagons</button>
-    <button type="button" onclick="sendData('n',18)">Spinning: Counter Rotating Hexagons</button>
-    <button type="button" onclick="sendData('n',19)">Spinning: Variable Speed Rotation</button>
-    <button type="button" onclick="sendData('n',20)">Spinning: Variable Speed Rotation End</button>
+    <button type="button" onclick="sendData('n',17)">*Spinning: Rotating Hexagons</button>
+    <button type="button" onclick="sendData('n',18)">*Spinning: Counter Rotating Hexagons</button>
+    <button type="button" onclick="sendData('n',19)">*Spinning: Variable Speed Rotation</button>
+    <button type="button" onclick="sendData('n',20)">*Spinning: Variable Speed Rotation End</button>
     <div class="break"></div>
     <button type="button" onclick="sendData('n',21)">Flashing Hexagons</button>
     <button type="button" onclick="sendData('n',22)">Flashing Hexagons Warp</button>
