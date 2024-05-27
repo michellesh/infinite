@@ -51,6 +51,7 @@ private:
 
   // LASERS_ALL_AT_ONCE
   // RAINFALL_CYCLE_ON_BEAT
+  // RAINFALL_COMET_TRAILS
   // BASKET_WEAVING
   void _showLines() {
     for (int i = 0; i < _numLines; i++) {
@@ -125,6 +126,13 @@ private:
     }
   }
 
+  // RANDOM_FLASHING_SEGMENTS
+  void _showRandomFlashingSegments() {
+    for (int i = 0; i < _numLines; i++) {
+      _lines[i].showPathFixed(_numLines, false, true);
+    }
+  }
+
   // RANDOM_FLASHING_SEGMENTS_GLITCH
   void _showRandomFlashingSegmentsGlitch() {
     for (int i = 0; i < NUM_FLICKERS; i++) {
@@ -154,13 +162,6 @@ private:
     }
   }
 
-  // RANDOM_FLASHING_SEGMENTS
-  void _showRandomFlashingSegments() {
-    for (int i = 0; i < _numLines; i++) {
-      _lines[i].showPathFixed(_numLines, false, true);
-    }
-  }
-
 public:
   static const uint8_t ROTATING_PONG = 0;
   static const uint8_t LASERS = 1;
@@ -168,14 +169,15 @@ public:
   static const uint8_t LASERS_ALL_AT_ONCE = 3;
   static const uint8_t RAINFALL_CYCLE_ON_BEAT = 4;
   static const uint8_t RAINFALL_FALL_ON_BEAT = 5;
-  static const uint8_t BASKET_WEAVING = 6;
-  static const uint8_t COMET_TRAILS = 7;
-  static const uint8_t ROTATING_HEXAGONS = 8;
-  static const uint8_t COUNTER_ROTATING_HEXAGONS = 9;
-  static const uint8_t VARIABLE_SPEED_ROTATION = 10;
-  static const uint8_t VARIABLE_SPEED_ROTATION_END = 11;
-  static const uint8_t RANDOM_FLASHING_SEGMENTS = 12;
-  static const uint8_t RANDOM_FLASHING_SEGMENTS_GLITCH = 13;
+  static const uint8_t RAINFALL_COMET_TRAILS = 6;
+  static const uint8_t BASKET_WEAVING = 7;
+  static const uint8_t COMET_TRAILS = 8;
+  static const uint8_t ROTATING_HEXAGONS = 9;
+  static const uint8_t COUNTER_ROTATING_HEXAGONS = 10;
+  static const uint8_t VARIABLE_SPEED_ROTATION = 11;
+  static const uint8_t VARIABLE_SPEED_ROTATION_END = 12;
+  static const uint8_t RANDOM_FLASHING_SEGMENTS = 13;
+  static const uint8_t RANDOM_FLASHING_SEGMENTS_GLITCH = 14;
 
   LineSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
@@ -214,9 +216,13 @@ public:
       }
       break;
     case RAINFALL_CYCLE_ON_BEAT:
+    case RAINFALL_COMET_TRAILS:
       _numLines = NUM_RINGS;
       for (uint8_t i = 0; i < _numLines; i++) {
         _lines[i] = Line(i);
+        if (_activeSubPattern == RAINFALL_COMET_TRAILS) {
+          _lines[i].setFadeType(Line::FADE_COMET);
+        }
         _lines[i].setSpeedMultiplier(0.5);
         _lines[i].setOffset(random(0, NUM_LEDS_PER_RING));
         if (i % 2 == 0) {
@@ -398,6 +404,7 @@ public:
       break;
     case LASERS_ALL_AT_ONCE:
     case RAINFALL_CYCLE_ON_BEAT:
+    case RAINFALL_COMET_TRAILS:
     case BASKET_WEAVING:
       _showLines();
       break;
