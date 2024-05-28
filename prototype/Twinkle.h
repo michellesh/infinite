@@ -52,6 +52,13 @@ public:
 
   void setWithOverlay(bool withOverlay) { _withOverlay = withOverlay; }
 
+  void reset() {
+    _speedMultiplier = 1;
+    _densityMultiplier = 1;
+    _widthMultiplier = 1;
+    _withOverlay = false;
+  }
+
   void show() {
     uint16_t PRNG16 = 11337;
     uint32_t clock32 = millis();

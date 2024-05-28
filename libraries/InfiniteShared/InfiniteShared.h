@@ -18,7 +18,6 @@
 #define ACTION_TOGGLE_REVERSE 11
 #define ACTION_SET_BPM 12
 
-// These must correspond to the index in activePatterns
 #define PATTERN_SOLID 0
 #define PATTERN_SOLID_OVERLAY 1
 #define PATTERN_SOLID_OVERLAY_RAILGUN 2

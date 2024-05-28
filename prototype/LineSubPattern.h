@@ -163,23 +163,32 @@ private:
   }
 
 public:
-  static const uint8_t ROTATING_PONG = 0;
-  static const uint8_t LASERS = 1;
-  static const uint8_t LASERS_DOUBLES = 2;
-  static const uint8_t LASERS_ALL_AT_ONCE = 3;
-  static const uint8_t RAINFALL_CYCLE_ON_BEAT = 4;
-  static const uint8_t RAINFALL_FALL_ON_BEAT = 5;
-  static const uint8_t RAINFALL_COMET_TRAILS = 6;
-  static const uint8_t BASKET_WEAVING = 7;
-  static const uint8_t COMET_TRAILS = 8;
-  static const uint8_t ROTATING_HEXAGONS = 9;
-  static const uint8_t COUNTER_ROTATING_HEXAGONS = 10;
-  static const uint8_t VARIABLE_SPEED_ROTATION = 11;
-  static const uint8_t VARIABLE_SPEED_ROTATION_END = 12;
-  static const uint8_t RANDOM_FLASHING_SEGMENTS = 13;
-  static const uint8_t RANDOM_FLASHING_SEGMENTS_GLITCH = 14;
+  static const uint8_t ROTATING_PONG = PATTERN_ROTATING_PONG;
+  static const uint8_t LASERS = PATTERN_LASERS;
+  static const uint8_t LASERS_DOUBLES = PATTERN_LASERS_DOUBLES;
+  static const uint8_t LASERS_ALL_AT_ONCE = PATTERN_LASERS_ALL_AT_ONCE;
+  static const uint8_t RAINFALL_CYCLE_ON_BEAT = PATTERN_RAINFALL_CYCLE_ON_BEAT;
+  static const uint8_t RAINFALL_FALL_ON_BEAT = PATTERN_RAINFALL_FALL_ON_BEAT;
+  static const uint8_t RAINFALL_COMET_TRAILS = PATTERN_RAINFALL_COMET_TRAILS;
+  static const uint8_t BASKET_WEAVING = PATTERN_BASKET_WEAVING;
+  static const uint8_t COMET_TRAILS = PATTERN_COMET_TRAILS;
+  static const uint8_t ROTATING_HEXAGONS = PATTERN_ROTATING_HEXAGONS;
+  static const uint8_t COUNTER_ROTATING_HEXAGONS =
+      PATTERN_COUNTER_ROTATING_HEXAGONS;
+  static const uint8_t VARIABLE_SPEED_ROTATION =
+      PATTERN_VARIABLE_SPEED_ROTATION;
+  static const uint8_t VARIABLE_SPEED_ROTATION_END =
+      PATTERN_VARIABLE_SPEED_ROTATION_END;
+  static const uint8_t RANDOM_FLASHING_SEGMENTS =
+      PATTERN_RANDOM_FLASHING_SEGMENTS;
+  static const uint8_t RANDOM_FLASHING_SEGMENTS_GLITCH =
+      PATTERN_RANDOM_FLASHING_SEGMENTS_GLITCH;
 
   LineSubPattern(uint8_t activeSubPattern = 0) {
+    _activeSubPattern = activeSubPattern;
+  }
+
+  void setActivePattern(uint8_t activeSubPattern) {
     _activeSubPattern = activeSubPattern;
   }
 

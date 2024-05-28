@@ -5,15 +5,22 @@ private:
   uint8_t _percentBrightness = 0; // percent brightness of the whole pattern
 
 public:
-  static const uint8_t FLASHING_HEXAGONS = 0;
-  static const uint8_t FLASHING_HEXAGONS_WARP = 1;
+  static const uint8_t FLASHING_HEXAGONS = PATTERN_FLASHING_HEXAGONS;
+  static const uint8_t FLASHING_HEXAGONS_WARP = PATTERN_FLASHING_HEXAGONS_WARP;
 
   FlashSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
   }
 
+  void setActivePattern(uint8_t activeSubPattern) {
+    _activeSubPattern = activeSubPattern;
+  }
+
   void setup() {
     switch (_activeSubPattern) {
+    case FLASHING_HEXAGONS:
+      _flash.setDurationMultiplier(1);
+      break;
     case FLASHING_HEXAGONS_WARP:
       _flash.setDurationMultiplier(0.1);
       break;

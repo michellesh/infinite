@@ -4,11 +4,15 @@ private:
   uint8_t _percentBrightness = 0; // percent brightness of the whole pattern
 
 public:
-  static const uint8_t SOLID = 0;
-  static const uint8_t SOLID_OVERLAY = 1;
-  static const uint8_t SOLID_OVERLAY_RAILGUN = 2;
+  static const uint8_t SOLID = PATTERN_SOLID;
+  static const uint8_t SOLID_OVERLAY = PATTERN_SOLID_OVERLAY;
+  static const uint8_t SOLID_OVERLAY_RAILGUN = PATTERN_SOLID_OVERLAY_RAILGUN;
 
   SolidSubPattern(uint8_t activeSubPattern = 0) {
+    _activeSubPattern = activeSubPattern;
+  }
+
+  void setActivePattern(uint8_t activeSubPattern) {
     _activeSubPattern = activeSubPattern;
   }
 

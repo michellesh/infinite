@@ -5,22 +5,31 @@ private:
   uint8_t _percentBrightness = 0; // percent brightness of the whole pattern
 
 public:
-  static const uint8_t TWINKLE = 0;
-  static const uint8_t RANDOM_FADING_SEGMENTS = 1;
-  static const uint8_t TWINKLE_OVERLAY = 2;
+  static const uint8_t TWINKLE = PATTERN_TWINKLE;
+  static const uint8_t RANDOM_FADING_SEGMENTS = PATTERN_RANDOM_FADING_SEGMENTS;
+  static const uint8_t TWINKLE_OVERLAY = PATTERN_TWINKLE_OVERLAY;
 
   TwinkleSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
   }
 
+  void setActivePattern(uint8_t activeSubPattern) {
+    _activeSubPattern = activeSubPattern;
+  }
+
   void setup() {
     switch (_activeSubPattern) {
+    case TWINKLE:
+      _twinkle.reset();
+      break;
     case RANDOM_FADING_SEGMENTS:
       _twinkle.setDensityMultiplier(0.5);
       _twinkle.setSpeedMultiplier(2);
       _twinkle.setWidthMultiplier(DEPTH_SEGMENT_LENGTH / 2);
+      _twinkle.setWithOverlay(false);
       break;
     case TWINKLE_OVERLAY:
+      _twinkle.reset();
       _twinkle.setWithOverlay(true);
       break;
     default:

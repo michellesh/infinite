@@ -68,6 +68,7 @@ Path straights[NUM_STRAIGHTS];
 
 int brightness = BRIGHTNESS;
 int activePattern = DEFAULT_PATTERN;
+int activePatternGroup = 0; // TODO
 float speed = DEFAULT_SPEED;
 float density = DEFAULT_DENSITY;
 float width = DEFAULT_WIDTH;
@@ -116,62 +117,59 @@ Palette palette;
 #include "SolidSubPattern.h"
 // clang-format on
 
-SolidSubPattern solid(SolidSubPattern::SOLID);
-SolidSubPattern solidOverlay(SolidSubPattern::SOLID_OVERLAY);
-SolidSubPattern solidOverlayRailgun(SolidSubPattern::SOLID_OVERLAY_RAILGUN);
-TwinkleSubPattern twinkle(TwinkleSubPattern::TWINKLE);
-TwinkleSubPattern
-    randomFadingSegments(TwinkleSubPattern::RANDOM_FADING_SEGMENTS);
-LineSubPattern randomFlashingSegments(LineSubPattern::RANDOM_FLASHING_SEGMENTS);
-LineSubPattern randomFlashingSegmentsGlitch(LineSubPattern::RANDOM_FLASHING_SEGMENTS_GLITCH);
-TwinkleSubPattern twinkleOverlay(TwinkleSubPattern::TWINKLE_OVERLAY);
-LineSubPattern rotatingPong(LineSubPattern::ROTATING_PONG);
-LineSubPattern lasers(LineSubPattern::LASERS);
-LineSubPattern lasersDoubles(LineSubPattern::LASERS_DOUBLES);
-LineSubPattern lasersAllAtOnce(LineSubPattern::LASERS_ALL_AT_ONCE);
-LineSubPattern
-    rainfallCycleOnBeat(LineSubPattern::RAINFALL_CYCLE_ON_BEAT);
-LineSubPattern rainfallFallOnBeat(LineSubPattern::RAINFALL_FALL_ON_BEAT);
-LineSubPattern rainfallCometTrails(LineSubPattern::RAINFALL_COMET_TRAILS);
-LineSubPattern basketWeaving(LineSubPattern::BASKET_WEAVING);
-LineSubPattern cometTrails(LineSubPattern::COMET_TRAILS);
-LineSubPattern rotatingHexagons(LineSubPattern::ROTATING_HEXAGONS);
-LineSubPattern
-    counterRotatingHexagons(LineSubPattern::COUNTER_ROTATING_HEXAGONS);
-LineSubPattern
-    variableSpeedRotation(LineSubPattern::VARIABLE_SPEED_ROTATION);
-LineSubPattern
-    variableSpeedRotationEnd(LineSubPattern::VARIABLE_SPEED_ROTATION_END);
-FlashSubPattern flashingHexagons(FlashSubPattern::FLASHING_HEXAGONS);
-FlashSubPattern flashingHexagonsWarp(FlashSubPattern::FLASHING_HEXAGONS_WARP);
+LineSubPattern linePattern;
+SolidSubPattern solidPattern;
+TwinkleSubPattern twinklePattern;
+FlashSubPattern flashPattern;
 
 // clang-format off
 SubPattern *activePatterns[] = {
-  &solid,
-  &solidOverlay,
-  &solidOverlayRailgun,
-  &twinkle,
-  &randomFadingSegments,
-  &randomFlashingSegments,
-  &randomFlashingSegmentsGlitch,
-  &twinkleOverlay,
-  &rotatingPong,
-  &lasers,
-  &lasersDoubles,
-  &lasersAllAtOnce,
-  &rainfallCycleOnBeat,
-  &rainfallFallOnBeat,
-  &rainfallCometTrails,
-  &basketWeaving,
-  &cometTrails,
-  &rotatingHexagons,
-  &counterRotatingHexagons,
-  &variableSpeedRotation,
-  &variableSpeedRotationEnd,
-  &flashingHexagons,
-  &flashingHexagonsWarp
+  &solidPattern,
+  &twinklePattern,
+  &linePattern,
+  &flashPattern
 };
 // clang-format on
+
+void setupActivePattern() {
+  switch (activePattern) {
+  case PATTERN_SOLID:
+  case PATTERN_SOLID_OVERLAY:
+  case PATTERN_SOLID_OVERLAY_RAILGUN:
+    activePatternGroup = 0;
+    break;
+  case PATTERN_TWINKLE:
+  case PATTERN_TWINKLE_OVERLAY:
+  case PATTERN_RANDOM_FADING_SEGMENTS:
+    activePatternGroup = 1;
+    break;
+  case PATTERN_RANDOM_FLASHING_SEGMENTS:
+  case PATTERN_RANDOM_FLASHING_SEGMENTS_GLITCH:
+  case PATTERN_ROTATING_PONG:
+  case PATTERN_LASERS:
+  case PATTERN_LASERS_DOUBLES:
+  case PATTERN_LASERS_ALL_AT_ONCE:
+  case PATTERN_RAINFALL_CYCLE_ON_BEAT:
+  case PATTERN_RAINFALL_FALL_ON_BEAT:
+  case PATTERN_RAINFALL_COMET_TRAILS:
+  case PATTERN_BASKET_WEAVING:
+  case PATTERN_COMET_TRAILS:
+  case PATTERN_ROTATING_HEXAGONS:
+  case PATTERN_COUNTER_ROTATING_HEXAGONS:
+  case PATTERN_VARIABLE_SPEED_ROTATION:
+  case PATTERN_VARIABLE_SPEED_ROTATION_END:
+    activePatternGroup = 2;
+    break;
+  case PATTERN_FLASHING_HEXAGONS:
+  case PATTERN_FLASHING_HEXAGONS_WARP:
+    activePatternGroup = 3;
+    break;
+  default:
+    break;
+  }
+  activePatterns[activePatternGroup]->setActivePattern(activePattern);
+  activePatterns[activePatternGroup]->setup();
+}
 
 Timer actionTimer;
 bool actionQueued = false;
@@ -373,10 +371,6 @@ void setup() {
 #if MODE == SINGLE_BOARD_MODE
   setupWebServer();
 #endif
-
-  for (int i = 0; i < NUM_PATTERNS; i++) {
-    activePatterns[i]->setup();
-  }
 }
 
 void loop() {
@@ -430,11 +424,11 @@ void loop() {
 
   static int prevActivePattern = -1;
   if (activePattern != prevActivePattern) {
-    activePatterns[activePattern]->setup();
+    setupActivePattern();
     prevActivePattern = activePattern;
   }
 
-  activePatterns[activePattern]->show();
+  activePatterns[activePatternGroup]->show();
 
   // static int prevSecond = -1;
   // static unsigned long prevTicks = ticks;
