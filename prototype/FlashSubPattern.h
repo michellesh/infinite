@@ -19,10 +19,12 @@ public:
   void setup() {
     switch (_activeSubPattern) {
     case FLASHING_HEXAGONS:
-      _flash.setDurationMultiplier(1);
+      _flash.reset();
       break;
     case FLASHING_HEXAGONS_WARP:
-      _flash.setDurationMultiplier(0.1);
+      _flash.reset();
+      _flash.setDurationMultiplier(10);
+      _flash.setPercentFlashing(60);
       break;
     default:
       break;
