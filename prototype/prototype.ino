@@ -69,6 +69,7 @@ Path straights[NUM_STRAIGHTS];
 int brightness = BRIGHTNESS;
 int activePattern = DEFAULT_PATTERN;
 int activePatternGroup = 0; // TODO
+int overlay = 0;
 float speed = DEFAULT_SPEED;
 float density = DEFAULT_DENSITY;
 float width = DEFAULT_WIDTH;
@@ -443,8 +444,15 @@ void loop() {
   //   prevTicks = ticks;
   // }
 
+  int globalBrightness = brightness;
+  if (overlay == OVERLAY_BRIGHTNESS_SINWAVE) {
+    globalBrightness = sinWaveGlobalBrightness();
+  } else if (overlay == OVERLAY_BRIGHTNESS_STROBE) {
+    globalBrightness = strobeGlobalBrightness();
+  }
+
   FastLED.setMaxRefreshRate(30);
-  FastLED.setBrightness(brightness);
+  FastLED.setBrightness(globalBrightness);
   FastLED.show();
   ticks++;
 }

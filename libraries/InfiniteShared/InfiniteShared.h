@@ -17,6 +17,7 @@
 #define ACTION_SET_OVERLAY_DENSITY 10
 #define ACTION_TOGGLE_REVERSE 11
 #define ACTION_SET_BPM 12
+#define ACTION_SET_OVERLAY 13
 
 #define PATTERN_SOLID 0
 #define PATTERN_SOLID_OVERLAY 1
@@ -46,7 +47,7 @@
 #define PATTERN_WAVEFORM_BOUNCING_NODES 25
 #define NUM_PATTERNS 26
 
-#define DEFAULT_PATTERN PATTERN_WAVEFORM_BOUNCING_DOUBLE
+#define DEFAULT_PATTERN PATTERN_ROTATING_HEXAGONS
 #define DEFAULT_PALETTE 0
 #define DEFAULT_COLORMODE 2
 #define DEFAULT_SPEED 3
@@ -102,6 +103,7 @@ typedef struct msg {
   float overlayWidth = DEFAULT_OVERLAYWIDTH;
   bool reverse = DEFAULT_REVERSE;
   int bpm = DEFAULT_BPM;
+  int overlay = 0;
 } msg;
 
 esp_err_t send(msg m) { return esp_now_send(0, (uint8_t *)&m, sizeof(msg)); }

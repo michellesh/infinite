@@ -22,6 +22,7 @@ void handleAction() {
   overlayWidth = data.overlayWidth;
   reverse = data.reverse;
   bpm = data.bpm;
+  overlay = data.overlay;
 }
 
 void setData(int action, int value = 0) {
@@ -58,6 +59,9 @@ void setData(int action, int value = 0) {
     break;
   case ACTION_SET_BPM:
     data.bpm = value;
+    break;
+  case ACTION_SET_OVERLAY:
+    data.overlay = value;
     break;
   default:
     break;

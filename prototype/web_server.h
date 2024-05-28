@@ -127,6 +127,13 @@ const char index_html[] PROGMEM = R"rawliteral(
     <button type="button" onclick="sendData('n',25)">*Waveform Bouncing Nodes</button>
     <div class="break"></div>
 
+    <h3>Global brightness overlays</h3>
+    <div class="break"></div>
+    <button type="button" onclick="sendData('t',0)">None</button>
+    <button type="button" onclick="sendData('t',1)">*Sine wave</button>
+    <button type="button" onclick="sendData('t',2)">*Strobe</button>
+    <div class="break"></div>
+
     <h3>Color Palettes</h3>
     <div class="break"></div>
     <button type="button" onclick="sendData('p',0)">Fire</button>
@@ -331,6 +338,11 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
         break;
       case 'y':
         setData(ACTION_SET_OVERLAY_DENSITY, dataValue.toInt());
+        handleAction();
+        ws.textAll(message);
+        break;
+      case 't':
+        setData(ACTION_SET_OVERLAY, dataValue.toInt());
         handleAction();
         ws.textAll(message);
         break;
