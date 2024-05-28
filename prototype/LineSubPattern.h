@@ -9,6 +9,8 @@
 RangeF spinningSpeedMultiplier = {0.25, 0.5, 0.5}; // min, max, default
 
 int order[MAX_LINES];
+int bouncePeak[NUM_RINGS];
+float bouncePosition[NUM_RINGS];
 
 struct Flicker {
   int id = 0;
@@ -162,6 +164,32 @@ private:
     }
   }
 
+  // WAVEFORM_BOUNCING_SINGLE
+  // WAVEFORM_BOUNCING_DOUBLE
+  // WAVEFORM_BOUNCING_NODES
+  void _showWaveform() {
+    for (int i = 0; i < _numLines; i++) {
+      int percent = mapBeat(0, 100);
+      int bounceIndex = i % NUM_RINGS;
+      int PERCENT = 20;
+      if (percent < PERCENT) {
+        bouncePosition[bounceIndex] =
+            map(percent, 0, PERCENT, 0, bouncePeak[bounceIndex]);
+      } else {
+        bouncePosition[bounceIndex] -= 0.5;
+        if (bouncePosition[bounceIndex] < 0) {
+          bouncePosition[bounceIndex] = 0;
+        }
+      }
+      if (i < _numLines / 2) {
+        _lines[i].show(bouncePosition[bounceIndex]);
+      } else {
+        _lines[i].show(NUM_LEDS_PER_RING - bouncePosition[bounceIndex] +
+                       _lines[i].getLength());
+      }
+    }
+  }
+
 public:
   static const uint8_t ROTATING_PONG = PATTERN_ROTATING_PONG;
   static const uint8_t LASERS = PATTERN_LASERS;
@@ -183,6 +211,12 @@ public:
       PATTERN_RANDOM_FLASHING_SEGMENTS;
   static const uint8_t RANDOM_FLASHING_SEGMENTS_GLITCH =
       PATTERN_RANDOM_FLASHING_SEGMENTS_GLITCH;
+  static const uint8_t WAVEFORM_BOUNCING_SINGLE =
+      PATTERN_WAVEFORM_BOUNCING_SINGLE;
+  static const uint8_t WAVEFORM_BOUNCING_DOUBLE =
+      PATTERN_WAVEFORM_BOUNCING_DOUBLE;
+  static const uint8_t WAVEFORM_BOUNCING_NODES =
+      PATTERN_WAVEFORM_BOUNCING_NODES;
 
   LineSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
@@ -385,6 +419,20 @@ public:
         }
       }
       break;
+    case WAVEFORM_BOUNCING_SINGLE:
+    case WAVEFORM_BOUNCING_DOUBLE:
+    case WAVEFORM_BOUNCING_NODES:
+      _numLines = NUM_RINGS * 2;
+      for (uint8_t i = 0; i < _numLines; i++) {
+        _lines[i] = Line(i);
+        _lines[i].setPath(rings[i % NUM_RINGS]);
+        _lines[i].setFadeType(Line::FADE_LIGHT);
+        _lines[i].setReverse(false);
+        if (i < NUM_RINGS) {
+          bouncePeak[i] = random(NUM_LEDS_PER_RING / 7, NUM_LEDS_PER_RING / 3);
+        }
+      }
+      break;
     default:
       break;
     }
@@ -433,6 +481,11 @@ public:
       break;
     case RANDOM_FLASHING_SEGMENTS_GLITCH:
       _showRandomFlashingSegmentsGlitch();
+      break;
+    case WAVEFORM_BOUNCING_SINGLE:
+    case WAVEFORM_BOUNCING_DOUBLE:
+    case WAVEFORM_BOUNCING_NODES:
+      _showWaveform();
       break;
     default:
       break;

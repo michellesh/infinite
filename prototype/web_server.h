@@ -122,6 +122,10 @@ const char index_html[] PROGMEM = R"rawliteral(
     <button type="button" onclick="sendData('n',21)">Flashing Hexagons</button>
     <button type="button" onclick="sendData('n',22)">Flashing Hexagons Warp</button>
     <div class="break"></div>
+    <button type="button" onclick="sendData('n',23)">Waveform Bouncing Single</button>
+    <button type="button" onclick="sendData('n',24)">Waveform Bouncing Double</button>
+    <button type="button" onclick="sendData('n',25)">Waveform Bouncing Nodes</button>
+    <div class="break"></div>
 
     <h3>Color Palettes</h3>
     <div class="break"></div>

@@ -3,6 +3,10 @@ float mapf(float value, float inMin, float inMax, float outMin, float outMax) {
   return outMin + (outMax - outMin) * percentage;
 }
 
+int mapc(int value, int fromLow, int fromHigh, int toLow, int toHigh) {
+  return constrain(map(value, fromLow, fromHigh, toLow, toHigh), toLow, toHigh);
+}
+
 bool isBetween(int16_t value, int16_t min, int16_t max,
                bool inclusive = false) {
   return inclusive ? value >= min && value <= max : value > min && value < max;

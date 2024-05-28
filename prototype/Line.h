@@ -1,7 +1,7 @@
 class Line : public Pattern {
 private:
   uint8_t _id = 0;
-  uint8_t _fadeType = FADE_BOTH_ENDS;
+  uint8_t _fadeType = FADE_HEAVY;
   float _speedMultiplier = 1;
   float _lengthMultiplier = 1;
   float _prevPosition = 0;
@@ -21,9 +21,14 @@ private:
         t = max(t, b);
       }
       return t;
+    } else if (_fadeType == FADE_LIGHT) {
+      int fadeLengthPercent = 10; // the last 10% on each end fade from 255 to 0
+      int percent = (float)indexOnLine / (float)_length * 100;
+      percent = percent > fadeLengthPercent ? 100 - percent : percent;
+      return mapc(percent, 0, fadeLengthPercent, 0, 255);
     }
 
-    // FADE_BOTH_ENDS
+    // FADE_HEAVY
     return addFadeShape(map(indexOnLine, 0, _length, 0, 255));
   }
 
@@ -47,8 +52,9 @@ private:
 public:
   Line(uint8_t id = 0) { _id = id; }
 
-  static constexpr uint8_t FADE_BOTH_ENDS = 0;
+  static constexpr uint8_t FADE_HEAVY = 0;
   static constexpr uint8_t FADE_COMET = 1;
+  static constexpr uint8_t FADE_LIGHT = 2;
 
   static constexpr Range LENGTH = {
       DEPTH_SEGMENT_LENGTH, DEPTH_SEGMENT_LENGTH * 6, DEPTH_SEGMENT_LENGTH * 2};
