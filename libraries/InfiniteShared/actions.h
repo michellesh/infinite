@@ -8,7 +8,13 @@ Action actions[] = {
     time(15000).pattern(PATTERN_ROTATING_HEXAGONS).speed(9.5).width(10),
     time(20000).speed(1),
     time(25000).width(1).speed(6).density(1),
-};
+    time(30000)
+        .pattern(PATTERN_TWINKLE)
+        .width(5)
+        .density(4)
+        .speed(7)
+        .overlay(OVERLAY_BRIGHTNESS_SINWAVE)
+        .bpm(112)};
 
 Fade fades[] = {
     fadeOut(5000, 10000),

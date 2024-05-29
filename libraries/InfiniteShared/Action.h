@@ -15,6 +15,7 @@ struct Action {
   bool setOverlayWidth;
   bool setReverse;
   bool setBPM;
+  bool setOverlay;
 
   Action track(uint8_t x) {
     trackNumber = x;
@@ -88,6 +89,12 @@ struct Action {
     return *this;
   }
 
+  Action overlay(int x) {
+    actionData.overlay = x;
+    setOverlay = true;
+    return *this;
+  }
+
   void commitData() {
     if (setPattern) {
       data.pattern = actionData.pattern;
@@ -121,6 +128,9 @@ struct Action {
     }
     if (setBPM) {
       data.bpm = actionData.bpm;
+    }
+    if (setOverlay) {
+      data.overlay = actionData.overlay;
     }
   }
 };

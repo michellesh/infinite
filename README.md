@@ -16,6 +16,13 @@ Action actions[] = {
     time(15000).pattern(PATTERN_ROTATING_HEXAGONS).speed(9.5).width(10),
     time(20000).speed(1),
     time(25000).width(1).speed(6).density(1),
+    time(30000)
+        .pattern(PATTERN_TWINKLE)
+        .width(5)
+        .density(4)
+        .speed(7)
+        .overlay(OVERLAY_BRIGHTNESS_SINWAVE)
+        .bpm(112)};
 };
 
 Fade fades[] = {
@@ -36,17 +43,18 @@ Fade fades[] = {
 | -------- | ----------- |
 | `.time(milliseconds)` | Create an action at this timestamp. `milliseconds` cannot be 0, use `.time()` for first action. |
 | `.track(int trackNumber)` | Set the track. Should be in same order as SD card. For first track use `.track(1)` (no zeros). Has no effect if running sequence from web server. |
-| `.pattern(int patternId)`  | Set the pattern<br><br>`PATTERN_SOLID`<br>`PATTERN_SOLID_OVERLAY`<br>`PATTERN_SOLID_OVERLAY_RAILGUN`<br>`PATTERN_TWINKLE`<br>`PATTERN_RANDOM_FADING_SEGMENTS`<br>`PATTERN_RANDOM_FLASHING_SEGMENTS`<br>`PATTERN_TWINKLE_OVERLAY`<br>`PATTERN_ROTATING_PONG`<br>`PATTERN_LASERS`<br>`PATTERN_LASERS_DOUBLES`<br>`PATTERN_LASERS_ALL_AT_ONCE`<br>`PATTERN_RAINFALL_CYCLE_ON_BEAT`<br>`PATTERN_RAINFALL_FALL_ON_BEAT`<br>`PATTERN_BASKET_WEAVING`<br>`PATTERN_COMET_TRAILS`<br>`PATTERN_ROTATING_HEXAGONS`<br>`PATTERN_COUNTER_ROTATING_HEXAGONS`<br>`PATTERN_VARIABLE_SPEED_ROTATION`<br>`PATTERN_FLASHING_HEXAGONS`<br>`PATTERN_FLASHING_HEXAGONS_WARP` |
+| `.pattern(int patternId)`  | Set the pattern. See spreadsheet for current pattern variables. |
 | `.palette(int paletteId)` | Set the color palette<br><br>`PALETTE_FIRE`<br>`PALETTE_OCEAN`<br>`PALETTE_FLORAL`<br>`PALETTE_ICE`<br>`PALETTE_FAIRY` |
 | `.colorMode(int colorModeId)` | Set the color mode<br><br>`COLOR_MODE_SOLID`<br>`COLOR_MODE_INDEX_GRADIENT`<br>`COLOR_MODE_DEPTH_GRADIENT`<br>`COLOR_MODE_ANGLE_GRADIENT` |
 | `.bpm(int value)` | Set the bpm |
 | `.speed(float value)` | Set the speed 1-10 |
 | `.density(float value)` | Set the density 1-10 |
 | `.width(float value)` | Set the width 1-10 |
-| `.overlaySpeed(float value)` | Set the overlay speed 1-10. Affects the overlay patterns:<br><br>`PATTERN_SOLID_OVERLAY`<br>`PATTERN_SOLID_OVERLAY_RAILGUN` |
-| `.overlayDensity(float value)` | Set the overlay density 1-10. Affects the overlay patterns:<br><br>`PATTERN_SOLID_OVERLAY`<br>`PATTERN_SOLID_OVERLAY_RAILGUN` |
-| `.overlayWidth(float value)` | Set the overlay width 1-10. Affects the overlay patterns:<br><br>`PATTERN_SOLID_OVERLAY`<br>`PATTERN_SOLID_OVERLAY_RAILGUN` |
+| `.overlaySpeed(float value)` | Set the overlay speed 1-10. |
+| `.overlayDensity(float value)` | Set the overlay density 1-10. |
+| `.overlayWidth(float value)` | Set the overlay width 1-10. |
 | `.reverse(bool isReversed)` | Set reverse to true or false. Defaults to false. |
+| `.overlay(int value)` | Set an overlay pattern to play over the current pattern.<br><br>`OVERLAY_BRIGHTNESS_SINWAVE`<br>`OVERLAY_BRIGHTNESS_STROBE` |
 
 ### Fade functions
 
