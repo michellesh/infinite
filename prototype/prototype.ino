@@ -373,6 +373,19 @@ void setup() {
     offset += NUM_LEDS_PER_RING;
   }
 
+//8:29:37.828 -> straight: 0
+//18:29:37.828 -> offset: 576
+//18:29:37.859 -> straight: 1
+//18:29:37.859 -> offset: 288
+//18:29:37.891 -> straight: 2
+//18:29:37.891 -> offset: 0
+//18:29:37.891 -> straight: 3
+//18:29:37.923 -> offset: 144
+//18:29:37.923 -> straight: 4
+//18:29:37.955 -> offset: 432
+//18:29:37.955 -> straight: 5
+//18:29:37.988 -> offset: 720
+
 #if MODE == SINGLE_BOARD_MODE
   setupWebServer();
 #endif

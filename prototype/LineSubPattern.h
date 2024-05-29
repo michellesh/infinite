@@ -3,7 +3,7 @@
 #define NUM_FLICKERS 4
 
 #define MAX_IDLE_TIME 2000
-#define NUM_NODES 16 // 8
+#define NUM_NODES 30 // 8
 #define NODE_LENGTH NUM_LEDS_PER_STRAIGHT / (NUM_RINGS - 1)
 
 // Spinning hexagon patterns speed multiplier range
@@ -216,27 +216,49 @@ private:
   }
 
   // WAVEFORM_BOUNCING_NODES
+  bool _isNodePastEdge(int offset, Path basePath) {
+    return offset + NODE_LENGTH > basePath.offset + basePath.length ||
+           offset < basePath.offset;
+  }
+
   void _showWaveformNodes() {
     Path path;
     int offset;
     for (int i = 0; i < NUM_NODES; i++) {
       Node node = nodes[i];
       // set lines for straights
-      offset = straights[node.straightNum].offset + node.straightPosition -
-               NODE_LENGTH;
-      path = {&leds[offset], NODE_LENGTH + 1, offset};
-      _lines[0].setPath(path);
+      Path straight = straights[node.straightNum];
+      offset = straight.offset + node.straightPosition - NODE_LENGTH;
+      path = {&leds[offset], NODE_LENGTH, offset};
+      if (_isNodePastEdge(offset, straight)) {
+        path.length = 0;
+      } else {
+        _lines[0].setPath(path);
+      }
       offset += NODE_LENGTH;
       path = {&leds[offset], NODE_LENGTH, offset};
-      _lines[1].setPath(path);
+      if (_isNodePastEdge(offset, straight)) {
+        path.length = 0;
+      } else {
+        _lines[1].setPath(path);
+      }
 
       // set lines for rings
-      offset = rings[node.ringNum].offset + node.ringPosition - NODE_LENGTH;
-      path = {&leds[offset], NODE_LENGTH + 1, offset};
-      _lines[2].setPath(path);
+      Path ring = rings[node.ringNum];
+      offset = ring.offset + node.ringPosition - NODE_LENGTH;
+      path = {&leds[offset], NODE_LENGTH, offset};
+      if (_isNodePastEdge(offset, ring)) {
+        path.length = 0;
+      } else {
+        _lines[2].setPath(path);
+      }
       offset += NODE_LENGTH;
       path = {&leds[offset], NODE_LENGTH, offset};
-      _lines[3].setPath(path);
+      if (_isNodePastEdge(offset, ring)) {
+        path.length = 0;
+      } else {
+        _lines[3].setPath(path);
+      }
       _showWaveform(0);
     }
   }
@@ -511,10 +533,9 @@ public:
       _numLines = 4; // 4 lines per node
       bouncePeak[0] = NODE_LENGTH;
       int n = 0;
-      for (int i = 1; i < NUM_STRAIGHTS - 1; i++) {
-        for (int j = 2; j < NUM_RINGS - 1; j += 2) {
-          int ringNum = i % 2 == 0 ? j - 1 : j;
-          nodes[n] = {i, straightPositionOnRing(ringNum), ringNum,
+      for (int i = 0; i < NUM_STRAIGHTS; i++) {
+        for (int j = i % 2 == 0 ? 0 : 1; j < NUM_RINGS; j += 2) {
+          nodes[n] = {i, straightPositionOnRing(j), j,
                       ringPositionOnStraight(i)};
           n++;
         }
