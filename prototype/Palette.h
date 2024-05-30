@@ -15,7 +15,6 @@ public:
   static const uint8_t CUSTOM_GRADIENT = COLOR_MODE_CUSTOM_GRADIENT;
 
   void cycle() {
-
     EVERY_N_MILLISECONDS(10) {
       nblendPaletteTowardPalette(_currentPalette, _targetPalette, 12);
     }
@@ -27,6 +26,7 @@ public:
 
   void setPalette(uint8_t whichPalette) {
     _activePalette = whichPalette;
+    _currentPalette = *(activePalettes[whichPalette]);
     _targetPalette = *(activePalettes[whichPalette]);
   }
 

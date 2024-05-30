@@ -136,11 +136,19 @@ const char index_html[] PROGMEM = R"rawliteral(
 
     <h3>Color Palettes</h3>
     <div class="break"></div>
-    <button type="button" onclick="sendData('p',0)">Fire</button>
-    <button type="button" onclick="sendData('p',1)">Ocean</button>
-    <button type="button" onclick="sendData('p',2)">Floral</button>
-    <button type="button" onclick="sendData('p',3)">Ice</button>
-    <button type="button" onclick="sendData('p',4)">Fairy</button>
+    <button type="button" onclick="sendData('p',0)">orange purple blue</button>
+    <button type="button" onclick="sendData('p',1)">pink purple pink</button>
+    <button type="button" onclick="sendData('p',2)">fire and ice</button>
+    <button type="button" onclick="sendData('p',3)">pink cloud</button>
+    <button type="button" onclick="sendData('p',4)">yellow green</button>
+    <button type="button" onclick="sendData('p',5)">blues and purples</button>
+    <button type="button" onclick="sendData('p',6)">rainbow</button>
+    <button type="button" onclick="sendData('p',7)">blue purple red orange</button>
+    <button type="button" onclick="sendData('p',8)">fire</button>
+    <button type="button" onclick="sendData('p',9)">ocean</button>
+    <button type="button" onclick="sendData('p',10)">floral</button>
+    <button type="button" onclick="sendData('p',11)">ice</button>
+    <button type="button" onclick="sendData('p',12)">fairy</button>
     <div class="break"></div>
 
     <h3>Color Modes</h3>
