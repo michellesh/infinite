@@ -95,6 +95,12 @@ private:
 
   // COMET_TRAILS
   void _showCometTrails() {
+    static float inc = mapf(speed, 1, 10, 1, 5);
+    static int prevSpeed = speed;
+    if (prevSpeed != speed) {
+      inc = mapf(speed, 1, 10, 1, 5);
+    }
+    prevSpeed = speed;
     static int nextComet = 0;
     if (beat) {
       // start a comet
@@ -108,7 +114,7 @@ private:
     }
     for (int i = 0; i < NUM_STRAIGHTS * 2; i++) {
       if (cometActive[i]) {
-        cometPosition[i] += _lines[i].isReversed() ? 1 : -1;
+        cometPosition[i] += _lines[i].isReversed() ? inc : -1 * inc;
         if ((_lines[i].isReversed() &&
              cometPosition[i] > _lines[i].getEndPosition(true)) ||
             (!_lines[i].isReversed() && cometPosition[i] < 0)) {
