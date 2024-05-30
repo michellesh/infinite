@@ -404,11 +404,15 @@ public:
       break;
     case COMET_TRAILS:
       _numLines = NUM_STRAIGHTS * 2;
-      shuffleIndexes(order, _numLines);
+      shuffleIndexes(order, NUM_STRAIGHTS);
+      for (uint8_t i = 0; i < _numLines; i++) {
+        order[i + NUM_STRAIGHTS] = order[i]; // move shuffled values over
+      }
+      shuffleIndexes(order, NUM_STRAIGHTS); // shuffle again
       for (uint8_t i = 0; i < _numLines; i++) {
         _lines[i] = Line(i);
         _lines[i].setSpeedMultiplier(0.1);
-        _lines[i].setPath(straights[i % NUM_STRAIGHTS]);
+        _lines[i].setPath(straights[order[i]]);
         _lines[i].setLengthMultiplier(2);
         _lines[i].setFadeType(Line::FADE_COMET);
       }
