@@ -71,11 +71,16 @@ public:
     return map(width, 1, 10, LENGTH.MIN, LENGTH.MAX) * _lengthMultiplier;
   }
 
-  float getPosition(bool includeLineLength = true) {
+  int getEndPosition(bool includeLineLength = true) {
     int endPosition = _path.length;
     if (includeLineLength) {
       endPosition += getLength();
     }
+    return endPosition;
+  }
+
+  float getPosition(bool includeLineLength = true) {
+    int endPosition = getEndPosition(includeLineLength);
     float newPosition = isReversed()
                             ? mapBeat(0, endPosition, _speedMultiplier)
                             : mapBeat(endPosition, 0, _speedMultiplier);

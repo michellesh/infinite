@@ -13,6 +13,8 @@ RangeF spinningSpeedMultiplier = {0.25, 0.5, 0.5}; // min, max, default
 int order[MAX_LINES];
 int bouncePeak[NUM_RINGS];
 float bouncePosition[NUM_RINGS];
+int cometPosition[NUM_STRAIGHTS * 2];
+bool cometActive[NUM_STRAIGHTS * 2];
 
 struct Flicker {
   int id = 0;
@@ -80,7 +82,6 @@ private:
   }
 
   // LASERS
-  // COMET_TRAILS
   void _showOneByOne() {
     static int active = 0;
     float nextPosition = _lines[order[active]].getPosition();
@@ -90,6 +91,32 @@ private:
     }
     _lines[order[active]].show(nextPosition);
     _lines[order[active]].commitNewPosition();
+  }
+
+  // COMET_TRAILS
+  void _showCometTrails() {
+    static int nextComet = 0;
+    if (beat) {
+      // start a comet
+      if (!cometActive[nextComet]) {
+        cometPosition[nextComet] = _lines[nextComet].isReversed()
+                                       ? 0
+                                       : _lines[nextComet].getEndPosition(true);
+        cometActive[nextComet] = true;
+        nextComet = (nextComet + 1) % (NUM_STRAIGHTS * 2);
+      }
+    }
+    for (int i = 0; i < NUM_STRAIGHTS * 2; i++) {
+      if (cometActive[i]) {
+        cometPosition[i] += _lines[i].isReversed() ? 1 : -1;
+        if ((_lines[i].isReversed() &&
+             cometPosition[i] > _lines[i].getEndPosition(true)) ||
+            (!_lines[i].isReversed() && cometPosition[i] < 0)) {
+          cometActive[i] = false;
+        }
+        _lines[i].show(cometPosition[i]);
+      }
+    }
   }
 
   // LASERS_DOUBLES
@@ -370,12 +397,12 @@ public:
       }
       break;
     case COMET_TRAILS:
-      _numLines = NUM_STRAIGHTS;
+      _numLines = NUM_STRAIGHTS * 2;
       shuffleIndexes(order, _numLines);
       for (uint8_t i = 0; i < _numLines; i++) {
         _lines[i] = Line(i);
-        _lines[i].setSpeedMultiplier(0.5);
-        _lines[i].setPath(straights[i]);
+        _lines[i].setSpeedMultiplier(0.1);
+        _lines[i].setPath(straights[i % NUM_STRAIGHTS]);
         _lines[i].setLengthMultiplier(2);
         _lines[i].setFadeType(Line::FADE_COMET);
       }
@@ -547,8 +574,11 @@ public:
       _showRotatingPong();
       break;
     case LASERS:
-    case COMET_TRAILS:
       _showOneByOne();
+      break;
+    case COMET_TRAILS:
+      //_showOneByOne();
+      _showCometTrails();
       break;
     case LASERS_DOUBLES:
       _showTwoByTwo();
