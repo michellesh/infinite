@@ -221,44 +221,24 @@ private:
            offset < basePath.offset;
   }
 
+  void _setNodeLine(uint8_t lineIndex, Path basePath, int offset) {
+    int _offset = basePath.offset + offset;
+    Path path = {&leds[_offset], NODE_LENGTH, _offset};
+    if (!_isNodePastEdge(_offset, basePath)) {
+      _lines[lineIndex].setPath(path);
+    }
+  }
+
   void _showWaveformNodes() {
     Path path;
     int offset;
     for (int i = 0; i < NUM_NODES; i++) {
       Node node = nodes[i];
-      // set lines for straights
-      Path straight = straights[node.straightNum];
-      offset = straight.offset + node.straightPosition - NODE_LENGTH;
-      path = {&leds[offset], NODE_LENGTH, offset};
-      if (_isNodePastEdge(offset, straight)) {
-        path.length = 0;
-      } else {
-        _lines[0].setPath(path);
-      }
-      offset += NODE_LENGTH;
-      path = {&leds[offset], NODE_LENGTH, offset};
-      if (_isNodePastEdge(offset, straight)) {
-        path.length = 0;
-      } else {
-        _lines[1].setPath(path);
-      }
-
-      // set lines for rings
-      Path ring = rings[node.ringNum];
-      offset = ring.offset + node.ringPosition - NODE_LENGTH;
-      path = {&leds[offset], NODE_LENGTH, offset};
-      if (_isNodePastEdge(offset, ring)) {
-        path.length = 0;
-      } else {
-        _lines[2].setPath(path);
-      }
-      offset += NODE_LENGTH;
-      path = {&leds[offset], NODE_LENGTH, offset};
-      if (_isNodePastEdge(offset, ring)) {
-        path.length = 0;
-      } else {
-        _lines[3].setPath(path);
-      }
+      _setNodeLine(0, straights[node.straightNum],
+                   node.straightPosition - NODE_LENGTH);
+      _setNodeLine(1, straights[node.straightNum], node.straightPosition);
+      _setNodeLine(2, rings[node.ringNum], node.ringPosition - NODE_LENGTH);
+      _setNodeLine(3, rings[node.ringNum], node.ringPosition);
       _showWaveform(0);
     }
   }
