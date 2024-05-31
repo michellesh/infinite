@@ -1,20 +1,19 @@
-// By XTronical, www.xtronical.com, use as you wish
-// Based on work and on the audio library of schreibfaul1
-// See github page : https://github.com/schreibfaul1/ESP32-audioI2S
-// Also has volume control via a potentiometer attached to pin 13
 #include "Arduino.h"
-#include "Audio.h"
+#include "Audio.h" // https://github.com/schreibfaul1/ESP32-audioI2S
 #include "FS.h"
 #include "SD.h"
 
-// Digital I/O used
+// SD Card
 #define SD_CS 5
-#define SPI_MOSI 23 // SD Card
+#define SPI_MOSI 23
 #define SPI_MISO 19
 #define SPI_SCK 18
 
+// MAX98357 audio amplifier
+// GAIN pin tied to ground
+// SD pin floating
 #define I2S_DOUT 25
-#define I2S_BCLK 27 // I2S
+#define I2S_BCLK 27
 #define I2S_LRC 26
 
 #define MAX_VOLUME 21
@@ -29,16 +28,19 @@ int fileCount = 0;
 int trackNumber = 0;
 
 void setup() {
+  Serial.begin(9600);
+
   pinMode(SD_CS, OUTPUT);
   digitalWrite(SD_CS, HIGH);
   SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
-  Serial.begin(9600);
+
   if (!SD.begin(SD_CS)) {
     Serial.println("Card Mount Failed!");
-    while (true)
-      ; // end program
+    return;
   }
+
   audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
+  audio.setVolume(MAX_VOLUME);
 
   rootDir = SD.open("/");
   if (!rootDir) {
@@ -58,8 +60,6 @@ void setup() {
   for (int i = 0; i < fileCount; i++) {
     Serial.println(fileNames[i]);
   }
-
-  audio.setVolume(MAX_VOLUME);
 
   playTrack(0);
 }
