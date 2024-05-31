@@ -86,13 +86,15 @@ private:
     unsigned long percent = mapBeat(0, 100);
     static unsigned long prevPercent = percent;
     static uint8_t beatNum = 0;
+    int numBeats = 4;
     if (percent < prevPercent) {
-      beatNum = (beatNum + 1) % 3; // 3 = number beats total
+      beatNum = (beatNum + 1) % numBeats;
     }
     prevPercent = percent;
     percent += 100 * beatNum;
-    int amountPowerUp = 200;    // out of 300%. percent time gaining power
-    int amountTotalPower = 220; // out of 300%. total power time including drop
+    int amountPowerUp = 100 * (numBeats - 1); // percent time gaining power
+    int amountTotalPower =
+        amountPowerUp + 20; // total power time including drop
     if (percent < amountTotalPower) {
       int minPower = reverse ? 0 : MAX_DEPTH;
       int maxPower = reverse ? MAX_DEPTH * 3 / 4 : MAX_DEPTH / 4;
@@ -102,9 +104,10 @@ private:
               : map(percent, amountPowerUp, amountTotalPower, maxPower,
                     minPower);
       for (int i = 0; i < NUM_LEDS; i++) {
-        if ((!reverse && ledDepth(i) > powerUpAmount) || (reverse && ledDepth(i) < powerUpAmount)) {
+        if ((!reverse && ledDepth(i) > powerUpAmount) ||
+            (reverse && ledDepth(i) < powerUpAmount)) {
           uint8_t brightness =
-              map(ledDepth(i), powerUpAmount, MAX_DEPTH, 0, 255);
+              map(ledDepth(i), powerUpAmount, reverse ? MAX_DEPTH : 0, 0, 255);
           leds[i] = palette.getColor(i).nscale8(brightness);
         }
       }
