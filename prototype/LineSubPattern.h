@@ -82,7 +82,7 @@ private:
   }
 
   // POWER_UP_AND_FIRE
-  void _showPowerUpAndFire() {
+  void _showPowerUpAndFire(bool broke = false) {
     unsigned long percent = mapBeat(0, 100);
     static unsigned long prevPercent = percent;
     static uint8_t beatNum = 0;
@@ -106,8 +106,8 @@ private:
       for (int i = 0; i < NUM_LEDS; i++) {
         if ((!reverse && ledDepth(i) > powerUpAmount) ||
             (reverse && ledDepth(i) < powerUpAmount)) {
-          uint8_t brightness =
-              map(ledDepth(i), powerUpAmount, reverse ? MAX_DEPTH : 0, 0, 255);
+          int mapTo = broke ? MAX_DEPTH - minPower : minPower;
+          uint8_t brightness = map(ledDepth(i), powerUpAmount, mapTo, 0, 255);
           leds[i] = palette.getColor(i).nscale8(brightness);
         }
       }
@@ -342,6 +342,8 @@ public:
   static const uint8_t WAVEFORM_BOUNCING_NODES =
       PATTERN_WAVEFORM_BOUNCING_NODES;
   static const uint8_t POWER_UP_AND_FIRE = PATTERN_POWER_UP_AND_FIRE;
+  static const uint8_t POWER_UP_AND_FIRE_BROKEN =
+      PATTERN_POWER_UP_AND_FIRE_BROKEN;
 
   LineSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
@@ -376,6 +378,7 @@ public:
       break;
     case LASERS_ALL_AT_ONCE:
     case POWER_UP_AND_FIRE:
+    case POWER_UP_AND_FIRE_BROKEN:
       _numLines = NUM_STRAIGHTS;
       for (uint8_t i = 0; i < _numLines; i++) {
         _lines[i] = Line(i);
@@ -665,6 +668,9 @@ public:
       break;
     case POWER_UP_AND_FIRE:
       _showPowerUpAndFire();
+      break;
+    case POWER_UP_AND_FIRE_BROKEN:
+      _showPowerUpAndFire(true);
       break;
     default:
       break;
