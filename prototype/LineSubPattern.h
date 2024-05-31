@@ -81,6 +81,39 @@ private:
     }
   }
 
+  // POWER_UP_AND_FIRE
+  void _showPowerUpAndFire() {
+    unsigned long percent = mapBeat(0, 100);
+    static unsigned long prevPercent = percent;
+    static uint8_t beatNum = 0;
+    if (percent < prevPercent) {
+      beatNum = (beatNum + 1) % 3; // 3 = number beats total
+    }
+    prevPercent = percent;
+    percent += 100 * beatNum;
+    int amountPowerUp = 200;    // out of 300%. percent time gaining power
+    int amountTotalPower = 220; // out of 300%. total power time including drop
+    if (percent < amountTotalPower) {
+      int powerUpAmount =
+          percent < amountPowerUp
+              ? map(percent, 0, amountPowerUp, MAX_DEPTH, MAX_DEPTH / 4)
+              : map(percent, amountPowerUp, amountTotalPower, MAX_DEPTH / 4,
+                    MAX_DEPTH);
+      for (int i = 0; i < NUM_LEDS; i++) {
+        if (ledDepth(i) > powerUpAmount) {
+          uint8_t brightness =
+              map(ledDepth(i), powerUpAmount, MAX_DEPTH, 0, 255);
+          leds[i] = palette.getColor(i).nscale8(brightness);
+        }
+      }
+    } else {
+      // lasers all at once
+      for (int i = 0; i < _numLines; i++) {
+        _lines[i].show();
+      }
+    }
+  }
+
   // LASERS
   void _showOneByOne() {
     static int active = 0;
@@ -303,6 +336,7 @@ public:
       PATTERN_WAVEFORM_BOUNCING_DOUBLE;
   static const uint8_t WAVEFORM_BOUNCING_NODES =
       PATTERN_WAVEFORM_BOUNCING_NODES;
+  static const uint8_t POWER_UP_AND_FIRE = PATTERN_POWER_UP_AND_FIRE;
 
   LineSubPattern(uint8_t activeSubPattern = 0) {
     _activeSubPattern = activeSubPattern;
@@ -336,6 +370,7 @@ public:
       }
       break;
     case LASERS_ALL_AT_ONCE:
+    case POWER_UP_AND_FIRE:
       _numLines = NUM_STRAIGHTS;
       for (uint8_t i = 0; i < _numLines; i++) {
         _lines[i] = Line(i);
@@ -622,6 +657,9 @@ public:
       break;
     case WAVEFORM_BOUNCING_NODES:
       _showWaveformNodes();
+      break;
+    case POWER_UP_AND_FIRE:
+      _showPowerUpAndFire();
       break;
     default:
       break;
