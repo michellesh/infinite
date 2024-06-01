@@ -1,3 +1,5 @@
+#define NUM_SNAKES 10
+
 struct Snake {
   Node n1;
   Node n2;
@@ -5,7 +7,7 @@ struct Snake {
   Node n4;
 };
 
-Snake snake;
+Snake snakes[NUM_SNAKES];
 
 class SnakeSubPattern : public SubPattern {
 private:
@@ -89,22 +91,32 @@ private:
   }
 
   //  SNAKES
-  void _showSnakes() {
-    int percent = mapBeat(0, 100);
-    static int prevPercent = percent;
-    if (percent < prevPercent) {
+  void _showSnake(Snake &snake, int percent, bool makeNewNode) {
+    if (makeNewNode) {
       Node newNode = _getRandomAdjacentNode(snake.n3, snake.n4);
       snake.n1 = snake.n2;
       snake.n2 = snake.n3;
       snake.n3 = snake.n4;
       snake.n4 = newNode;
     }
-    prevPercent = percent;
 
-    // n1 to n2
     _drawSnakeFromNodeToNode(snake.n1, snake.n2, -1 * percent);
     _drawSnakeFromNodeToNode(snake.n2, snake.n3, 100);
     _drawSnakeFromNodeToNode(snake.n3, snake.n4, percent);
+  }
+
+  void _showSnakes() {
+    int percent = mapBeat(0, 100);
+    static int prevPercent = percent;
+    bool makeNewNode = false;
+    if (percent < prevPercent) {
+      makeNewNode = true;
+    }
+    prevPercent = percent;
+
+    for (int i = 0; i < NUM_SNAKES; i++) {
+      _showSnake(snakes[i], percent, makeNewNode);
+    }
   }
 
 public:
@@ -127,11 +139,13 @@ public:
   void setup() {
     switch (_activeSubPattern) {
     case SNAKES: {
-      Node n4 = createNode(random(NUM_STRAIGHTS), random(NUM_RINGS));
-      Node n3 = _getRandomAdjacentNode(n4, n4);
-      Node n2 = _getRandomAdjacentNode(n4, n3);
-      Node n1 = _getRandomAdjacentNode(n3, n2);
-      snake = {n1, n2, n3, n4};
+      for (int i = 0; i < NUM_SNAKES; i++) {
+        Node n4 = createNode(random(NUM_STRAIGHTS), random(NUM_RINGS));
+        Node n3 = _getRandomAdjacentNode(n4, n4);
+        Node n2 = _getRandomAdjacentNode(n4, n3);
+        Node n1 = _getRandomAdjacentNode(n3, n2);
+        snakes[i] = {n1, n2, n3, n4};
+      }
       break;
     }
     default:
