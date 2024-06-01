@@ -1,7 +1,7 @@
 struct Node {
   int straightNum;
-  int straightPosition;
   int ringNum;
+  int straightPosition;
   int ringPosition;
 };
 
@@ -11,4 +11,9 @@ int ringPositionOnStraight(int straightNum) {
 
 int straightPositionOnRing(int ringNum) {
   return NUM_LEDS_PER_STRAIGHT / (NUM_RINGS - 1) * ringNum;
+}
+
+Node createNode(int straightNum, int ringNum) {
+  return {straightNum, ringNum, straightPositionOnRing(ringNum),
+          ringPositionOnStraight(straightNum)};
 }

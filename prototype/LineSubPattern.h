@@ -581,8 +581,7 @@ public:
       int n = 0;
       for (int i = 0; i < NUM_STRAIGHTS; i++) {
         for (int j = i % 2 == 0 ? 0 : 1; j < NUM_RINGS; j += 2) {
-          waveformNodes[n] = {i, straightPositionOnRing(j), j,
-                              ringPositionOnStraight(i)};
+          waveformNodes[n] = createNode(i, j);
           n++;
         }
       }

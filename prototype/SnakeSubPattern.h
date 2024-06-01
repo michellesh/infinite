@@ -1,26 +1,14 @@
-struct Snode {
-  int straightNum;
-  int ringNum;
-  int straightPosition;
-  int ringPosition;
-};
-
 struct Snake {
-  Snode n1;
-  Snode n2;
-  Snode n3;
-  Snode n4;
+  Node n1;
+  Node n2;
+  Node n3;
+  Node n4;
 };
 
-Snode createNode(int straightNum, int ringNum) {
-  return {straightNum, ringNum, straightPositionOnRing(ringNum),
-          ringPositionOnStraight(straightNum)};
-}
-
-Snode n1 = createNode(1, 1);
-Snode n2 = createNode(1, 3);
-Snode n3 = createNode(2, 3);
-Snode n4 = createNode(2, 5);
+Node n1 = createNode(1, 1);
+Node n2 = createNode(1, 3);
+Node n3 = createNode(2, 3);
+Node n4 = createNode(2, 5);
 Snake snake = {n1, n2, n3, n4};
 
 class SnakeSubPattern : public SubPattern {
@@ -28,10 +16,10 @@ private:
   uint8_t _activeSubPattern = 0;
   uint8_t _percentBrightness = 0; // percent brightness of the whole pattern
                                   //
-  Snode *_filterNodes(Snode *options, int length, int &filteredLength,
-                      Snode excludeNode) {
+  Node *_filterNodes(Node *options, int length, int &filteredLength,
+                     Node excludeNode) {
     // Create a temporary array to hold the filtered nodes
-    Snode *temp = new Snode[length];
+    Node *temp = new Node[length];
     int count = 0;
 
     // Apply the filter condition
@@ -49,7 +37,7 @@ private:
     }
 
     // Create an array of the correct size to hold the filtered nodes
-    Snode *filteredNodes = new Snode[count];
+    Node *filteredNodes = new Node[count];
     for (int i = 0; i < count; i++) {
       filteredNodes[i] = temp[i];
     }
@@ -63,20 +51,20 @@ private:
     return filteredNodes;
   }
 
-  Snode _newNode(Snode fromNode, Snode toNode) {
-    Snode options[] = {createNode(toNode.straightNum + 1, toNode.ringNum),
-                       createNode(toNode.straightNum - 1, toNode.ringNum),
-                       createNode(toNode.straightNum, toNode.ringNum + 2),
-                       createNode(toNode.straightNum, toNode.ringNum - 2)};
+  Node _newNode(Node fromNode, Node toNode) {
+    Node options[] = {createNode(toNode.straightNum + 1, toNode.ringNum),
+                      createNode(toNode.straightNum - 1, toNode.ringNum),
+                      createNode(toNode.straightNum, toNode.ringNum + 2),
+                      createNode(toNode.straightNum, toNode.ringNum - 2)};
 
     int filteredLength = 4;
-    Snode *filteredNodes = _filterNodes(options, 4, filteredLength, fromNode);
+    Node *filteredNodes = _filterNodes(options, 4, filteredLength, fromNode);
 
     int choice = random(filteredLength);
     return filteredNodes[choice];
   }
 
-  void _drawSnakeFromNodeToNode(Snode n1, Snode n2, int percent = 100) {
+  void _drawSnakeFromNodeToNode(Node n1, Node n2, int percent = 100) {
     int startPosition, endPosition;
     Path path;
     if (n1.straightNum == n2.straightNum) {
@@ -107,13 +95,7 @@ private:
     int percent = mapBeat(0, 100);
     static int prevPercent = percent;
     if (percent < prevPercent) {
-      Snode newNode = _newNode(snake.n3, snake.n4);
-      Serial.print("newNode: {");
-      Serial.print(newNode.straightNum);
-      Serial.print(", ");
-      Serial.print(newNode.ringNum);
-      Serial.println("}");
-
+      Node newNode = _newNode(snake.n3, snake.n4);
       snake.n1 = snake.n2;
       snake.n2 = snake.n3;
       snake.n3 = snake.n4;
