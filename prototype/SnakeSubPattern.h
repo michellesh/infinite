@@ -5,11 +5,7 @@ struct Snake {
   Node n4;
 };
 
-Node n1 = createNode(1, 1);
-Node n2 = createNode(1, 3);
-Node n3 = createNode(2, 3);
-Node n4 = createNode(2, 5);
-Snake snake = {n1, n2, n3, n4};
+Snake snake;
 
 class SnakeSubPattern : public SubPattern {
 private:
@@ -27,7 +23,9 @@ private:
       bool isValidStraight =
           options[i].straightNum >= 0 && options[i].straightNum < NUM_STRAIGHTS;
       bool isValidRing =
-          options[i].ringNum > 0 && options[i].ringNum < NUM_RINGS;
+          excludeNode.ringNum % 2 == 1
+              ? (options[i].ringNum > 0 && options[i].ringNum < NUM_RINGS)
+              : (options[i].ringNum >= 0 && options[i].ringNum < NUM_RINGS - 1);
       bool isExcludeNode = options[i].ringNum == excludeNode.ringNum &&
                            options[i].straightNum == excludeNode.straightNum;
       if (isValidStraight && isValidRing && !isExcludeNode) {
@@ -51,7 +49,7 @@ private:
     return filteredNodes;
   }
 
-  Node _newNode(Node fromNode, Node toNode) {
+  Node _getRandomAdjacentNode(Node fromNode, Node toNode) {
     Node options[] = {createNode(toNode.straightNum + 1, toNode.ringNum),
                       createNode(toNode.straightNum - 1, toNode.ringNum),
                       createNode(toNode.straightNum, toNode.ringNum + 2),
@@ -95,7 +93,7 @@ private:
     int percent = mapBeat(0, 100);
     static int prevPercent = percent;
     if (percent < prevPercent) {
-      Node newNode = _newNode(snake.n3, snake.n4);
+      Node newNode = _getRandomAdjacentNode(snake.n3, snake.n4);
       snake.n1 = snake.n2;
       snake.n2 = snake.n3;
       snake.n3 = snake.n4;
@@ -124,6 +122,21 @@ public:
 
   virtual void setPercentBrightness(uint8_t percentBrightness) {
     _percentBrightness = percentBrightness;
+  }
+
+  void setup() {
+    switch (_activeSubPattern) {
+    case SNAKES: {
+      Node n4 = createNode(random(NUM_STRAIGHTS), random(NUM_RINGS));
+      Node n3 = _getRandomAdjacentNode(n4, n4);
+      Node n2 = _getRandomAdjacentNode(n4, n3);
+      Node n1 = _getRandomAdjacentNode(n3, n2);
+      snake = {n1, n2, n3, n4};
+      break;
+    }
+    default:
+      break;
+    }
   }
 
   virtual void show() {
