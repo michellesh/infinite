@@ -1,6 +1,8 @@
 struct Snode {
   int straightNum;
   int ringNum;
+  int straightPosition;
+  int ringPosition;
 };
 
 struct Snake {
@@ -10,10 +12,15 @@ struct Snake {
   Snode n4;
 };
 
-Snode n1 = {1, 1};
-Snode n2 = {1, 3};
-Snode n3 = {2, 3};
-Snode n4 = {2, 5};
+Snode createNode(int straightNum, int ringNum) {
+  return {straightNum, ringNum, straightPositionOnRing(ringNum),
+          ringPositionOnStraight(straightNum)};
+}
+
+Snode n1 = createNode(1, 1);
+Snode n2 = createNode(1, 3);
+Snode n3 = createNode(2, 3);
+Snode n4 = createNode(2, 5);
 Snake snake = {n1, n2, n3, n4};
 
 class SnakeSubPattern : public SubPattern {
@@ -57,10 +64,10 @@ private:
   }
 
   Snode _newNode(Snode fromNode, Snode toNode) {
-    Snode options[] = {{toNode.straightNum + 1, toNode.ringNum},
-                       {toNode.straightNum - 1, toNode.ringNum},
-                       {toNode.straightNum, toNode.ringNum + 2},
-                       {toNode.straightNum, toNode.ringNum - 2}};
+    Snode options[] = {createNode(toNode.straightNum + 1, toNode.ringNum),
+                       createNode(toNode.straightNum - 1, toNode.ringNum),
+                       createNode(toNode.straightNum, toNode.ringNum + 2),
+                       createNode(toNode.straightNum, toNode.ringNum - 2)};
 
     int filteredLength = 4;
     Snode *filteredNodes = _filterNodes(options, 4, filteredLength, fromNode);
@@ -74,12 +81,12 @@ private:
     Path path;
     if (n1.straightNum == n2.straightNum) {
       path = straights[n1.straightNum];
-      startPosition = straightPositionOnRing(n1.ringNum);
-      endPosition = straightPositionOnRing(n2.ringNum);
+      startPosition = n1.straightPosition;
+      endPosition = n2.straightPosition;
     } else if (n1.ringNum == n2.ringNum) {
       path = rings[n1.ringNum];
-      startPosition = ringPositionOnStraight(n1.straightNum);
-      endPosition = ringPositionOnStraight(n2.straightNum);
+      startPosition = n1.ringPosition;
+      endPosition = n2.ringPosition;
     } else {
       Serial.println("Nodes not adjacent");
       return;
@@ -120,30 +127,30 @@ private:
     _drawSnakeFromNodeToNode(snake.n3, snake.n4, percent);
   }
 
-  public:
-    static const uint8_t SNAKES = PATTERN_SNAKES;
+public:
+  static const uint8_t SNAKES = PATTERN_SNAKES;
 
-    SnakeSubPattern(uint8_t activeSubPattern = 0) {
-      _activeSubPattern = activeSubPattern;
+  SnakeSubPattern(uint8_t activeSubPattern = 0) {
+    _activeSubPattern = activeSubPattern;
+  }
+
+  void setActivePattern(uint8_t activeSubPattern) {
+    _activeSubPattern = activeSubPattern;
+  }
+
+  virtual uint8_t getPercentBrightness() { return _percentBrightness; }
+
+  virtual void setPercentBrightness(uint8_t percentBrightness) {
+    _percentBrightness = percentBrightness;
+  }
+
+  virtual void show() {
+    switch (_activeSubPattern) {
+    case SNAKES:
+      _showSnakes();
+      break;
+    default:
+      break;
     }
-
-    void setActivePattern(uint8_t activeSubPattern) {
-      _activeSubPattern = activeSubPattern;
-    }
-
-    virtual uint8_t getPercentBrightness() { return _percentBrightness; }
-
-    virtual void setPercentBrightness(uint8_t percentBrightness) {
-      _percentBrightness = percentBrightness;
-    }
-
-    virtual void show() {
-      switch (_activeSubPattern) {
-      case SNAKES:
-        _showSnakes();
-        break;
-      default:
-        break;
-      }
-    }
-  };
+  }
+};

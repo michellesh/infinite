@@ -401,7 +401,11 @@ void setup() {
 }
 
 void loop() {
-  FastLED.clear();
+  if (activePattern == PATTERN_SNAKES) {
+    fadeLightBy(leds, NUM_LEDS, 40);
+  } else {
+    FastLED.clear();
+  }
   palette.cycle();
 
   // use loopMillis instead of millis so that everything calculated on one
