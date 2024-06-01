@@ -115,18 +115,19 @@ const char index_html[] PROGMEM = R"rawliteral(
     <button type="button" onclick="sendData('n',16)">*Lines: Comet Trails</button>
     <button type="button" onclick="sendData('n',17)">*Lines: Power Up And Fire</button>
     <button type="button" onclick="sendData('n',18)">*Lines: Power Up And Fire (broken)</button>
+    <button type="button" onclick="sendData('n',19)">*Lines: Snakes</button>
     <div class="break"></div>
-    <button type="button" onclick="sendData('n',19)">*Spinning: Rotating Hexagons</button>
-    <button type="button" onclick="sendData('n',20)">*Spinning: Counter Rotating Hexagons</button>
-    <button type="button" onclick="sendData('n',21)">*Spinning: Variable Speed Rotation</button>
-    <button type="button" onclick="sendData('n',22)">*Spinning: Variable Speed Rotation End</button>
+    <button type="button" onclick="sendData('n',20)">*Spinning: Rotating Hexagons</button>
+    <button type="button" onclick="sendData('n',21)">*Spinning: Counter Rotating Hexagons</button>
+    <button type="button" onclick="sendData('n',22)">*Spinning: Variable Speed Rotation</button>
+    <button type="button" onclick="sendData('n',23)">*Spinning: Variable Speed Rotation End</button>
     <div class="break"></div>
-    <button type="button" onclick="sendData('n',23)">*Flashing Hexagons</button>
-    <button type="button" onclick="sendData('n',24)">*Flashing Hexagons Warp</button>
+    <button type="button" onclick="sendData('n',24)">*Flashing Hexagons</button>
+    <button type="button" onclick="sendData('n',25)">*Flashing Hexagons Warp</button>
     <div class="break"></div>
-    <button type="button" onclick="sendData('n',25)">*Waveform Bouncing Single</button>
-    <button type="button" onclick="sendData('n',26)">*Waveform Bouncing Double</button>
-    <button type="button" onclick="sendData('n',27)">*Waveform Bouncing Nodes</button>
+    <button type="button" onclick="sendData('n',26)">*Waveform Bouncing Single</button>
+    <button type="button" onclick="sendData('n',27)">*Waveform Bouncing Double</button>
+    <button type="button" onclick="sendData('n',28)">*Waveform Bouncing Nodes</button>
     <div class="break"></div>
 
     <h3>Global brightness overlays</h3>

@@ -100,6 +100,7 @@ int nextAction = numActions; // actions dont fire until nextAction < numActions
 #include "twinkleUtils.h"
 #include "ledDepth-ledAngle.h"
 #include "overlay.h"
+#include "Node.h"
 
 #include "Palette.h"
 Palette palette;
@@ -117,19 +118,22 @@ Palette palette;
 #include "Flash.h"
 #include "FlashSubPattern.h"
 #include "SolidSubPattern.h"
+#include "SnakeSubPattern.h"
 // clang-format on
 
 LineSubPattern linePattern;
 SolidSubPattern solidPattern;
 TwinkleSubPattern twinklePattern;
 FlashSubPattern flashPattern;
+SnakeSubPattern snakePattern;
 
 // clang-format off
 SubPattern *activePatterns[] = {
   &solidPattern,
   &twinklePattern,
   &linePattern,
-  &flashPattern
+  &flashPattern,
+  &snakePattern
 };
 // clang-format on
 
@@ -157,6 +161,7 @@ void setupActivePattern() {
   case PATTERN_BASKET_WEAVING:
   case PATTERN_COMET_TRAILS:
   case PATTERN_POWER_UP_AND_FIRE:
+  case PATTERN_POWER_UP_AND_FIRE_BROKEN:
   case PATTERN_ROTATING_HEXAGONS:
   case PATTERN_COUNTER_ROTATING_HEXAGONS:
   case PATTERN_VARIABLE_SPEED_ROTATION:
@@ -169,6 +174,9 @@ void setupActivePattern() {
   case PATTERN_FLASHING_HEXAGONS:
   case PATTERN_FLASHING_HEXAGONS_WARP:
     activePatternGroup = 3;
+    break;
+  case PATTERN_SNAKES:
+    activePatternGroup = 4;
     break;
   default:
     break;

@@ -26,10 +26,11 @@ private:
       int percent = (float)indexOnLine / (float)_length * 100;
       percent = percent > fadeLengthPercent ? 100 - percent : percent;
       return mapc(percent, 0, fadeLengthPercent, 0, 255);
+    } else if (_fadeType == FADE_HEAVY) {
+      return addFadeShape(map(indexOnLine, 0, _length, 0, 255));
     }
 
-    // FADE_HEAVY
-    return addFadeShape(map(indexOnLine, 0, _length, 0, 255));
+    return 255; // NO_FADE
   }
 
   void _show() {
@@ -55,6 +56,7 @@ public:
   static constexpr uint8_t FADE_HEAVY = 0;
   static constexpr uint8_t FADE_COMET = 1;
   static constexpr uint8_t FADE_LIGHT = 2;
+  static constexpr uint8_t NO_FADE = 3;
 
   static constexpr Range LENGTH = {
       DEPTH_SEGMENT_LENGTH, DEPTH_SEGMENT_LENGTH * 6, DEPTH_SEGMENT_LENGTH * 2};

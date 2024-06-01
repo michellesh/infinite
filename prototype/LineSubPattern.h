@@ -3,7 +3,7 @@
 #define NUM_FLICKERS 4
 
 #define MAX_IDLE_TIME 2000
-#define NUM_NODES 30 // 8
+#define NUM_NODES 30
 #define NODE_LENGTH NUM_LEDS_PER_STRAIGHT / (NUM_RINGS - 1)
 
 // Spinning hexagon patterns speed multiplier range
@@ -24,23 +24,9 @@ struct Flicker {
   Timer stateTimer = {10};
 };
 
-struct Node {
-  int straightNum;
-  int straightPosition;
-  int ringNum;
-  int ringPosition;
-};
-
-Node nodes[NUM_NODES];
-
 Flicker flickers[NUM_FLICKERS];
 
-int ringPositionOnStraight(int straightNum) {
-  return NUM_LEDS_PER_RING - (straightNum * RING_SEGMENT_LENGTH);
-}
-int straightPositionOnRing(int ringNum) {
-  return NUM_LEDS_PER_STRAIGHT / (NUM_RINGS - 1) * ringNum;
-}
+Node waveformNodes[NUM_NODES];
 
 class LineSubPattern : public SubPattern {
 private:
@@ -304,7 +290,7 @@ private:
     Path path;
     int offset;
     for (int i = 0; i < NUM_NODES; i++) {
-      Node node = nodes[i];
+      Node node = waveformNodes[i];
       _setNodeLine(0, straights[node.straightNum],
                    node.straightPosition - NODE_LENGTH);
       _setNodeLine(1, straights[node.straightNum], node.straightPosition);
@@ -595,8 +581,8 @@ public:
       int n = 0;
       for (int i = 0; i < NUM_STRAIGHTS; i++) {
         for (int j = i % 2 == 0 ? 0 : 1; j < NUM_RINGS; j += 2) {
-          nodes[n] = {i, straightPositionOnRing(j), j,
-                      ringPositionOnStraight(i)};
+          waveformNodes[n] = {i, straightPositionOnRing(j), j,
+                              ringPositionOnStraight(i)};
           n++;
         }
       }
