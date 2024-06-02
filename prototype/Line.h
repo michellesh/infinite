@@ -59,7 +59,7 @@ public:
   static constexpr uint8_t NO_FADE = 3;
 
   static constexpr Range LENGTH = {
-      DEPTH_SEGMENT_LENGTH, DEPTH_SEGMENT_LENGTH * 6, DEPTH_SEGMENT_LENGTH * 2};
+      DEPTH_SEGMENT_LENGTH, DEPTH_SEGMENT_LENGTH * 10, DEPTH_SEGMENT_LENGTH * 2};
 
   void setSpeedMultiplier(float speedMultiplier) {
     _speedMultiplier = speedMultiplier;
