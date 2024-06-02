@@ -13,42 +13,15 @@ class SnakeSubPattern : public SubPattern {
 private:
   uint8_t _activeSubPattern = 0;
   uint8_t _percentBrightness = 0; // percent brightness of the whole pattern
-                                  //
-  Node *_filterNodes(Node *options, int length, int &filteredLength,
-                     Node excludeNode) {
-    // Create a temporary array to hold the filtered nodes
-    Node *temp = new Node[length];
-    int count = 0;
 
-    // Apply the filter condition
-    for (int i = 0; i < length; i++) {
-      bool isValidStraight =
-          options[i].straightNum >= 0 && options[i].straightNum < NUM_STRAIGHTS;
-      bool isValidRing =
-          excludeNode.ringNum % 2 == 1
-              ? (options[i].ringNum > 0 && options[i].ringNum < NUM_RINGS)
-              : (options[i].ringNum >= 0 && options[i].ringNum < NUM_RINGS - 1);
-      bool isExcludeNode = options[i].ringNum == excludeNode.ringNum &&
-                           options[i].straightNum == excludeNode.straightNum;
-      if (isValidStraight && isValidRing && !isExcludeNode) {
-        temp[count] = options[i];
-        count++;
-      }
-    }
-
-    // Create an array of the correct size to hold the filtered nodes
-    Node *filteredNodes = new Node[count];
-    for (int i = 0; i < count; i++) {
-      filteredNodes[i] = temp[i];
-    }
-
-    // Set the filtered length
-    filteredLength = count;
-
-    // Free the temporary array
-    delete[] temp;
-
-    return filteredNodes;
+  bool _isValidNode(Node n, Node excludeNode) {
+    bool isValidStraight = n.straightNum >= 0 && n.straightNum < NUM_STRAIGHTS;
+    bool isValidRing = excludeNode.ringNum % 2 == 1
+                           ? (n.ringNum > 0 && n.ringNum < NUM_RINGS)
+                           : (n.ringNum >= 0 && n.ringNum < NUM_RINGS - 1);
+    bool isExcludeNode = n.ringNum == excludeNode.ringNum &&
+                         n.straightNum == excludeNode.straightNum;
+    return isValidStraight && isValidRing && !isExcludeNode;
   }
 
   Node _getRandomAdjacentNode(Node fromNode, Node toNode) {
@@ -57,11 +30,28 @@ private:
                       createNode(toNode.straightNum, toNode.ringNum + 2),
                       createNode(toNode.straightNum, toNode.ringNum - 2)};
 
-    int filteredLength = 4;
-    Node *filteredNodes = _filterNodes(options, 4, filteredLength, fromNode);
+    bool validNode[] = {0, 0, 0, 0};
+    int numValid = 0;
+    for (int i = 0; i < 4; i++) {
+      if (_isValidNode(options[i], fromNode)) {
+        validNode[i] = true;
+        numValid++;
+      }
+    }
 
-    int choice = random(filteredLength);
-    return filteredNodes[choice];
+    int choice = random(numValid);
+    int index = 0;
+    for (int i = 0; i < 4; i++) {
+      if (validNode[i]) {
+        if (index == choice) {
+          index = i;
+          break;
+        } else {
+          index++;
+        }
+      }
+    }
+    return options[index];
   }
 
   void _drawSnakeFromNodeToNode(Node n1, Node n2, int percent = 100) {
