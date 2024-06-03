@@ -256,18 +256,34 @@ private:
     }
   }
 
+  void _updateBoucePeaks(float peakMax, bool force = false) {
+    static int prevWidth = -1;
+    if (prevWidth != width || force) {
+      int peakRangeMin = map(width, 1, 10, peakMax * 0.4, peakMax * 0.7);
+      int peakRangeMax = map(width, 1, 10, peakMax * 0.7, peakMax);
+      for (int i = 0; i < NUM_RINGS; i++) {
+        bouncePeak[i] = random(peakRangeMin, peakRangeMax);
+      }
+    }
+    prevWidth = width;
+  }
+
   // WAVEFORM_BOUNCING_SINGLE
   // WAVEFORM_BOUNCING_DOUBLE
   void _showWaveform(int bounceIndex = -1) {
     for (int i = 0; i < _numLines; i++) {
       int _bounceIndex = bounceIndex == -1 ? i % NUM_RINGS : bounceIndex;
       _updateBouncePosition(_bounceIndex);
+      Path path = _lines[i].getPath();
       if (!_lines[i].isReversed()) {
-        _lines[i].show(bouncePosition[_bounceIndex]);
+        for (int j = 0; j < bouncePosition[_bounceIndex]; j++) {
+          path.leds[j] = palette.getColor(path.offset + j);
+        }
       } else {
-        int pathLength = _lines[i].getPath().length;
-        _lines[i].show(pathLength - bouncePosition[_bounceIndex] +
-                       _lines[i].getLength());
+        for (int j = path.length - 1;
+             j > path.length - bouncePosition[_bounceIndex]; j--) {
+          path.leds[j] = palette.getColor(path.offset + j);
+        }
       }
     }
   }
@@ -539,23 +555,19 @@ public:
       }
       break;
     case WAVEFORM_BOUNCING_SINGLE:
+      _updateBoucePeaks(NUM_LEDS_PER_RING / 2, true);
       _numLines = NUM_RINGS * 2;
       for (uint8_t i = 0; i < _numLines; i++) {
         _lines[i] = Line(i);
         _lines[i].setPath(rings[i % NUM_RINGS]);
         _lines[i].setFadeType(Line::FADE_LIGHT);
         _lines[i].setReverse(i < _numLines / 2 ? false : true);
-        if (i < NUM_RINGS) {
-          bouncePeak[i] = random(NUM_LEDS_PER_RING / 7, NUM_LEDS_PER_RING / 3);
-        }
       }
       break;
     case WAVEFORM_BOUNCING_DOUBLE:
+      _updateBoucePeaks(NUM_LEDS_PER_RING / 4, true);
       _numLines = NUM_RINGS * 4;
       for (uint8_t i = 0; i < _numLines; i++) {
-        if (i < NUM_RINGS) {
-          bouncePeak[i] = random(NUM_LEDS_PER_RING / 10, NUM_LEDS_PER_RING / 5);
-        }
         _lines[i] = Line(i);
         _lines[i].setReverse(false);
         _lines[i].setFadeType(Line::FADE_LIGHT);
@@ -645,7 +657,11 @@ public:
       _showRandomFlashingSegmentsGlitch();
       break;
     case WAVEFORM_BOUNCING_SINGLE:
+      _updateBoucePeaks(NUM_LEDS_PER_RING / 2);
+      _showWaveform();
+      break;
     case WAVEFORM_BOUNCING_DOUBLE:
+      _updateBoucePeaks(NUM_LEDS_PER_RING / 4);
       _showWaveform();
       break;
     case WAVEFORM_BOUNCING_NODES:
