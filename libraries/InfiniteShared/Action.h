@@ -16,6 +16,7 @@ struct Action {
   bool setReverse;
   bool setBPM;
   bool setOverlay;
+  bool setFade;
 
   Action track(uint8_t x) {
     trackNumber = x;
@@ -26,6 +27,14 @@ struct Action {
   Action pattern(int x) {
     actionData.pattern = x;
     setPattern = true;
+    return *this;
+  }
+
+  Action patternFade(int x) {
+    actionData.pattern = x;
+    setPattern = true;
+    actionData.fade = true;
+    setFade = true;
     return *this;
   }
 
@@ -131,6 +140,9 @@ struct Action {
     }
     if (setOverlay) {
       data.overlay = actionData.overlay;
+    }
+    if (setFade) {
+      data.fade = actionData.fade;
     }
   }
 };

@@ -358,7 +358,7 @@ public:
       for (uint8_t i = 0; i < _numLines; i++) {
         _lines[i] = Line(i);
         _lines[i].setPath(straights[i]);
-        _lines[i].setLengthMultiplier(2);
+        _lines[i].setLengthMultiplier(4);
         _lines[i].setReverse(false);
       }
       break;
@@ -369,7 +369,7 @@ public:
       for (uint8_t i = 0; i < _numLines; i++) {
         _lines[i] = Line(i);
         _lines[i].setPath(straights[i]);
-        _lines[i].setLengthMultiplier(2);
+        _lines[i].setLengthMultiplier(4);
         _lines[i].setReverse(false);
       }
       break;

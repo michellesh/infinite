@@ -78,6 +78,8 @@ float overlaySpeed = DEFAULT_OVERLAYSPEED;
 float overlayWidth = DEFAULT_OVERLAYWIDTH;
 float overlayDensity = DEFAULT_OVERLAYDENSITY;
 bool reverse = DEFAULT_REVERSE;
+bool fadePatternOut = false;
+bool fadePatternIn = false;
 CRGB customColor1 = CRGB(100, 100, 100);
 CRGB customColor2 = CRGB(0, 0, 100);
 CRGB customColor3 = CRGB(0, 100, 100);
@@ -95,6 +97,7 @@ int mapBeat(int start, int end, float multiplier = 1.0) {
 
 unsigned long startTime = 0;
 int nextAction = numActions; // actions dont fire until nextAction < numActions
+Timer fadeTimer = {2000};
 
 // clang-format off
 #include "twinkleUtils.h"
@@ -382,19 +385,6 @@ void setup() {
     offset += NUM_LEDS_PER_RING;
   }
 
-//8:29:37.828 -> straight: 0
-//18:29:37.828 -> offset: 576
-//18:29:37.859 -> straight: 1
-//18:29:37.859 -> offset: 288
-//18:29:37.891 -> straight: 2
-//18:29:37.891 -> offset: 0
-//18:29:37.891 -> straight: 3
-//18:29:37.923 -> offset: 144
-//18:29:37.923 -> straight: 4
-//18:29:37.955 -> offset: 432
-//18:29:37.955 -> straight: 5
-//18:29:37.988 -> offset: 720
-
 #if MODE == SINGLE_BOARD_MODE
   setupWebServer();
 #endif
@@ -434,10 +424,13 @@ void loop() {
 
   unsigned long elapsedTime = millis() - startTime;
   if (elapsedTime >= actions[nextAction].timestamp && nextAction < numActions) {
-    Serial.print("next action: ");
-    Serial.println(nextAction);
     actions[nextAction].commitData();
-    handleAction();
+    if (data.fade) {
+      fadePatternOut = true;
+      fadeTimer.reset();
+    } else {
+      handleAction();
+    }
     nextAction++;
   }
 #endif
@@ -457,6 +450,24 @@ void loop() {
   if (activePattern != prevActivePattern) {
     setupActivePattern();
     prevActivePattern = activePattern;
+  }
+
+  if (fadePatternOut && !fadeTimer.complete()) {
+    brightness =
+        map(millis(), fadeTimer.lastCycleTime,
+            fadeTimer.lastCycleTime + fadeTimer.totalCycleTime, 255, 0);
+  } else if (fadePatternOut && fadeTimer.complete()) {
+    handleAction();
+    fadePatternOut = false;
+    fadePatternIn = true;
+    fadeTimer.reset();
+  }
+  if (fadePatternIn && !fadeTimer.complete()) {
+    brightness =
+        map(millis(), fadeTimer.lastCycleTime,
+            fadeTimer.lastCycleTime + fadeTimer.totalCycleTime, 0, 255);
+  } else if (fadePatternIn && fadeTimer.complete()) {
+    fadePatternIn = false;
   }
 
   activePatterns[activePatternGroup]->show();

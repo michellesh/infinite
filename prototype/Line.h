@@ -59,7 +59,7 @@ public:
   static constexpr uint8_t NO_FADE = 3;
 
   static constexpr Range LENGTH = {
-      DEPTH_SEGMENT_LENGTH, DEPTH_SEGMENT_LENGTH * 10, DEPTH_SEGMENT_LENGTH * 2};
+      DEPTH_SEGMENT_LENGTH, DEPTH_SEGMENT_LENGTH * 6, DEPTH_SEGMENT_LENGTH * 2};
 
   void setSpeedMultiplier(float speedMultiplier) {
     _speedMultiplier = speedMultiplier;
@@ -151,6 +151,9 @@ public:
   void showRepeat() {
     int _length = getLength();
     int numLinesOnPath = floor(_path.length / (_length * 2));
+    if (numLinesOnPath == 0) {
+      numLinesOnPath = 1;
+    }
     int increment = _path.length / numLinesOnPath;
     for (int indexOnPath = 0; indexOnPath < _path.length;
          indexOnPath += increment) {

@@ -118,6 +118,7 @@ typedef struct msg {
   bool reverse = DEFAULT_REVERSE;
   int bpm = DEFAULT_BPM;
   int overlay = 0;
+  bool fade = false;
 } msg;
 
 esp_err_t send(msg m) { return esp_now_send(0, (uint8_t *)&m, sizeof(msg)); }
