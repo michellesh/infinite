@@ -374,6 +374,7 @@ public:
         _lines[i] = Line(i);
         _lines[i].setPath(straights[i]);
         _lines[i].setOffset(offsetStep * i);
+        _lines[i].setLengthMultiplier(4);
         _lines[i].setReverse(false);
       }
       break;
