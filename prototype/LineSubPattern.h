@@ -239,20 +239,20 @@ private:
     }
   }
 
-  void _updateBouncePosition(int bounceIndex) {
+  int PERCENT_BOUNCE_UP = 20; // percent of beat to bounce upward
+  int PERCENT_MIN_BOUNCE =
+      15; // min position of waveform as percent of path length
+
+  void _updateBouncePosition(int bounceIndex, int minBouncePosition) {
     int percent = mapBeat(0, 100);
-    int PERCENT = 20;
-    float decay = _activeSubPattern == WAVEFORM_BOUNCING_NODES    ? 0.01
-                  : _activeSubPattern == WAVEFORM_BOUNCING_DOUBLE ? 0.25
-                                                                  : 0.5;
-    if (percent < PERCENT) {
+    if (percent < PERCENT_BOUNCE_UP) {
       bouncePosition[bounceIndex] =
-          map(percent, 0, PERCENT, 0, bouncePeak[bounceIndex]);
+          map(percent, 0, PERCENT_BOUNCE_UP, minBouncePosition,
+              bouncePeak[bounceIndex]);
     } else {
-      bouncePosition[bounceIndex] -= decay;
-      if (bouncePosition[bounceIndex] < 0) {
-        bouncePosition[bounceIndex] = 0;
-      }
+      bouncePosition[bounceIndex] =
+          map(percent, PERCENT_BOUNCE_UP, 100, bouncePeak[bounceIndex],
+              minBouncePosition);
     }
   }
 
@@ -273,16 +273,26 @@ private:
   void _showWaveform(int bounceIndex = -1) {
     for (int i = 0; i < _numLines; i++) {
       int _bounceIndex = bounceIndex == -1 ? i % NUM_RINGS : bounceIndex;
-      _updateBouncePosition(_bounceIndex);
       Path path = _lines[i].getPath();
+      _updateBouncePosition(_bounceIndex,
+                            path.length * PERCENT_MIN_BOUNCE / 100);
       if (!_lines[i].isReversed()) {
         for (int j = 0; j < bouncePosition[_bounceIndex]; j++) {
-          path.leds[j] = palette.getColor(path.offset + j);
+          uint8_t brightness =
+              _lines[i].getFadeType() == Line::NO_FADE
+                  ? 255
+                  : map(j, 0, bouncePosition[_bounceIndex], 255, 0);
+          path.leds[j] = palette.getColor(path.offset + j).nscale8(brightness);
         }
       } else {
         for (int j = path.length - 1;
              j > path.length - bouncePosition[_bounceIndex]; j--) {
-          path.leds[j] = palette.getColor(path.offset + j);
+          uint8_t brightness =
+              _lines[i].getFadeType() == Line::NO_FADE
+                  ? 255
+                  : map(j, path.length - 1,
+                        path.length - bouncePosition[_bounceIndex], 255, 0);
+          path.leds[j] = palette.getColor(path.offset + j).nscale8(brightness);
         }
       }
     }
@@ -559,9 +569,18 @@ public:
       _numLines = NUM_RINGS * 2;
       for (uint8_t i = 0; i < _numLines; i++) {
         _lines[i] = Line(i);
-        _lines[i].setPath(rings[i % NUM_RINGS]);
-        _lines[i].setFadeType(Line::FADE_LIGHT);
-        _lines[i].setReverse(i < _numLines / 2 ? false : true);
+        _lines[i].setFadeType(Line::NO_FADE);
+        Path ring = rings[i % NUM_RINGS];
+        if (i < _numLines / 2) {
+          Path path = {&leds[ring.offset], ring.length / 2, ring.offset};
+          _lines[i].setPath(path);
+          _lines[i].setReverse(false);
+        } else {
+          int offset = ring.offset + ring.length / 2;
+          Path path = {&leds[offset], ring.length / 2, offset};
+          _lines[i].setPath(path);
+          _lines[i].setReverse(true);
+        }
       }
       break;
     case WAVEFORM_BOUNCING_DOUBLE:
@@ -570,7 +589,7 @@ public:
       for (uint8_t i = 0; i < _numLines; i++) {
         _lines[i] = Line(i);
         _lines[i].setReverse(false);
-        _lines[i].setFadeType(Line::FADE_LIGHT);
+        _lines[i].setFadeType(Line::NO_FADE);
         int offset;
         if (i < _numLines / 4) {
           offset = rings[i % NUM_RINGS].offset + NUM_LEDS_PER_RING / 5;

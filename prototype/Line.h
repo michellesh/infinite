@@ -111,6 +111,8 @@ public:
 
   void setFadeType(uint8_t fadeType) { _fadeType = fadeType; }
 
+  uint8_t getFadeType() { return _fadeType; }
+
   void resetPrevPosition() { _prevPosition = 0; }
 
   bool isFullyOutOfBounds(float position) {
