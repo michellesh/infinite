@@ -97,7 +97,7 @@ int mapBeat(int start, int end, float multiplier = 1.0) {
 
 unsigned long startTime = 0;
 int nextAction = numActions; // actions dont fire until nextAction < numActions
-Timer fadeTimer = {2000};
+Timer fadeTimer = {DEFAULT_FADE_MILLIS};
 
 // clang-format off
 #include "twinkleUtils.h"
@@ -425,8 +425,9 @@ void loop() {
   unsigned long elapsedTime = millis() - startTime;
   if (elapsedTime >= actions[nextAction].timestamp && nextAction < numActions) {
     actions[nextAction].commitData();
-    if (data.fade) {
+    if (data.fadeMillis != 0) {
       fadePatternOut = true;
+      fadeTimer.totalCycleTime = data.fadeMillis;
       fadeTimer.reset();
     } else {
       handleAction();

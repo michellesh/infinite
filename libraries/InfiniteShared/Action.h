@@ -27,14 +27,14 @@ struct Action {
   Action pattern(int x) {
     actionData.pattern = x;
     setPattern = true;
+    actionData.fadeMillis = 0;
     return *this;
   }
 
-  Action patternFade(int x) {
+  Action patternFade(int x, unsigned long fadeMillis = DEFAULT_FADE_MILLIS) {
     actionData.pattern = x;
     setPattern = true;
-    actionData.fade = true;
-    setFade = true;
+    actionData.fadeMillis = fadeMillis;
     return *this;
   }
 
@@ -107,6 +107,7 @@ struct Action {
   void commitData() {
     if (setPattern) {
       data.pattern = actionData.pattern;
+      data.fadeMillis = actionData.fadeMillis;
     }
     if (setPalette) {
       data.palette = actionData.palette;
@@ -140,9 +141,6 @@ struct Action {
     }
     if (setOverlay) {
       data.overlay = actionData.overlay;
-    }
-    if (setFade) {
-      data.fade = actionData.fade;
     }
   }
 };

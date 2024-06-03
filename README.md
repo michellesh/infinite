@@ -44,6 +44,7 @@ Fade fades[] = {
 | `.time(milliseconds)` | Create an action at this timestamp. `milliseconds` cannot be 0, use `.time()` for first action. |
 | `.track(int trackNumber)` | Set the track. Should be in same order as SD card. For first track use `.track(1)` (no zeros). Has no effect if running sequence from web server. |
 | `.pattern(int patternId)`  | Set the pattern. See spreadsheet for current pattern variables. |
+| `.patternFade(int patternId, int fadeMillis = 2000)`  | Set the pattern, and fade the current pattern out and the new pattern in. The second function argument (optional) is how many milliseconds to fade out and to fade in individually. If omitted, default is 2000ms. |
 | `.palette(int paletteId)` | Set the color palette<br><br>`PALETTE_FIRE`<br>`PALETTE_OCEAN`<br>`PALETTE_FLORAL`<br>`PALETTE_ICE`<br>`PALETTE_FAIRY` |
 | `.colorMode(int colorModeId)` | Set the color mode<br><br>`COLOR_MODE_SOLID`<br>`COLOR_MODE_INDEX_GRADIENT`<br>`COLOR_MODE_DEPTH_GRADIENT`<br>`COLOR_MODE_ANGLE_GRADIENT` |
 | `.bpm(int value)` | Set the bpm |

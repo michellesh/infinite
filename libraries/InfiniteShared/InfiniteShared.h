@@ -66,6 +66,7 @@
 #define DEFAULT_AUTOCYCLEPALETTES false
 #define DEFAULT_SECONDSPERPALETTE 10
 #define DEFAULT_BPM 112
+#define DEFAULT_FADE_MILLIS 2000
 
 #define PALETTE_ORANGEPURPLEBLUE 0
 #define PALETTE_PINKPURPLEPINK 1
@@ -118,7 +119,7 @@ typedef struct msg {
   bool reverse = DEFAULT_REVERSE;
   int bpm = DEFAULT_BPM;
   int overlay = 0;
-  bool fade = false;
+  unsigned long fadeMillis = DEFAULT_FADE_MILLIS;
 } msg;
 
 esp_err_t send(msg m) { return esp_now_send(0, (uint8_t *)&m, sizeof(msg)); }

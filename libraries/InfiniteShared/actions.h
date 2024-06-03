@@ -3,7 +3,7 @@
 
 Action actions[] = {
     time().track(5).bpm(112).pattern(PATTERN_ROTATING_HEXAGONS),
-    time(5000).patternFade(PATTERN_TWINKLE),
+    time(5000).patternFade(PATTERN_TWINKLE, 500),
     time(10000).patternFade(PATTERN_ROTATING_HEXAGONS).bpm(224).width(10),
     time(15000).patternFade(PATTERN_TWINKLE),
     time(20000).patternFade(PATTERN_ROTATING_HEXAGONS),
