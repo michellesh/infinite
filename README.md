@@ -43,9 +43,9 @@ Action actions[] = {
 
 ### Variables
 
-| Function | Description |
+| Variable | Description |
 | -------- | ----------- |
-| `mp3url` | The URL of the mp3 file. In the web server, this audio will play from the browser when the "Play Sequence" button is clicked. Include this at the top of the `actions.h` file. Example:<br></br>`String mp3url = "https://github.com/michellesh/infinite/raw/main/songs/cornfield-chase.mp3";` |
+| `mp3url` | The URL of the mp3 file. In the web server, this audio will play from the browser when the "Play Sequence" button is clicked. Include this at the top of the `actions.h` file. Example:<br></br>```String mp3url = "https://github.com/michellesh/infinite/raw/main/songs/cornfield-chase.mp3";``` |
 
 
 ### Action functions
