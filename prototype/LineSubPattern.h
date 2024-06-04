@@ -15,6 +15,7 @@ int bouncePeak[NUM_RINGS];
 float bouncePosition[NUM_RINGS];
 int cometPosition[NUM_STRAIGHTS * 2];
 bool cometActive[NUM_STRAIGHTS * 2];
+int nextComet = 0;
 
 struct Flicker {
   int id = 0;
@@ -125,7 +126,6 @@ private:
       inc = mapf(speed, 1, 10, 1, 5);
     }
     prevSpeed = speed;
-    static int nextComet = 0;
     if (beat) {
       // start a comet
       if (!cometActive[nextComet]) {
@@ -169,13 +169,12 @@ private:
 
   // RAINFALL_FALL_ON_BEAT
   void _showRainfall() {
-    if (beat) {
-      shuffleIndexes(order, _numLines);
-    }
-    for (int i = 0; i < _numLines; i++) {
-      if (i % 2 == 0) {
-        _lines[order[i]].show();
+    for (int i = 0; i < _numLines / 2; i++) {
+      if (i == 0 && _lines[order[i]].isFullyOutOfBounds()) {
+        shuffleIndexes(order, _numLines);
       }
+      _lines[order[i]].commitNewPosition();
+      _lines[order[i]].show();
     }
   }
 
@@ -461,8 +460,10 @@ public:
     case COMET_TRAILS:
       _numLines = NUM_STRAIGHTS * 2;
       shuffleIndexes(order, NUM_STRAIGHTS);
+      nextComet = 0;
       for (uint8_t i = 0; i < _numLines; i++) {
         order[i + NUM_STRAIGHTS] = order[i]; // move shuffled values over
+        cometPosition[i] = 0;
       }
       shuffleIndexes(order, NUM_STRAIGHTS); // shuffle again
       for (uint8_t i = 0; i < _numLines; i++) {

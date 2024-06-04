@@ -281,6 +281,23 @@ const char index_html[] PROGMEM = R"rawliteral(
         document.getElementById("timer").innerHTML = (elapsedTime / 1000).toFixed(3);
       }, 100);
     });
+
+    // Create a new Audio element
+    const audio = new Audio("https://github.com/michellesh/infinite/raw/main/songs/cornfield-chase.mp3");
+    // Play the audio when the button is clicked
+    document.getElementById("startTimerBtn").addEventListener("click", () => {
+      audio.currentTime = 0;
+      audio.play();
+    });
+    // Optionally, you can handle events like 'canplaythrough' to ensure audio is ready to play
+    audio.addEventListener("canplaythrough", () => {
+      console.log("Audio is ready to play");
+    });
+    // Log any errors
+    audio.addEventListener("error", (e) => {
+      console.error("Error playing audio:", e);
+    });
+
   }
 
   function sendData(type, val) {
