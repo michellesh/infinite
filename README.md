@@ -6,28 +6,32 @@ Tubey McTubeface
 
 ### Example
 
-See `libraries/InfiniteShared/actions.h`
+In file: `libraries/InfiniteShared/actions.h`
 
 ```cpp
-Action actions[] = {
-    time().track(5).bpm(112).pattern(PATTERN_SOLID_OVERLAY),
-    time(5000).bpm(224).pattern(PATTERN_LASERS_DOUBLES),
-    time(10000).pattern(PATTERN_LASERS),
-    time(15000).pattern(PATTERN_ROTATING_HEXAGONS).speed(9.5).width(10),
-    time(20000).bpm(56),
-    time(25000).width(1).density(1),
-    time(30000)
-        .pattern(PATTERN_TWINKLE)
-        .width(5)
-        .density(4)
-        .speed(7)
-        .overlay(OVERLAY_BRIGHTNESS_SINWAVE)
-        .bpm(112)
-};
+String mp3url = "https://github.com/michellesh/infinite/raw/main/songs/cornfield-chase.mp3";
 
-Fade fades[] = {
-    fadeOut(5000, 10000),
-    fadeIn(10000, 15000),
+Action actions[] = {
+    time().bpm(31).pattern(PATTERN_TWINKLE).speed(4).width(1).density(1),
+    time(4800).patternFade(PATTERN_COMET_TRAILS, 500).bpm(31).width(7),
+    time(18200).pattern(PATTERN_RAINFALL_FALL_ON_BEAT).bpm(34).width(6),
+    time(33200).pattern(PATTERN_BASKET_WEAVING).bpm(96).width(1),
+    time(42200).pattern(PATTERN_LASERS).width(10),
+    time(53525).pattern(PATTERN_LASERS).width(2).bpm(189),
+    time(68800).pattern(PATTERN_ROTATING_HEXAGONS).bpm(48).density(9).width(4),
+    time(72400).width(3),
+    time(76200).width(2),
+    time(80100).width(1),
+    time(83500).pattern(PATTERN_ROTATING_HEXAGONS).bpm(48).density(3).width(9),
+    time(87300).bpm(96).density(5),
+    time(91300).bpm(144).density(7),
+    time(94800).bpm(189).density(9),
+    time(99000).pattern(PATTERN_SOLID_OVERLAY_RAILGUN).bpm(48),
+    time(102900).bpm(96),
+    time(106000).reverse(1),
+    time(111000).pattern(PATTERN_FLASHING_HEXAGONS_WARP),
+    time(113500).pattern(PATTERN_TWINKLE).width(1).speed(7).density(3).overlay(OVERLAY_BRIGHTNESS_SINWAVE).bpm(96),
+    time(119400).pattern(PATTERN_TWINKLE).width(1).speed(3).density(1).overlay(0)
 };
 ```
 
@@ -36,6 +40,13 @@ Fade fades[] = {
 3. There must be at least 350 milliseconds between each action. This is because there needs to be a delay between sending to each of the 8 receivers. The delay is currently set to 50ms per receiver.
 4. Actions must be in order - each subsequent timestamp must be greater than the previous.
 5. Negative values are untested. Use `reverse`.
+
+### Variables
+
+| Function | Description |
+| -------- | ----------- |
+| `mp3url` | The URL of the mp3 file. In the web server, this audio will play from the browser when the "Play Sequence" button is clicked. Include this at the top of the `actions.h` file. Example:<br></br>`String mp3url = "https://github.com/michellesh/infinite/raw/main/songs/cornfield-chase.mp3";` |
+
 
 ### Action functions
 
@@ -57,9 +68,9 @@ Fade fades[] = {
 | `.reverse(bool isReversed)` | Set reverse to true or false. Defaults to false. |
 | `.overlay(int value)` | Set an overlay pattern to play over the current pattern.<br><br>`OVERLAY_BRIGHTNESS_SINWAVE`<br>`OVERLAY_BRIGHTNESS_STROBE` |
 
-### Fade functions
+### Volume fade functions
 
-These functions have no effect if running sequence from web server.
+Fade the volume of the song. These functions have no effect if running the sequence from the web server.
 
 | Function | Description |
 | -------- | ----------- |

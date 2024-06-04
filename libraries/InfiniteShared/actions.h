@@ -1,6 +1,8 @@
 // See README for reference
 // https://github.com/michellesh/infinite
 
+String mp3url = "https://github.com/michellesh/infinite/raw/main/songs/cornfield-chase.mp3";
+
 Action actions[] = {
     time().bpm(31).pattern(PATTERN_TWINKLE).speed(4).width(1).density(1),
     time(4800).patternFade(PATTERN_COMET_TRAILS, 500).bpm(31).width(7),
@@ -18,10 +20,10 @@ Action actions[] = {
     time(94800).bpm(189).density(9),
     time(99000).pattern(PATTERN_SOLID_OVERLAY_RAILGUN).bpm(48),
     time(102900).bpm(96),
-    time(106000).reverse(1), // perfect
+    time(106000).reverse(1),
     time(111000).pattern(PATTERN_FLASHING_HEXAGONS_WARP),
     time(113500).pattern(PATTERN_TWINKLE).width(1).speed(7).density(3).overlay(OVERLAY_BRIGHTNESS_SINWAVE).bpm(96),
-    time(119400).pattern(PATTERN_TWINKLE).width(1).speed(3).density(1).overlay(0) // perfect
+    time(119400).pattern(PATTERN_TWINKLE).width(1).speed(3).density(1).overlay(0)
 };
 
 Fade fades[] = {

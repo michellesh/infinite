@@ -283,7 +283,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     });
 
     // Create a new Audio element
-    const audio = new Audio("https://github.com/michellesh/infinite/raw/main/songs/cornfield-chase.mp3");
+    const audio = new Audio("%MP3URL%");
     // Play the audio when the button is clicked
     document.getElementById("startTimerBtn").addEventListener("click", () => {
       audio.currentTime = 0;
@@ -502,6 +502,9 @@ String processor(const String& var){
   }
   if(var == "BRIGHTNESSVALUE"){
     return String(brightness);
+  }
+  if(var == "MP3URL") {
+    return mp3url;
   }
   return "";
 }
