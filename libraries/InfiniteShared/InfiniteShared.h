@@ -2,7 +2,7 @@
 #define X1_RECEIVER_MODE 1  // sender and single receiver
 #define X8_RECEIVER_MODE 2  // sender and two receivers
 
-#define MODE X1_RECEIVER_MODE
+#define MODE SINGLE_BOARD_MODE
 
 char receiver1[] = "4C:75:25:64:E5:DC";
 
