@@ -1,25 +1,3 @@
-DEFINE_GRADIENT_PALETTE(_firePalette){
-    0,   139, 10,  0,  // dark red with hint of orange
-    255, 255, 150, 0}; // gold with hint of orange
-CRGBPalette16 firePalette = _firePalette;
-
-DEFINE_GRADIENT_PALETTE(_oceanPalette){
-    0,   94, 255, 94,  // CHSV(HUE_GREEN, 100, 255)
-    255, 15, 150, 15}; // greenish teal
-CRGBPalette16 oceanPalette = _oceanPalette;
-
-DEFINE_GRADIENT_PALETTE(_floralPalette){0,   255, 127, 80,   // CRGB::Coral
-                                        255, 230, 230, 250}; // CRGB::Lavender
-CRGBPalette16 floralPalette = _floralPalette;
-
-DEFINE_GRADIENT_PALETTE(_icePalette){0,   224, 240, 255,  // light blue
-                                     255, 31,  147, 255}; // medium blue
-CRGBPalette16 icePalette = _icePalette;
-
-DEFINE_GRADIENT_PALETTE(_fairyPalette){0,   63,  57,  11,  // "QuarterFairy"
-                                       255, 255, 227, 45}; // CRGB::FairyLight
-CRGBPalette16 fairyPalette = _fairyPalette;
-
 uint8_t percent(uint8_t percent) { return map(percent, 0, 100, 0, 255); }
 
 DEFINE_GRADIENT_PALETTE(_orangePurpleBlue){
@@ -30,29 +8,11 @@ DEFINE_GRADIENT_PALETTE(_orangePurpleBlue){
     percent(88), 159, 85,  137, percent(100), 239, 146, 58};
 CRGBPalette16 orangePurpleBlue = _orangePurpleBlue;
 
-DEFINE_GRADIENT_PALETTE(_pinkPurplePink){
-    percent(0),   220, 144, 182, percent(11), 186, 102, 151,
-    percent(20),  157, 80,  150, percent(50), 46,  26,  113,
-    percent(80),  157, 80,  150, percent(90), 186, 102, 151,
-    percent(100), 220, 144, 182};
-CRGBPalette16 pinkPurplePink = _pinkPurplePink;
-
 DEFINE_GRADIENT_PALETTE(_fireAndIce){
     percent(0),  164, 29,  10,  percent(20),  235, 71,  15,
     percent(40), 250, 103, 29,  percent(60),  88,  139, 194,
     percent(80), 42,  82,  152, percent(100), 21,  31,  52};
 CRGBPalette16 fireAndIce = _fireAndIce;
-
-DEFINE_GRADIENT_PALETTE(_pinkCloud){percent(0),   252, 200, 169,
-                                    percent(50),  236, 100, 153,
-                                    percent(100), 128, 150, 226};
-CRGBPalette16 pinkCloud = _pinkCloud;
-
-DEFINE_GRADIENT_PALETTE(_yellowGreen){
-    percent(0),   220, 243, 134, percent(29), 202, 228, 128,
-    percent(55),  132, 216, 119, percent(80), 64,  158, 53,
-    percent(100), 0,   88,  0};
-CRGBPalette16 yellowGreen = _yellowGreen;
 
 DEFINE_GRADIENT_PALETTE(_bluesAndPurples){
     percent(0),  123, 145, 204, percent(12),  65,  79,  134,
@@ -78,21 +38,82 @@ DEFINE_GRADIENT_PALETTE(_bluePurpleRedOrange){
     percent(93), 236, 170, 86,  percent(100), 249, 234, 211};
 CRGBPalette16 bluePurpleRedOrange = _bluePurpleRedOrange;
 
+DEFINE_GRADIENT_PALETTE(_firePalette){
+    0,   139, 10,  0,  // dark red with hint of orange
+    255, 255, 150, 0}; // gold with hint of orange
+CRGBPalette16 firePalette = _firePalette;
+
+DEFINE_GRADIENT_PALETTE(_oceanPalette){
+    0,   94, 255, 94,  // CHSV(HUE_GREEN, 100, 255)
+    255, 15, 150, 15}; // greenish teal
+CRGBPalette16 oceanPalette = _oceanPalette;
+
+DEFINE_GRADIENT_PALETTE(_pinkBluePink){
+    percent(0), 255, 40, 71, percent(50), 0, 0, 255, percent(100), 255, 40, 71};
+CRGBPalette16 pinkBluePink = _pinkBluePink;
+
+DEFINE_GRADIENT_PALETTE(_blueTealBlue){
+    percent(0), 0, 0, 125, percent(50), 0, 250, 125, percent(100), 0, 0, 125};
+CRGBPalette16 blueTealBlue = _blueTealBlue;
+
+DEFINE_GRADIENT_PALETTE(_blueMagentaPurple){
+    percent(0), 0, 0, 200, percent(50), 180, 24, 50, percent(100), 50, 0, 100};
+CRGBPalette16 blueMagentaPurple = _blueMagentaPurple;
+
+DEFINE_GRADIENT_PALETTE(_mintMagentaPurple){
+    percent(0), 0, 255, 81, percent(50), 180, 24, 50, percent(100), 50, 0, 100};
+CRGBPalette16 mintMagentaPurple = _mintMagentaPurple;
+
+DEFINE_GRADIENT_PALETTE(_orangePinkMint){percent(0),   0,   255, 81,
+                                         percent(50),  180, 24,  50,
+                                         percent(100), 255, 100, 0};
+CRGBPalette16 orangePinkMint = _orangePinkMint;
+
+DEFINE_GRADIENT_PALETTE(_peacefulBlue){
+    percent(0), 0, 0, 5, percent(50), 0, 0, 100, percent(100), 0, 0, 5};
+CRGBPalette16 peacefulBlue = _peacefulBlue;
+
+DEFINE_GRADIENT_PALETTE(_blueTealBlue2){
+    percent(0), 0, 0, 100, percent(50), 0, 200, 75, percent(100), 0, 0, 100};
+CRGBPalette16 blueTealBlue2 = _blueTealBlue2;
+
+DEFINE_GRADIENT_PALETTE(_bluePurplePink){
+    percent(0), 0, 0, 200, percent(50), 255, 50, 100, percent(100), 150, 0, 30};
+CRGBPalette16 bluePurplePink = _bluePurplePink;
+
+DEFINE_GRADIENT_PALETTE(_pinkWhiteOrange){
+    percent(0), 100, 0, 20, percent(50), 40, 40, 40, percent(100), 100, 25, 0};
+CRGBPalette16 pinkWhiteOrange = _pinkWhiteOrange;
+
+DEFINE_GRADIENT_PALETTE(_yellowGreen){
+    percent(0), 0, 50, 0, percent(30), 20, 100, 0, percent(100), 200, 250, 0};
+CRGBPalette16 yellowGreen = _yellowGreen;
+
+DEFINE_GRADIENT_PALETTE(_pinkCloudUpdate){percent(0),   30,  30,  226,
+                                          percent(50),  236, 100, 153,
+                                          percent(100), 120, 120, 120};
+CRGBPalette16 pinkCloudUpdate = _pinkCloudUpdate;
+
 // clang-format off
 CRGBPalette16* activePalettes[] = {
   &orangePurpleBlue,
-  &pinkPurplePink,
   &fireAndIce,
-  &pinkCloud,
-  &yellowGreen,
   &bluesAndPurples,
   &rainbow,
   &bluePurpleRedOrange,
   &firePalette,
   &oceanPalette,
-  &floralPalette,
-  &icePalette,
-  &fairyPalette
+  &pinkBluePink,
+  &blueTealBlue,
+  &blueMagentaPurple,
+  &mintMagentaPurple,
+  &orangePinkMint,
+  &peacefulBlue,
+  &blueTealBlue2,
+  &bluePurplePink,
+  &pinkWhiteOrange,
+  &yellowGreen,
+  &pinkCloudUpdate,
   // TODO update NUM_PALETTES and palette IDs!
 };
 // clang-format on

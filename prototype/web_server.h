@@ -140,18 +140,23 @@ const char index_html[] PROGMEM = R"rawliteral(
     <h3>Color Palettes</h3>
     <div class="break"></div>
     <button type="button" onclick="sendData('p',0)">orange purple blue</button>
-    <button type="button" onclick="sendData('p',1)">pink purple pink</button>
-    <button type="button" onclick="sendData('p',2)">fire and ice</button>
-    <button type="button" onclick="sendData('p',3)">pink cloud</button>
-    <button type="button" onclick="sendData('p',4)">yellow green</button>
-    <button type="button" onclick="sendData('p',5)">blues and purples</button>
-    <button type="button" onclick="sendData('p',6)">rainbow</button>
-    <button type="button" onclick="sendData('p',7)">blue purple red orange</button>
-    <button type="button" onclick="sendData('p',8)">fire</button>
-    <button type="button" onclick="sendData('p',9)">ocean</button>
-    <button type="button" onclick="sendData('p',10)">floral</button>
-    <button type="button" onclick="sendData('p',11)">ice</button>
-    <button type="button" onclick="sendData('p',12)">fairy</button>
+    <button type="button" onclick="sendData('p',1)">fire and ice</button>
+    <button type="button" onclick="sendData('p',2)">blues and purples</button>
+    <button type="button" onclick="sendData('p',3)">rainbow</button>
+    <button type="button" onclick="sendData('p',4)">blue purple red orange</button>
+    <button type="button" onclick="sendData('p',5)">fire</button>
+    <button type="button" onclick="sendData('p',6)">ocean</button>
+    <button type="button" onclick="sendData('p',7)">pink blue pink</button>
+    <button type="button" onclick="sendData('p',8)">blue teal blue</button>
+    <button type="button" onclick="sendData('p',9)">blue magenta purple</button>
+    <button type="button" onclick="sendData('p',10)">mint magenta purple</button>
+    <button type="button" onclick="sendData('p',11)">orange pink mint</button>
+    <button type="button" onclick="sendData('p',12)">peaceful blue</button>
+    <button type="button" onclick="sendData('p',13)">blue teal blue 2</button>
+    <button type="button" onclick="sendData('p',14)">blue purple pink</button>
+    <button type="button" onclick="sendData('p',15)">pink white orange</button>
+    <button type="button" onclick="sendData('p',16)">yellow green</button>
+    <button type="button" onclick="sendData('p',17)">pink cloud update</button>
     <div class="break"></div>
 
     <h3>Color Modes</h3>
