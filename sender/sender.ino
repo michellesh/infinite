@@ -1,4 +1,10 @@
 // clang-format off
+#include "Arduino.h"
+#include "Audio.h" // https://github.com/schreibfaul1/ESP32-audioI2S
+#include "FS.h"
+#include "SD.h"
+
+#include <FastLED.h>
 #include <WiFi.h>
 #include <esp_now.h>
 
@@ -7,20 +13,21 @@
 #include "InfiniteShared.h"
 // clang-format on
 
-#define CMD_PLAY_NEXT 0x01
-#define CMD_PLAY_PREV 0x02
-#define CMD_PLAY_W_INDEX 0x03
-#define CMD_SET_VOLUME 0x06
-#define CMD_SEL_DEV 0x09
-#define CMD_PLAY_W_VOL 0x22
-#define CMD_PLAY 0x0D
-#define CMD_PAUSE 0x0E
-#define CMD_SINGLE_CYCLE 0x19
-#define DEV_TF 0x02
-#define SINGLE_CYCLE_ON 0x00
-#define SINGLE_CYCLE_OFF 0x01
+// SD Card
+#define SD_CS 5
+#define SPI_MOSI 23
+#define SPI_MISO 19
+#define SPI_SCK 18
 
-#define MAX_VOLUME 30
+// MAX98357 audio amplifier
+// GAIN pin tied to ground
+// SD pin floating
+#define I2S_DOUT 25
+#define I2S_BCLK 27
+#define I2S_LRC 26
+
+#define MAX_VOLUME 21
+#define MAX_FILES 100
 
 #if MODE == X8_RECEIVER_MODE
 #define NUM_RECEIVERS 8
@@ -30,71 +37,17 @@
 
 #define DELAY 50 // delay send between receivers
 
-#define LED_PIN 4
-
 uint8_t receiverAddresses[NUM_RECEIVERS][6]; // 6 bytes in a mac address
-
-bool autoCyclePalettes = DEFAULT_AUTOCYCLEPALETTES;
-
-String getTrackName(int trackNumber) {
-  switch (trackNumber) {
-  case 1:
-    return "KILLER QUEEN";
-  case 2:
-    return "BOHEMIAN RHAPSODY";
-  case 3:
-    return "FLASH";
-  case 4:
-    return "FAT BOTTOMED GIRLS";
-  case 5:
-    return "ANOTHER ONE BITES THE DUST";
-  case 6:
-    return "BICYCLE RACE";
-  case 7:
-    return "YOU'RE MY BEST FRIEND";
-  case 8:
-    return "DONT STOP ME NOW";
-  case 9:
-    return "SAVE ME";
-  case 10:
-    return "CRAZY LITTLE THING CALLED LOVE";
-  default:
-    return "";
-  }
-}
-
-int getBPM(int trackNumber) {
-  switch (trackNumber) {
-  case 1:
-    return 118; // -> 3 killer queen
-  case 2:
-    return 141; // -> 1 bohemian rhapsody
-  case 3:
-    return 108; // -> 14 flash
-  case 4:
-    return 88; // -> 4 fat bottomed girls
-  case 5:
-    return 112; // -> 2 another one bites the dust
-  case 6:
-    return 168; // -> 5 bicycle race
-  case 7:
-    return 119; // -> 6 you're my best friend
-  case 8:
-    return 156; // -> 7 dont stop me now
-  case 9:
-    return 82; // -> 8 save me
-  case 10:
-    return 77; // -> 9 crazy little thing called love
-  default:
-    return 0;
-  }
-}
 
 esp_now_peer_info_t peerInfo;
 
-Timer paletteCycleTimer = {DEFAULT_SECONDSPERPALETTE * 1000};
-Timer oneSecondTimer = {1000};
-Timer ledTimer;
+Audio audio;
+
+File rootDir;
+
+char *fileNames[MAX_FILES];
+int fileCount = 0;
+int trackNumber = 0;
 
 void handleAction() {
   for (int i = 0; i < NUM_RECEIVERS; i++) {
@@ -138,9 +91,14 @@ void registerPeer(uint8_t *receiverAddress) {
 
 void setup() {
   Serial.begin(9600);
-  Serial2.begin(9600);
-  delay(200);
 
+  // Setup SD card and audio library
+  setupAudioSD();
+
+  // Print out list of files on SD card
+  populateFileNames(rootDir);
+
+  // Setup receivers
   WiFi.mode(WIFI_STA);
 
   if (esp_now_init() != ESP_OK) {
@@ -158,28 +116,10 @@ void setup() {
     macAddressStrToBytes(receivers[i], receiverAddresses[i]);
     registerPeer(receiverAddresses[i]);
   }
-
-  mp3_command(CMD_SEL_DEV, DEV_TF); // select the TF card
-  delay(200);                       // wait for 200ms
-
-  pinMode(LED_PIN, OUTPUT);
 }
 
 void loop() {
-  // static int palette = 0;
-  // if (autoCyclePalettes && paletteCycleTimer.complete()) {
-  //   palette = (palette + 1) % NUM_PALETTES;
-  //   handleAction(ACTION_SET_PALETTE, palette);
-  //   paletteCycleTimer.reset();
-  // }
-
-  if (oneSecondTimer.complete()) {
-    Serial.print("s: ");
-    Serial.println(millis() / 1000);
-    oneSecondTimer.reset();
-  }
-
-  static int currentBPM = 0;
+  audio.loop();
 
   // Execute next action
   static int nextAction = 0;
@@ -189,14 +129,13 @@ void loop() {
     actions[nextAction].commitData();
     handleAction();
     if (actions[nextAction].setTrack) {
-      mp3_command(CMD_PLAY_W_INDEX, actions[nextAction].trackNumber);
-      currentBPM = getBPM(actions[nextAction].trackNumber);
-      Serial.println(getTrackName(actions[nextAction].trackNumber));
+      playTrack(actions[nextAction].trackNumber);
     }
     nextAction++;
   }
 
   // Execute next volume fade
+  /*
   static int volume = MAX_VOLUME;
   static int prevVolume = MAX_VOLUME;
   static int nextFade = 0;
@@ -211,29 +150,87 @@ void loop() {
   if (volume != prevVolume) {
     Serial.print("volume: ");
     Serial.println(volume);
-    mp3_command(CMD_SET_VOLUME, volume);
+    audio.setVolume(volume);
     prevVolume = volume;
   }
+  */
+}
 
-  // Blink an LED to the beat
-  if (currentBPM != 0) {
-    unsigned long msPerBeat = 60000 / currentBPM; // one minute is 60000 ms
-    unsigned long flashDuration = 100;
-    static bool ledOn = false;
-    if (ledTimer.complete()) {
-      ledOn = !ledOn;
-      if (ledOn) {
-        digitalWrite(LED_PIN, HIGH);
-      } else {
-        digitalWrite(LED_PIN, LOW);
-      }
-      ledTimer.totalCycleTime =
-          ledOn ? flashDuration : msPerBeat - flashDuration;
-      ledTimer.reset();
+void playTrack(int index) {
+  Serial.print("playing ");
+  Serial.println(fileNames[index]);
+  audio.connecttoFS(SD, fileNames[index]);
+}
+
+void populateFileNames(File dir) {
+  while (true) {
+    File entry = dir.openNextFile();
+    if (!entry) {
+      // No more files
+      break;
     }
+
+    if (!entry.isDirectory()) {
+      // Check if the file has a .mp3 extension
+      const char *fileName = entry.name();
+      if (fileName[0] == '.') {
+        // Serial.print("Ignoring file: ");
+        // Serial.println(fileName);
+        continue;
+      }
+
+      const char *extension =
+          strrchr(fileName, '.'); // Find the last occurrence of '.'
+      if (extension != nullptr && strcmp(extension, ".mp3") == 0) {
+        // Store the file name
+        if (fileCount < MAX_FILES) {
+          fileNames[fileCount] =
+              strdup(fileName); // Allocate memory and copy the name
+          fileCount++;
+        } else {
+          // Handle case where there are more files than the array can hold
+          Serial.println("Too many files to store in array");
+          break;
+        }
+      }
+    }
+    entry.close();
   }
 
-  // readSerialMonitorInput();
+  // Print the file names
+  Serial.println("MP3 files found on SD card:");
+  for (int i = 0; i < fileCount; i++) {
+    Serial.print("Track ");
+    Serial.print(i);
+    Serial.print(": \"");
+    Serial.print(fileNames[i]);
+    Serial.println("\"");
+  }
+}
+
+void setupAudioSD() {
+  pinMode(SD_CS, OUTPUT);
+  digitalWrite(SD_CS, HIGH);
+  SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
+
+  if (!SD.begin(SD_CS)) {
+    Serial.println("Card Mount Failed!");
+    return;
+  }
+
+  audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
+  audio.setVolume(MAX_VOLUME);
+
+  rootDir = SD.open("/");
+  if (!rootDir) {
+    Serial.println("Failed to open root directory");
+    return;
+  }
+  // Ensure the directory is a valid directory
+  if (!rootDir.isDirectory()) {
+    Serial.println("Root is not a directory");
+    return;
+  }
 }
 
 /*
@@ -267,19 +264,3 @@ void readSerialMonitorInput() {
   }
 }
 */
-
-void mp3_command(int8_t command, int16_t dat) {
-  int8_t frame[8] = {0};
-  frame[0] = 0x7e; // starting byte
-  frame[1] = 0xff; // version
-  frame[2] = 0x06; // the number of bytes of the command without starting byte
-                   // and ending byte
-  frame[3] = command;            //
-  frame[4] = 0x00;               // 0x00 = no feedback, 0x01 = feedback
-  frame[5] = (int8_t)(dat >> 8); // data high byte
-  frame[6] = (int8_t)(dat);      // data low byte
-  frame[7] = 0xef;               // ending byte
-  for (uint8_t i = 0; i < 8; i++) {
-    Serial2.write(frame[i]);
-  }
-}

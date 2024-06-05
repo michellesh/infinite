@@ -4,7 +4,7 @@
 String mp3url = "https://github.com/michellesh/infinite/raw/main/songs/cornfield-chase.mp3";
 
 Action actions[] = {
-    time().bpm(31).pattern(PATTERN_TWINKLE).speed(4).width(1).density(1),
+    time().track(0).bpm(31).pattern(PATTERN_TWINKLE).speed(4).width(1).density(1),
     time(4800).patternFade(PATTERN_COMET_TRAILS, 500).bpm(31).width(7),
     time(18200).pattern(PATTERN_RAINFALL_FALL_ON_BEAT).bpm(34).width(6),
     time(33200).pattern(PATTERN_BASKET_WEAVING).bpm(96).width(1),
