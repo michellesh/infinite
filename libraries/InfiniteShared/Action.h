@@ -1,6 +1,7 @@
 struct Action {
   unsigned long timestamp;
   uint8_t trackNumber;
+  int trackDelay;
   msg actionData;
 
   bool setTrack;
@@ -18,9 +19,10 @@ struct Action {
   bool setOverlay;
   bool setFade;
 
-  Action track(uint8_t x) {
+  Action track(uint8_t x, int delay = 0) {
     trackNumber = x;
     setTrack = true;
+    trackDelay = delay;
     return *this;
   }
 

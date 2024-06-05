@@ -48,13 +48,15 @@ File rootDir;
 char *fileNames[MAX_FILES];
 int fileCount = 0;
 int trackNumber = 0;
+int receiverDelayAction = 0;
+Timer trackDelayTimer;
 
 void handleAction() {
   for (int i = 0; i < NUM_RECEIVERS; i++) {
 #if MODE == X8_RECEIVER_MODE
-    data.delay = (NUM_RECEIVERS - 1 - i) * DELAY;
+    data.delay = (NUM_RECEIVERS - 1 - i) * DELAY + receiverDelayAction;
 #elif MODE == X1_RECEIVER_MODE
-    data.delay = DELAY * 7; // Simulate the delay of all 8 receivers
+    data.delay = DELAY * 7 + receiverDelayAction; // Simulate the delay of all 8 receivers
 #endif
     esp_err_t result =
         esp_now_send(receiverAddresses[i], (uint8_t *)&data, sizeof(msg));
@@ -123,15 +125,33 @@ void loop() {
 
   // Execute next action
   static int nextAction = 0;
+  static bool trackQueued = false;
   if (millis() >= actions[nextAction].timestamp && nextAction < numActions) {
-    Serial.print("next action: ");
-    Serial.println(nextAction);
     actions[nextAction].commitData();
     handleAction();
     if (actions[nextAction].setTrack) {
-      playTrack(actions[nextAction].trackNumber);
+      if (actions[nextAction].trackDelay > 0) {
+        // delay playing the track
+        trackQueued = true;
+        trackDelayTimer.totalCycleTime = actions[nextAction].trackDelay;
+        trackDelayTimer.reset();
+        receiverDelayAction = 0;
+      } else if (actions[nextAction].trackDelay < 0) {
+        // delay sending the actions
+        playTrack(actions[nextAction].trackNumber);
+        receiverDelayAction = abs(actions[nextAction].trackDelay);
+      } else {
+        // neither track nor action delay
+        playTrack(actions[nextAction].trackNumber);
+        receiverDelayAction = 0;
+      }
     }
     nextAction++;
+  }
+
+  if (trackQueued && trackDelayTimer.complete()) {
+    playTrack(actions[nextAction].trackNumber);
+    trackQueued = false;
   }
 
   // Execute next volume fade

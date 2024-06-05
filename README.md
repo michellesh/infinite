@@ -53,7 +53,7 @@ Action actions[] = {
 | Function | Description |
 | -------- | ----------- |
 | `.time(milliseconds)` | Create an action at this timestamp. `milliseconds` cannot be 0, use `.time()` for first action. |
-| `.track(int trackNumber)` | Set the track. Should be in same order as SD card. For first track use `.track(1)` (no zeros). Has no effect if running sequence from web server. |
+| `.track(int trackNumber, delay = 0)` | Set the track. Should be in same order as SD card. For first track use `.track(0)` (zero-indexed). Has no effect if running sequence from web server (use `mp3url`). The second function argument `delay` is optional. Values greater than 0 will delay playing the track that many milliseconds. Values less than 0 will delay firing the actions after that many milliseconds. If omitted, neither the track playing nor the actions firing will be delayed. -300 worked well for me in X1_RECEIVER_MODE, it might end up being the same value for every song. |
 | `.pattern(int patternId)`  | Set the pattern. See spreadsheet for current pattern variables. |
 | `.patternFade(int patternId, int fadeMillis = 2000)`  | Set the pattern, and fade the current pattern out and the new pattern in. The second function argument (optional) is how many milliseconds to fade out and to fade in (each). If omitted, default is 2000ms. |
 | `.palette(int paletteId)` | Set the color palette<br><br>`PALETTE_FIRE`<br>`PALETTE_OCEAN`<br>`PALETTE_FLORAL`<br>`PALETTE_ICE`<br>`PALETTE_FAIRY` |
