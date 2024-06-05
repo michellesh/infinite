@@ -80,21 +80,21 @@ Fade the volume of the song. These functions have no effect if running the seque
 
 ## SD card/sender setup
 
-Steps to set up the prototype as a receiver and set up the sender to play music from the SD card and send choreography to prototype.
+Steps to set up the prototype as a receiver and set up the sender to play music from the SD card and send choreography to receiver.
 
 1. Change prototype ESP32 from "single board mode" to "single receiver mode"
 
-- Open file `libraries/InfiniteShared/InfiniteShared.h`
-- Near the top of the file, change the line `#define MODE SINGLE_BOARD_MODE` to `#define MODE X1_RECEIVER_MODE`. (The web server only works in `SINGLE_BOARD_MODE` though, so swap this back if you want to use the web server.)
-- On the next line down, change the mac address `char receiver1[] = "4C:75:25:64:E5:DC";` to your prototype ESP32's mac address. To find the MAC address of your ESP32, upload [this code](https://github.com/michellesh/test-leds/blob/main/mac-address/mac-address.ino) to the board, and the MAC address will print to the serial monitor.
-- Upload `prototype/prototype.ino` sketch to the receiver board.
+   - Open file `libraries/InfiniteShared/InfiniteShared.h`
+   - Near the top of the file, change the line `#define MODE SINGLE_BOARD_MODE` to `#define MODE X1_RECEIVER_MODE`. (The web server only works in `SINGLE_BOARD_MODE` though, so swap this back if you want to use the web server.)
+   - On the next line down, change the mac address `char receiver1[] = "4C:75:25:64:E5:DC";` to your prototype ESP32's mac address. To find the MAC address of your ESP32, upload [this code](https://github.com/michellesh/test-leds/blob/main/mac-address/mac-address.ino) to the board, and the MAC address will print to the serial monitor.
+   - Upload `prototype/prototype.ino` sketch to the receiver board.
 
 2. Add mp3 files to your SD card in the root directory
 
 3. Upload code to sender
 
-- Open file `sender/sender.ino` as new sketch in Arduino IDE.
-- Upload `sender/sender.ino` sketch to the sender board.
-- Open Serial Monitor. It should print a list of tracks and their track numbers, which are the numbers you'll use when you call the `.track()` function in the `actions.h` file.
+   - Open file `sender/sender.ino` as new sketch in Arduino IDE.
+   - Upload `sender/sender.ino` sketch to the sender board.
+   - Open Serial Monitor. It should print a list of tracks and their track numbers, which are the numbers you'll use when you call the `.track()` function in the `actions.h` file.
 
 4. Set up choreography in the same way as before by changing the `actions.h` file, but instead of testing changes by uploading to the prototype's ESP32, upload the `sender/sender.ino` code to the sender.
