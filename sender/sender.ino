@@ -56,7 +56,8 @@ void handleAction() {
 #if MODE == X8_RECEIVER_MODE
     data.delay = (NUM_RECEIVERS - 1 - i) * DELAY + receiverDelayAction;
 #elif MODE == X1_RECEIVER_MODE
-    data.delay = DELAY * 7 + receiverDelayAction; // Simulate the delay of all 8 receivers
+    data.delay = DELAY * 7 +
+                 receiverDelayAction; // Simulate the delay of all 8 receivers
 #endif
     esp_err_t result =
         esp_now_send(receiverAddresses[i], (uint8_t *)&data, sizeof(msg));
@@ -201,7 +202,8 @@ void populateFileNames(File dir) {
 
       const char *extension =
           strrchr(fileName, '.'); // Find the last occurrence of '.'
-      if (extension != nullptr && strcmp(extension, ".mp3") == 0) {
+      if (extension != nullptr &&
+          (strcmp(extension, ".mp3") == 0 || strcmp(extension, ".wav") == 0)) {
         // Store the file name
         if (fileCount < MAX_FILES) {
           fileNames[fileCount] =
