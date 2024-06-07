@@ -21,9 +21,9 @@ Sequence unchartedWorldsSequence = {&unchartedWorldsActions[0],
 
 // clang-format off
 Sequence *sequences[] = {
+  &marsSequence,
   &unchartedWorldsSequence,
   &kidsSequence,
-  //&marsSequence,
   &cornfieldChaseSequence,
 };
 // clang-format on

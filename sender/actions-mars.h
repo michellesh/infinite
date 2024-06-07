@@ -1,5 +1,5 @@
 Action marsActions[] = {
-time().track("mars-bonus.mp3").patternFade(PATTERN_RAINFALL_COMET_TRAILS).bpm(26.6).speed(10).density(1).width(10).overlaySpeed(1).overlayWidth(1).overlayDensity(1).reverse(0).overlay(0).palette(PALETTE_ORANGEPURPLEBLUE).colorMode(COLOR_MODE_INDEX_GRADIENT),
+time().track("mars-bonus-128.mp3").patternFade(PATTERN_RAINFALL_COMET_TRAILS).bpm(26.6).speed(10).density(1).width(10).overlaySpeed(1).overlayWidth(1).overlayDensity(1).reverse(0).overlay(0).palette(PALETTE_ORANGEPURPLEBLUE).colorMode(COLOR_MODE_INDEX_GRADIENT),
 time(12800).patternFade(PATTERN_TWINKLE).bpm(106.6).speed(4).density(1).width(1).reverse(0).palette(PALETTE_PINKBLUEPINK),
 time(22700).patternFade(PATTERN_TWINKLE).bpm(106.6).speed(4).density(10).width(1).reverse(0).palette(PALETTE_BLUESANDPURPLES),
 time(32800).patternFade(PATTERN_TWINKLE_OVERLAY).bpm(53.3).speed(6).density(10).width(10).overlayWidth(1).overlayDensity(1).reverse(1).palette(PALETTE_PEACEFULBLUE),
