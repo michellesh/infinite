@@ -135,8 +135,6 @@ const char index_html[] PROGMEM = R"rawliteral(
     <button type="button" onclick="sendData('t',0)">None</button>
     <button type="button" onclick="sendData('t',1)">*Sine wave</button>
     <button type="button" onclick="sendData('t',2)">*Strobe</button>
-    <button type="button" onclick="sendData('t',3)">*Wave</button>
-    <button type="button" onclick="sendData('t',4)">*Wave railgun</button>
     <div class="break"></div>
 
     <h3>Color Palettes</h3>

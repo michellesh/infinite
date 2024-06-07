@@ -441,11 +441,10 @@ void loop() {
     actionQueued = false;
   }
 
-  if (overlay == OVERLAY_WAVE || overlay == OVERLAY_WAVE_RAILGUN) {
+  if (activePattern == PATTERN_TWINKLE_OVERLAY ||
+      activePattern == PATTERN_SOLID_OVERLAY ||
+      activePattern == PATTERN_SOLID_OVERLAY_RAILGUN) {
     waveOverlay();
-    for (int i = 0; i < NUM_LEDS; i++) {
-      leds[i] = palette.getColor(i).nscale8(overlayBrightness[i]);
-    }
   }
 
   static int prevActivePattern = -1;
