@@ -11,6 +11,7 @@
 #include "Timer.h"
 
 #include "InfiniteShared.h"
+#include "sequences.h"
 // clang-format on
 
 // SD Card
@@ -26,7 +27,6 @@
 #define I2S_BCLK 27
 #define I2S_LRC 26
 
-#define MAX_VOLUME 21
 #define MAX_FILES 100
 
 #if MODE == X8_RECEIVER_MODE
@@ -50,6 +50,9 @@ int fileCount = 0;
 int trackNumber = 0;
 int receiverDelayAction = 0;
 Timer trackDelayTimer;
+
+Sequence *sequence = sequences[0];
+int sequenceIndex = 0;
 
 void handleAction() {
   for (int i = 0; i < NUM_RECEIVERS; i++) {
@@ -124,26 +127,37 @@ void setup() {
 void loop() {
   audio.loop();
 
-  // Execute next action
+  static unsigned long startTime = millis();
+  static int prevSequenceIndex = sequenceIndex;
   static int nextAction = 0;
+  if (prevSequenceIndex != sequenceIndex) {
+    startTime = millis();
+    nextAction = 0;
+    prevSequenceIndex = sequenceIndex;
+  }
+
+  // Execute next action
   static bool trackQueued = false;
-  if (millis() >= actions[nextAction].timestamp && nextAction < numActions) {
-    actions[nextAction].commitData();
+  unsigned long elapsedTime = millis() - startTime;
+  if (elapsedTime >= sequence->actions[nextAction].timestamp &&
+      nextAction < sequence->numActions) {
+    sequence->actions[nextAction].commitData();
     handleAction();
-    if (actions[nextAction].setTrack) {
-      if (actions[nextAction].trackDelay > 0) {
+    if (sequence->actions[nextAction].setTrack) {
+      if (sequence->actions[nextAction].trackDelay > 0) {
         // delay playing the track
         trackQueued = true;
-        trackDelayTimer.totalCycleTime = actions[nextAction].trackDelay;
+        trackDelayTimer.totalCycleTime =
+            sequence->actions[nextAction].trackDelay;
         trackDelayTimer.reset();
         receiverDelayAction = 0;
-      } else if (actions[nextAction].trackDelay < 0) {
+      } else if (sequence->actions[nextAction].trackDelay < 0) {
         // delay sending the actions
-        playTrack(actions[nextAction].trackNumber);
-        receiverDelayAction = abs(actions[nextAction].trackDelay);
+        playTrack(sequence->actions[nextAction].filename);
+        receiverDelayAction = abs(sequence->actions[nextAction].trackDelay);
       } else {
         // neither track nor action delay
-        playTrack(actions[nextAction].trackNumber);
+        playTrack(sequence->actions[nextAction].filename);
         receiverDelayAction = 0;
       }
     }
@@ -151,7 +165,7 @@ void loop() {
   }
 
   if (trackQueued && trackDelayTimer.complete()) {
-    playTrack(actions[nextAction].trackNumber);
+    playTrack(sequence->actions[nextAction].filename);
     trackQueued = false;
   }
 
@@ -177,10 +191,35 @@ void loop() {
   */
 }
 
-void playTrack(int index) {
+void audio_eof_mp3(const char *info) { // end of file
+  Serial.print("eof_mp3     ");
+  Serial.println(info);
+  sequenceIndex = (sequenceIndex + 1) % numSequences;
+  sequence = sequences[sequenceIndex];
+  resetDefaultData();
+}
+
+void resetDefaultData() {
+  data.delay = 0;
+  data.pattern = DEFAULT_PATTERN;
+  data.palette = DEFAULT_PALETTE;
+  data.colorMode = DEFAULT_COLORMODE;
+  data.speed = DEFAULT_SPEED;
+  data.density = DEFAULT_DENSITY;
+  data.width = DEFAULT_WIDTH;
+  data.overlaySpeed = DEFAULT_OVERLAYSPEED;
+  data.overlayDensity = DEFAULT_OVERLAYDENSITY;
+  data.overlayWidth = DEFAULT_OVERLAYWIDTH;
+  data.reverse = DEFAULT_REVERSE;
+  data.bpm = DEFAULT_BPM;
+  data.overlay = 0;
+  data.fadeMillis = DEFAULT_FADE_MILLIS;
+}
+
+void playTrack(char *filename) {
   Serial.print("playing ");
-  Serial.println(fileNames[index]);
-  audio.connecttoFS(SD, fileNames[index]);
+  Serial.println(filename);
+  audio.connecttoFS(SD, filename);
 }
 
 void populateFileNames(File dir) {
