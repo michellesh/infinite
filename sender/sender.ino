@@ -138,6 +138,7 @@ void loop() {
 
   // Execute next action
   static bool trackQueued = false;
+  static char* queuedFilename;
   unsigned long elapsedTime = millis() - startTime;
   if (elapsedTime >= sequence->actions[nextAction].timestamp &&
       nextAction < sequence->numActions) {
@@ -147,6 +148,7 @@ void loop() {
       if (sequence->actions[nextAction].trackDelay > 0) {
         // delay playing the track
         trackQueued = true;
+        queuedFilename = sequence->actions[nextAction].filename;
         trackDelayTimer.totalCycleTime =
             sequence->actions[nextAction].trackDelay;
         trackDelayTimer.reset();
@@ -165,7 +167,7 @@ void loop() {
   }
 
   if (trackQueued && trackDelayTimer.complete()) {
-    playTrack(sequence->actions[nextAction].filename);
+    playTrack(queuedFilename);
     trackQueued = false;
   }
 
