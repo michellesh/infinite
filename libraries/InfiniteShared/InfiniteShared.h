@@ -2,9 +2,7 @@
 #define X1_RECEIVER_MODE 1  // sender and single receiver
 #define X8_RECEIVER_MODE 2  // sender and two receivers
 
-#define MODE SINGLE_BOARD_MODE
-
-char receiver1[] = "4C:75:25:64:E5:DC";
+#define MODE X8_RECEIVER_MODE
 
 #define ACTION_SET_PATTERN 0
 #define ACTION_SET_PALETTE 1
@@ -101,7 +99,7 @@ char receiver1[] = "4C:75:25:64:E5:DC";
 // char senderB3[] = "FC:B4:67:74:5C:68"; // (sender)
 // char senderMS[] = "C8:F0:9E:9F:36:A8"; // (sender)
 
-//char receiverM1[] = "4C:75:25:64:E5:DC";
+char receiverM1[] = "4C:75:25:64:E5:DC";
 char receiverM2[] = "A8:42:E3:48:A1:8C";
 char receiverM3[] = "A0:B7:65:63:7D:8C";
 char receiverM4[] = "48:E7:29:C9:F9:F8";
@@ -109,7 +107,7 @@ char receiverM5[] = "FC:B4:67:74:46:04";
 char receiverM6[] = "FC:B4:67:74:5A:38";
 char receiverM7[] = "48:E7:29:C9:74:7C";
 char receiverM8[] = "EC:62:60:32:CC:78";
-char *receivers[] = {receiver1, receiverM2, receiverM3, receiverM4,
+char *receivers[] = {receiverM1, receiverM2, receiverM3, receiverM4,
                      receiverM5, receiverM6, receiverM7, receiverM8};
 
 typedef struct msg {

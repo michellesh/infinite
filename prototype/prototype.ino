@@ -24,7 +24,7 @@
 #define PIN_STRAIGHT_6 2  // M3
 #define PIN_RINGS_1_2 4   // M4
 #define PIN_RINGS_3_4 4   // M5
-#define PIN_RINGS_5_6 4   // M6
+#define PIN_RINGS_5_6 2   // M6
 #define PIN_RINGS_7_8 4   // M7
 #define PIN_RINGS_9_10 4  // M8
 #else

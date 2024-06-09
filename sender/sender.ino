@@ -50,23 +50,10 @@ int fileCount = 0;
 int trackNumber = 0;
 int receiverDelayAction = 0;
 Timer trackDelayTimer;
+Timer delaySendTimer = {DELAY};
 
 Sequence *sequence = sequences[0];
 int sequenceIndex = 0;
-
-void handleAction() {
-  for (int i = 0; i < NUM_RECEIVERS; i++) {
-#if MODE == X8_RECEIVER_MODE
-    data.delay = (NUM_RECEIVERS - 1 - i) * DELAY + receiverDelayAction;
-#elif MODE == X1_RECEIVER_MODE
-    data.delay = DELAY * 7 +
-                 receiverDelayAction; // Simulate the delay of all 8 receivers
-#endif
-    esp_err_t result =
-        esp_now_send(receiverAddresses[i], (uint8_t *)&data, sizeof(msg));
-    delay(DELAY);
-  }
-}
 
 // callback when data is sent
 void onDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
@@ -138,12 +125,13 @@ void loop() {
 
   // Execute next action
   static bool trackQueued = false;
-  static char* queuedFilename;
+  static char *queuedFilename;
+  static int nextReceiver = NUM_RECEIVERS;
   unsigned long elapsedTime = millis() - startTime;
   if (elapsedTime >= sequence->actions[nextAction].timestamp &&
       nextAction < sequence->numActions) {
     sequence->actions[nextAction].commitData();
-    handleAction();
+    nextReceiver = 0;
     if (sequence->actions[nextAction].setTrack) {
       if (sequence->actions[nextAction].trackDelay > 0) {
         // delay playing the track
@@ -164,6 +152,23 @@ void loop() {
       }
     }
     nextAction++;
+  }
+
+  if (nextReceiver < NUM_RECEIVERS) {
+    if (delaySendTimer.complete()) {
+#if MODE == X8_RECEIVER_MODE
+      data.delay =
+          (NUM_RECEIVERS - 1 - nextReceiver) * DELAY + receiverDelayAction;
+#elif MODE == X1_RECEIVER_MODE
+      data.delay = DELAY * 7 +
+                   receiverDelayAction; // Simulate the delay of all 8 receivers
+#endif
+      esp_err_t result = esp_now_send(receiverAddresses[nextReceiver],
+                                      (uint8_t *)&data, sizeof(msg));
+
+      nextReceiver++;
+      delaySendTimer.reset();
+    }
   }
 
   if (trackQueued && trackDelayTimer.complete()) {
