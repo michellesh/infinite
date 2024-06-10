@@ -1,6 +1,6 @@
 Action stayActions[] = {
   time().track("stay-concatenated.mp3").pattern(PATTERN_SOLID).palette(PALETTE_BLUESANDPURPLES),
-  time(100).patternFade(PATTERN_TWINKLE, 2300).speed(5).width(1).density(1),
+  time(500).patternFade(PATTERN_TWINKLE, 2300).speed(5).width(1).density(1),
   time(8500).patternFade(PATTERN_RAINFALL_COMET_TRAILS).bpm(24),
   time(16500).patternFade(PATTERN_ROTATING_HEXAGONS).density(3).width(6),
   time(24500).patternFade(PATTERN_BASKET_WEAVING).width(3).reverse(1).palette(PALETTE_PINKCLOUDUPDATE),

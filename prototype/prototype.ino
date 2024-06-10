@@ -437,7 +437,13 @@ void loop() {
 #endif
 
   if (actionQueued && actionTimer.complete()) {
-    handleAction();
+    if (data.fadeMillis != 0) {
+      fadePatternOut = true;
+      fadeTimer.totalCycleTime = data.fadeMillis;
+      fadeTimer.reset();
+    } else {
+      handleAction();
+    }
     actionQueued = false;
   }
 
