@@ -107,6 +107,7 @@ struct Action {
   }
 
   void commitData() {
+    data.fadeMillis = 0; // reset fadeMillis each new action
     if (setPattern) {
       data.pattern = actionData.pattern;
       data.fadeMillis = actionData.fadeMillis;

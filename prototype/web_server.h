@@ -157,6 +157,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     <button type="button" onclick="sendData('p',15)">pink white orange</button>
     <button type="button" onclick="sendData('p',16)">yellow green</button>
     <button type="button" onclick="sendData('p',17)">pink cloud update</button>
+    <button type="button" onclick="sendData('p',18)">all black</button>
     <div class="break"></div>
 
     <h3>Color Modes</h3>

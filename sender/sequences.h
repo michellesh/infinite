@@ -7,6 +7,7 @@ typedef struct Sequence {
 #include "actions-kids.h"
 #include "actions-mars.h"
 #include "actions-unchartedworlds.h"
+#include "actions-stay.h"
 
 Sequence cornfieldChaseSequence = {&cornfieldChaseActions[0],
                                    sizeof(cornfieldChaseActions) /
@@ -18,6 +19,8 @@ Sequence kidsSequence = {&kidsActions[0],
 Sequence unchartedWorldsSequence = {&unchartedWorldsActions[0],
                                     sizeof(unchartedWorldsActions) /
                                         sizeof(unchartedWorldsActions[0])};
+Sequence staySequence = {&stayActions[0],
+                         sizeof(stayActions) / sizeof(stayActions[0])};
 
 // clang-format off
 Sequence *sequences[] = {
@@ -25,6 +28,7 @@ Sequence *sequences[] = {
   &unchartedWorldsSequence,
   &kidsSequence,
   &cornfieldChaseSequence,
+  &staySequence,
 };
 // clang-format on
 

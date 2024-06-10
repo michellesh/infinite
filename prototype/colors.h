@@ -94,6 +94,9 @@ DEFINE_GRADIENT_PALETTE(_pinkCloudUpdate){percent(0),   30,  30,  226,
                                           percent(100), 120, 120, 120};
 CRGBPalette16 pinkCloudUpdate = _pinkCloudUpdate;
 
+DEFINE_GRADIENT_PALETTE(_allBlack){percent(0), 0, 0, 0, percent(100), 0, 0, 0};
+CRGBPalette16 allBlack = _allBlack;
+
 // clang-format off
 CRGBPalette16* activePalettes[] = {
   &orangePurpleBlue,
@@ -114,6 +117,7 @@ CRGBPalette16* activePalettes[] = {
   &pinkWhiteOrange,
   &yellowGreen,
   &pinkCloudUpdate,
+  &allBlack
   // TODO update NUM_PALETTES and palette IDs!
 };
 // clang-format on

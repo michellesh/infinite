@@ -2,7 +2,7 @@
 #define X1_RECEIVER_MODE 1  // sender and single receiver
 #define X8_RECEIVER_MODE 2  // sender and two receivers
 
-#define MODE X8_RECEIVER_MODE
+#define MODE SINGLE_BOARD_MODE
 
 #define ACTION_SET_PATTERN 0
 #define ACTION_SET_PALETTE 1
@@ -86,7 +86,8 @@
 #define PALETTE_PINKWHITEORANGE 15
 #define PALETTE_YELLOWGREEN 16
 #define PALETTE_PINKCLOUDUPDATE 17
-#define NUM_PALETTES 18
+#define PALETTE_ALLBLACK 18
+#define NUM_PALETTES 19
 
 #define COLOR_MODE_SOLID 0
 #define COLOR_MODE_INDEX_GRADIENT 1
