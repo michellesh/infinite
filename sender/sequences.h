@@ -30,10 +30,10 @@ Sequence mountainsSequence = {&mountainsActions[0],
 Sequence *sequences[] = {
   &mountainsSequence,
   &staySequence,
-  &marsSequence,
+  &cornfieldChaseSequence,
   &unchartedWorldsSequence,
   &kidsSequence,
-  &cornfieldChaseSequence,
+  &marsSequence,
 };
 // clang-format on
 
