@@ -16,17 +16,36 @@
 #define BRIGHTNESS 255
 
 #if MODE == X8_RECEIVER_MODE
-#define PIN_STRAIGHT_1 25 // M1
-#define PIN_STRAIGHT_2 26 // M1
-#define PIN_STRAIGHT_3 4  // M2
-#define PIN_STRAIGHT_4 2  // M2
-#define PIN_STRAIGHT_5 4  // M3
-#define PIN_STRAIGHT_6 2  // M3
-#define PIN_RINGS_1_2 4   // M4
-#define PIN_RINGS_3_4 4   // M5
-#define PIN_RINGS_5_6 2   // M6
-#define PIN_RINGS_7_8 4   // M7
-#define PIN_RINGS_9_10 4  // M8
+#define PIN_STRAIGHT_1 15 // M6
+#define PIN_STRAIGHT_2 2  // M6
+
+#define PIN_STRAIGHT_3 2 // M11
+#define PIN_STRAIGHT_4 4 // M11
+
+#define PIN_STRAIGHT_5 2 // M9
+#define PIN_STRAIGHT_6 4 // M9
+
+#define PIN_RING_1 4  // M4
+#define PIN_RING_2 2  // M4
+#define PIN_RING_3 2  // M5
+#define PIN_RING_4 4  // M5
+#define PIN_RING_5 4  // M6
+#define PIN_RING_6 2  // M6
+#define PIN_RING_7 4  // M7
+#define PIN_RING_8 2  // M7
+#define PIN_RING_9 4  // M8
+#define PIN_RING_10 2 // M8
+// #define PIN_STRAIGHT_1 25 // M1
+// #define PIN_STRAIGHT_2 26 // M1
+// #define PIN_STRAIGHT_3 4  // M2
+// #define PIN_STRAIGHT_4 2  // M2
+// #define PIN_STRAIGHT_5 4  // M3
+// #define PIN_STRAIGHT_6 2  // M3
+// #define PIN_RINGS_1_2 4   // M4
+// #define PIN_RINGS_3_4 4   // M5
+// #define PIN_RINGS_5_6 2   // M6
+// #define PIN_RINGS_7_8 4   // M7
+// #define PIN_RINGS_9_10 4  // M8
 #else
 #define PIN_STRAIGHT_1 25
 #define PIN_STRAIGHT_2 26
@@ -43,8 +62,8 @@
 
 #define NUM_RINGS 10
 #define NUM_STRAIGHTS 6
-#define NUM_LEDS_PER_STRAIGHT 144
-#define NUM_LEDS_PER_RING 144
+#define NUM_LEDS_PER_STRAIGHT 544
+#define NUM_LEDS_PER_RING 372
 #define NUM_LEDS                                                               \
   NUM_RINGS *NUM_LEDS_PER_RING + NUM_STRAIGHTS *NUM_LEDS_PER_STRAIGHT
 
@@ -207,7 +226,7 @@ void setup() {
 
 #if MODE == X8_RECEIVER_MODE
 
-  if (WiFi.macAddress() == receiverM1) {
+  if (WiFi.macAddress() == receiverM6) {
 
     int startIndex = 0;
     FastLED
@@ -223,7 +242,7 @@ void setup() {
         .setCorrection(TypicalLEDStrip)
         .setDither(BRIGHTNESS < 255);
 
-  } else if (WiFi.macAddress() == receiverM2) {
+  } else if (WiFi.macAddress() == receiverM11) {
 
     int startIndex = NUM_LEDS_PER_STRAIGHT * 2;
     FastLED
@@ -239,7 +258,7 @@ void setup() {
         .setCorrection(TypicalLEDStrip)
         .setDither(BRIGHTNESS < 255);
 
-  } else if (WiFi.macAddress() == receiverM3) {
+  } else if (WiFi.macAddress() == receiverM9) {
 
     int startIndex = NUM_LEDS_PER_STRAIGHT * 4;
     FastLED
@@ -255,48 +274,73 @@ void setup() {
         .setCorrection(TypicalLEDStrip)
         .setDither(BRIGHTNESS < 255);
 
-  } else if (WiFi.macAddress() == receiverM4) {
+  } else if (WiFi.macAddress() == receiverM3) {
 
     int startIndex = NUM_LEDS_PER_STRAIGHT * 6;
     FastLED
-        .addLeds<WS2813, PIN_RINGS_1_2, GRB>(leds, startIndex,
-                                             NUM_LEDS_PER_RING * 2)
+        .addLeds<WS2813, PIN_RING_1, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
         .setCorrection(TypicalLEDStrip)
         .setDither(BRIGHTNESS < 255);
 
-  } else if (WiFi.macAddress() == receiverM5) {
+    startIndex += NUM_LEDS_PER_RING;
+    FastLED
+        .addLeds<WS2813, PIN_RING_2, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
+        .setCorrection(TypicalLEDStrip)
+        .setDither(BRIGHTNESS < 255);
+
+  } else if (WiFi.macAddress() == receiverM2) {
+
+    int startIndex = NUM_LEDS_PER_STRAIGHT * 6 + NUM_LEDS_PER_RING;
+    FastLED
+        .addLeds<WS2813, PIN_RING_3, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
+        .setCorrection(TypicalLEDStrip)
+        .setDither(BRIGHTNESS < 255);
+
+    startIndex += NUM_LEDS_PER_RING;
+    FastLED
+        .addLeds<WS2813, PIN_RING_4, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
+        .setCorrection(TypicalLEDStrip)
+        .setDither(BRIGHTNESS < 255);
+
+  } else if (WiFi.macAddress() == receiverM4) {
 
     int startIndex = NUM_LEDS_PER_STRAIGHT * 6 + NUM_LEDS_PER_RING * 2;
     FastLED
-        .addLeds<WS2813, PIN_RINGS_3_4, GRB>(leds, startIndex,
-                                             NUM_LEDS_PER_RING * 2)
+        .addLeds<WS2813, PIN_RING_5, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
         .setCorrection(TypicalLEDStrip)
         .setDither(BRIGHTNESS < 255);
 
-  } else if (WiFi.macAddress() == receiverM6) {
-
-    int startIndex = NUM_LEDS_PER_STRAIGHT * 6 + NUM_LEDS_PER_RING * 4;
+    startIndex += NUM_LEDS_PER_RING;
     FastLED
-        .addLeds<WS2813, PIN_RINGS_5_6, GRB>(leds, startIndex,
-                                             NUM_LEDS_PER_RING * 2)
-        .setCorrection(TypicalLEDStrip)
-        .setDither(BRIGHTNESS < 255);
-
-  } else if (WiFi.macAddress() == receiverM7) {
-
-    int startIndex = NUM_LEDS_PER_STRAIGHT * 6 + NUM_LEDS_PER_RING * 6;
-    FastLED
-        .addLeds<WS2813, PIN_RINGS_7_8, GRB>(leds, startIndex,
-                                             NUM_LEDS_PER_RING * 2)
+        .addLeds<WS2813, PIN_RING_6, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
         .setCorrection(TypicalLEDStrip)
         .setDither(BRIGHTNESS < 255);
 
   } else if (WiFi.macAddress() == receiverM8) {
 
-    int startIndex = NUM_LEDS_PER_STRAIGHT * 6 + NUM_LEDS_PER_RING * 8;
+    int startIndex = NUM_LEDS_PER_STRAIGHT * 6 + NUM_LEDS_PER_RING * 3;
     FastLED
-        .addLeds<WS2813, PIN_RINGS_9_10, GRB>(leds, startIndex,
-                                              NUM_LEDS_PER_RING * 2)
+        .addLeds<WS2813, PIN_RING_7, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
+        .setCorrection(TypicalLEDStrip)
+        .setDither(BRIGHTNESS < 255);
+
+    startIndex += NUM_LEDS_PER_RING;
+    FastLED
+        .addLeds<WS2813, PIN_RING_8, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
+        .setCorrection(TypicalLEDStrip)
+        .setDither(BRIGHTNESS < 255);
+
+  } else if (WiFi.macAddress() == receiverM7) {
+
+    int startIndex = NUM_LEDS_PER_STRAIGHT * 6 + NUM_LEDS_PER_RING * 4;
+    FastLED
+        .addLeds<WS2813, PIN_RING_9, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
+        .setCorrection(TypicalLEDStrip)
+        .setDither(BRIGHTNESS < 255);
+
+    startIndex += NUM_LEDS_PER_RING;
+    FastLED
+        .addLeds<WS2813, PIN_RING_10, GRB>(leds, startIndex, NUM_LEDS_PER_RING)
         .setCorrection(TypicalLEDStrip)
         .setDither(BRIGHTNESS < 255);
   }

@@ -4,6 +4,7 @@ typedef struct Sequence {
 } Sequence;
 
 #include "actions-cornfield-chase.h"
+#include "actions-flow-state.h"
 #include "actions-kids.h"
 #include "actions-mars.h"
 #include "actions-mountains.h"
@@ -25,12 +26,16 @@ Sequence staySequence = {&stayActions[0],
 Sequence mountainsSequence = {&mountainsActions[0],
                               sizeof(mountainsActions) /
                                   sizeof(mountainsActions[0])};
+Sequence flowStateSequence = {&flowStateActions[0],
+                              sizeof(flowStateActions) /
+                                  sizeof(flowStateActions[0])};
 
 // clang-format off
 Sequence *sequences[] = {
+  &cornfieldChaseSequence,
+  &flowStateSequence,
   &mountainsSequence,
   &staySequence,
-  &cornfieldChaseSequence,
   &unchartedWorldsSequence,
   &kidsSequence,
   &marsSequence,
