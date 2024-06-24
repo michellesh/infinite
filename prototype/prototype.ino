@@ -25,16 +25,16 @@
 #define PIN_STRAIGHT_5 2 // M9
 #define PIN_STRAIGHT_6 4 // M9
 
-#define PIN_RING_1 4  // M4
-#define PIN_RING_2 2  // M4
-#define PIN_RING_3 2  // M5
-#define PIN_RING_4 4  // M5
-#define PIN_RING_5 4  // M6
-#define PIN_RING_6 2  // M6
-#define PIN_RING_7 4  // M7
-#define PIN_RING_8 2  // M7
-#define PIN_RING_9 4  // M8
-#define PIN_RING_10 2 // M8
+#define PIN_RING_1 4  // M3
+#define PIN_RING_2 2  // M3
+#define PIN_RING_3 2  // M12
+#define PIN_RING_4 4  // M12
+#define PIN_RING_5 4  // M4
+#define PIN_RING_6 2  // M4
+#define PIN_RING_7 4  // M8
+#define PIN_RING_8 2  // M8
+#define PIN_RING_9 4  // M7
+#define PIN_RING_10 2 // M7
 // #define PIN_STRAIGHT_1 25 // M1
 // #define PIN_STRAIGHT_2 26 // M1
 // #define PIN_STRAIGHT_3 4  // M2
@@ -62,7 +62,7 @@
 
 #define NUM_RINGS 10
 #define NUM_STRAIGHTS 6
-#define NUM_LEDS_PER_STRAIGHT 544
+#define NUM_LEDS_PER_STRAIGHT 551
 #define NUM_LEDS_PER_RING 372
 #define NUM_LEDS                                                               \
   NUM_RINGS *NUM_LEDS_PER_RING + NUM_STRAIGHTS *NUM_LEDS_PER_STRAIGHT
@@ -288,7 +288,7 @@ void setup() {
         .setCorrection(TypicalLEDStrip)
         .setDither(BRIGHTNESS < 255);
 
-  } else if (WiFi.macAddress() == receiverM2) {
+  } else if (WiFi.macAddress() == receiverM12) {
 
     int startIndex = NUM_LEDS_PER_STRAIGHT * 6 + NUM_LEDS_PER_RING;
     FastLED

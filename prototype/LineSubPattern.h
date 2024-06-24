@@ -380,7 +380,13 @@ public:
     case LASERS:
     case LASERS_DOUBLES:
       _numLines = NUM_STRAIGHTS;
-      shuffleIndexes(order, _numLines);
+      //shuffleIndexes(order, _numLines);
+      order[0] = 0;
+      order[1] = 3;
+      order[2] = 1;
+      order[3] = 4;
+      order[4] = 2;
+      order[5] = 5;
       for (uint8_t i = 0; i < _numLines; i++) {
         _lines[i] = Line(i);
         _lines[i].setPath(straights[i]);
@@ -459,7 +465,13 @@ public:
       break;
     case COMET_TRAILS:
       _numLines = NUM_STRAIGHTS * 2;
-      shuffleIndexes(order, NUM_STRAIGHTS);
+      //shuffleIndexes(order, NUM_STRAIGHTS);
+      order[0] = 0;
+      order[1] = 3;
+      order[2] = 1;
+      order[3] = 4;
+      order[4] = 2;
+      order[5] = 5;
       nextComet = 0;
       for (uint8_t i = 0; i < _numLines; i++) {
         order[i + NUM_STRAIGHTS] = order[i]; // move shuffled values over

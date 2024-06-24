@@ -101,7 +101,7 @@
 // char senderMS[] = "C8:F0:9E:9F:36:A8"; // (sender)
 
 //char receiverM1[] = "4C:75:25:64:E5:DC";
-char receiverM2[] = "A8:42:E3:48:A1:8C";
+//char receiverM2[] = "A8:42:E3:48:A1:8C";
 char receiverM3[] = "A0:B7:65:63:7D:8C";
 char receiverM4[] = "48:E7:29:C9:F9:F8";
 //char receiverM5[] = "FC:B4:67:74:46:04";
@@ -110,10 +110,11 @@ char receiverM7[] = "48:E7:29:C9:74:7C";
 char receiverM8[] = "EC:62:60:32:CC:78";
 char receiverM9[] = "D0:EF:76:47:5E:7C";
 char receiverM11[] = "D0:EF:76:47:74:48";
+char receiverM12[] = "D0:EF:76:47:34:A4";
 //char *receivers[] = {receiverM1, receiverM2, receiverM3, receiverM4,
 //                     receiverM5, receiverM6, receiverM7, receiverM8};
 char *receivers[] = {receiverM6, receiverM11, receiverM9, receiverM3,
-                     receiverM2, receiverM4, receiverM8, receiverM7};
+                     receiverM12, receiverM4, receiverM8, receiverM7};
 
 typedef struct msg {
   unsigned long delay = 0;
