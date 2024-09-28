@@ -14,11 +14,18 @@
 #include "sequences.h"
 // clang-format on
 
+// Knob LEDs
+#define LED_PIN 13
+#define NUM_LEDS 24
+
+CRGB leds[NUM_LEDS];
+
 // Rotary encoder
 #define ENCODER_CLK 33
 #define ENCODER_DT 32
 #define ENCODER_SW 34
 #define MAX_CLICKS 40
+#define NUM_KNOB_POSITIONS 8
 
 int clicks = 0;
 int currentCLK;
@@ -27,6 +34,7 @@ int currentSW = 0;
 int prevSW = 0;
 unsigned long lastDebounceTime = 0;
 unsigned long debounceDelay = 300;
+int knobPosition = 0;
 
 // SD Card
 #define SD_CS 5
@@ -66,8 +74,8 @@ int receiverDelayAction = 0;
 Timer trackDelayTimer;
 Timer delaySendTimer = {DELAY};
 
-Sequence *sequence = sequences[0];
-int sequenceIndex = 0;
+Sequence *sequence; // = sequences[0];
+int sequenceIndex = -1;
 
 // callback when data is sent
 void onDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
@@ -98,6 +106,8 @@ void registerPeer(uint8_t *receiverAddress) {
 
 void setup() {
   Serial.begin(9600);
+
+  FastLED.addLeds<NEOPIXEL, LED_PIN>(leds, NUM_LEDS);
 
   // Setup SD card and audio library
   setupAudioSD();
@@ -146,7 +156,9 @@ void loop() {
   static char *queuedFilename;
   static int nextReceiver = NUM_RECEIVERS;
   unsigned long elapsedTime = millis() - startTime;
-  if (elapsedTime >= sequence->actions[nextAction].timestamp &&
+  bool isValidSequence = sequenceIndex >= 0 && sequenceIndex < numSequences;
+  if (isValidSequence &&
+      elapsedTime >= sequence->actions[nextAction].timestamp &&
       nextAction < sequence->numActions) {
     sequence->actions[nextAction].commitData();
     nextReceiver = 0;
@@ -194,34 +206,16 @@ void loop() {
     trackQueued = false;
   }
 
-  // Execute next volume fade
-  /*
-  static int volume = MAX_VOLUME;
-  static int prevVolume = MAX_VOLUME;
-  static int nextFade = 0;
-  if (nextFade < numFades) {
-    if (millis() >= fades[nextFade].millisStart &&
-        millis() <= fades[nextFade].millisEnd) {
-      volume = fades[nextFade].getVolume();
-    } else if (millis() > fades[nextFade].millisEnd) {
-      nextFade++;
-    }
-  }
-  if (volume != prevVolume) {
-    Serial.print("volume: ");
-    Serial.println(volume);
-    audio.setVolume(volume);
-    prevVolume = volume;
-  }
-  */
+  showKnobLEDs();
 }
 
 void audio_eof_mp3(const char *info) { // end of file
   Serial.print("eof_mp3     ");
   Serial.println(info);
-  sequenceIndex = (sequenceIndex + 1) % numSequences;
-  sequence = sequences[sequenceIndex];
-  resetDefaultData();
+  // sequenceIndex = (sequenceIndex + 1) % numSequences;
+  // sequence = sequences[sequenceIndex];
+  // resetDefaultData();
+  sequenceIndex = -1;
 }
 
 void resetDefaultData() {
@@ -319,38 +313,6 @@ void setupAudioSD() {
   }
 }
 
-/*
-void readSerialMonitorInput() {
-  if (Serial.available() > 0) {
-    // Read incoming string until '\n' (newline) character is received
-    String receivedString = Serial.readStringUntil('\n');
-    // Print received string
-    Serial.print("Received: ");
-    Serial.println(receivedString);
-
-    // Find the position of the ':' character
-    int colonIndex = receivedString.indexOf(':');
-
-    // If ':' character is found
-    if (colonIndex != -1) {
-      // Extract the substrings before and after the ':'
-      String firstPart = receivedString.substring(0, colonIndex);
-      String secondPart = receivedString.substring(colonIndex + 1);
-
-      // Parse the substrings into integers
-      int action = firstPart.toInt();
-      int value = secondPart.toInt();
-
-      handleAction(action, value);
-
-    } else {
-      // If ':' character is not found, set both integers to 0
-      Serial.println("No ':' character found");
-    }
-  }
-}
-*/
-
 void setupRotaryEncoder() {
   pinMode(ENCODER_CLK, INPUT);
   pinMode(ENCODER_DT, INPUT);
@@ -369,8 +331,14 @@ void readRotaryEncoder() {
   if ((millis() - lastDebounceTime) > debounceDelay) {
     if (currentSW == LOW && prevSW == HIGH) {
       Serial.println("Button pressed!");
+      // Set sequence according to knob position
+      if (knobPosition < numSequences + 1) {
+        sequenceIndex = knobPosition;
+        sequence = sequences[sequenceIndex];
+        resetDefaultData();
+      }
       lastDebounceTime = millis();
-    }   
+    }
   }
 
   // A pulse occurs if the previous and the current state differ
@@ -388,9 +356,25 @@ void readRotaryEncoder() {
     }
 
     // Print the rotation angle, a value from 0-360 degrees
-    Serial.println(map(clicks, 0, MAX_CLICKS, 0, 360));
+    Serial.print("Knob position: ");
+    Serial.println(map(clicks, 0, MAX_CLICKS, 0, NUM_KNOB_POSITIONS));
+    knobPosition = map(clicks, 0, MAX_CLICKS, 0, NUM_KNOB_POSITIONS);
   }
 
   prevCLK = currentCLK;
   prevSW = currentSW;
+}
+
+void showKnobLEDs() {
+  FastLED.clear();
+
+  if (knobPosition < NUM_KNOB_POSITIONS) {
+    int numLEDsPerKnobPosition = NUM_LEDS / NUM_KNOB_POSITIONS;
+    int startIndex = knobPosition * numLEDsPerKnobPosition;
+    int hue = map(knobPosition, 0, NUM_KNOB_POSITIONS, 0, 255);
+    for (int i = startIndex; i < startIndex + numLEDsPerKnobPosition; i++) {
+      leds[i] = CHSV(hue, 255, 255);
+    }
+    FastLED.show();
+  }
 }
