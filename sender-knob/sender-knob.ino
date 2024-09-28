@@ -32,7 +32,7 @@ int currentCLK;
 int prevCLK;
 int currentSW = 0;
 int prevSW = 0;
-unsigned long lastDebounceTime = 0;
+unsigned long lastButtonClick = 0;
 unsigned long debounceDelay = 300;
 int knobPosition = 0;
 
@@ -328,16 +328,17 @@ void readRotaryEncoder() {
   currentCLK = digitalRead(ENCODER_CLK);
   currentSW = digitalRead(ENCODER_SW);
 
-  if ((millis() - lastDebounceTime) > debounceDelay) {
+  if ((millis() - lastButtonClick) > debounceDelay) {
     if (currentSW == LOW && prevSW == HIGH) {
       Serial.println("Button pressed!");
+      lastButtonClick = millis();
+
       // Set sequence according to knob position
       if (knobPosition < numSequences + 1) {
         sequenceIndex = knobPosition;
         sequence = sequences[sequenceIndex];
         resetDefaultData();
       }
-      lastDebounceTime = millis();
     }
   }
 
@@ -368,13 +369,22 @@ void readRotaryEncoder() {
 void showKnobLEDs() {
   FastLED.clear();
 
-  if (knobPosition < NUM_KNOB_POSITIONS) {
+  if (millis() < lastButtonClick + debounceDelay &&
+      knobPosition < numSequences) {
+    // Flash LEDs white when sequence is selected
+    for (int i = 0; i < NUM_LEDS; i++) {
+      leds[i] = CRGB::White;
+    }
+    FastLED.show();
+  } else if (knobPosition < numSequences) {
+    // Light segment of LEDs aligned with current knob position
     int numLEDsPerKnobPosition = NUM_LEDS / NUM_KNOB_POSITIONS;
     int startIndex = knobPosition * numLEDsPerKnobPosition;
     int hue = map(knobPosition, 0, NUM_KNOB_POSITIONS, 0, 255);
     for (int i = startIndex; i < startIndex + numLEDsPerKnobPosition; i++) {
-      leds[i] = CHSV(hue, 255, 255);
+      leds[NUM_LEDS - i - 1] = CHSV(hue, 255, 255);
     }
-    FastLED.show();
   }
+
+  FastLED.show();
 }
