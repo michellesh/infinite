@@ -33,6 +33,8 @@ int prevCLK;
 int currentSW = 0;
 int prevSW = 0;
 int knobPosition = 0;
+int numSpins = 3;
+float spinPosition = NUM_LEDS * numSpins;
 int volume = MAX_VOLUME;
 bool buttonHeld = false;
 
@@ -76,8 +78,9 @@ Timer trackDelayTimer;
 Timer delaySendTimer = {DELAY};
 Timer longPressButtonTimer = {LONG_PRESS_BUTTON_TIMER};
 
-Sequence *sequence; // = sequences[0];
-int sequenceIndex = -1;
+int standbySequenceIndex = numSequences - 1;
+int sequenceIndex = standbySequenceIndex;
+Sequence *sequence = sequences[sequenceIndex];
 
 // callback when data is sent
 void onDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
@@ -215,10 +218,7 @@ void loop() {
 void audio_eof_mp3(const char *info) { // end of file
   Serial.print("eof_mp3     ");
   Serial.println(info);
-  // sequenceIndex = (sequenceIndex + 1) % numSequences;
-  // sequence = sequences[sequenceIndex];
-  // resetDefaultData();
-  sequenceIndex = -1;
+  setSequence(standbySequenceIndex);
 }
 
 void resetDefaultData() {
@@ -326,6 +326,15 @@ void setupRotaryEncoder() {
   prevSW = digitalRead(ENCODER_SW);
 }
 
+void setSequence(int index) {
+  sequenceIndex = index;
+  sequence = sequences[sequenceIndex];
+  resetDefaultData();
+  if (index == standbySequenceIndex) {
+    audio.stopSong();
+  }
+}
+
 void readRotaryEncoder() {
   // Read the current state
   currentCLK = digitalRead(ENCODER_CLK);
@@ -336,10 +345,12 @@ void readRotaryEncoder() {
     buttonHeld = false;
     if (!longPressButtonTimer.complete()) {
       // Set sequence according to knob position
-      if (knobPosition < numSequences + 1) {
-        sequenceIndex = knobPosition;
-        sequence = sequences[sequenceIndex];
-        resetDefaultData();
+      if (knobPosition < numSequences) {
+        setSequence(knobPosition);
+        if (knobPosition < numSequences - 1) {
+          // Play a spinning animation if non-standby sequence selected
+          spinPosition = 0;
+        }
       }
     }
   }
@@ -374,9 +385,9 @@ void readRotaryEncoder() {
       Serial.println(volume);
     } else {
       // change knob position
+      knobPosition = map(clicks, 0, MAX_CLICKS, 0, NUM_KNOB_POSITIONS);
       Serial.print("Knob position: ");
       Serial.println(map(clicks, 0, MAX_CLICKS, 0, NUM_KNOB_POSITIONS));
-      knobPosition = map(clicks, 0, MAX_CLICKS, 0, NUM_KNOB_POSITIONS);
     }
   }
 
@@ -385,14 +396,24 @@ void readRotaryEncoder() {
 }
 
 void showKnobLEDs() {
-  FastLED.clear();
+  if (spinPosition < NUM_LEDS * numSpins) {
+    fadeToBlackBy(leds, NUM_LEDS, 10);
+  } else {
+    FastLED.clear();
+  }
 
-  if (longPressButtonTimer.complete() && buttonHeld) {
+  if (spinPosition < NUM_LEDS * numSpins) {
+    // Show a spinning animation when sequence is selected
+    int index = int(spinPosition) % NUM_LEDS;
+    leds[NUM_LEDS - index - 1] = CRGB::White;
+    spinPosition += 0.5;
+  } else if (longPressButtonTimer.complete() && buttonHeld) {
+    // Show volume meter
     int maxIndex = map(volume, 0, MAX_VOLUME, 0, NUM_LEDS);
     for (int i = 0; i < maxIndex; i++) {
       leds[NUM_LEDS - i - 1] = CRGB::White;
     }
-  } else if (knobPosition < numSequences) {
+  } else if (knobPosition < numSequences - 1) {
     // Light segment of LEDs aligned with current knob position
     int numLEDsPerKnobPosition = NUM_LEDS / NUM_KNOB_POSITIONS;
     int startIndex = knobPosition * numLEDsPerKnobPosition;

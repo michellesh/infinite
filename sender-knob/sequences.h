@@ -10,6 +10,7 @@ typedef struct Sequence {
 #include "actions-mountains.h"
 #include "actions-stay.h"
 #include "actions-unchartedworlds.h"
+#include "actions-standby.h"
 
 Sequence cornfieldChaseSequence = {&cornfieldChaseActions[0],
                                    sizeof(cornfieldChaseActions) /
@@ -29,6 +30,8 @@ Sequence mountainsSequence = {&mountainsActions[0],
 Sequence flowStateSequence = {&flowStateActions[0],
                               sizeof(flowStateActions) /
                                   sizeof(flowStateActions[0])};
+Sequence standbySequence = {&standbyActions[0],
+                            sizeof(standbyActions) / sizeof(standbyActions[0])};
 
 // clang-format off
 Sequence *sequences[] = {
@@ -39,6 +42,7 @@ Sequence *sequences[] = {
   &unchartedWorldsSequence,
   &kidsSequence,
   &marsSequence,
+  &standbySequence
 };
 // clang-format on
 
