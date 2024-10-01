@@ -32,9 +32,9 @@ int currentCLK;
 int prevCLK;
 int currentSW = 0;
 int prevSW = 0;
-unsigned long lastButtonClick = 0;
-unsigned long debounceDelay = 300;
 int knobPosition = 0;
+int volume = MAX_VOLUME;
+bool buttonHeld = false;
 
 // SD Card
 #define SD_CS 5
@@ -57,7 +57,8 @@ int knobPosition = 0;
 #define NUM_RECEIVERS 1
 #endif
 
-#define DELAY 50 // delay send between receivers
+#define DELAY 50                    // delay send between receivers
+#define LONG_PRESS_BUTTON_TIMER 300 // duration of long-press button
 
 uint8_t receiverAddresses[NUM_RECEIVERS][6]; // 6 bytes in a mac address
 
@@ -73,6 +74,7 @@ int trackNumber = 0;
 int receiverDelayAction = 0;
 Timer trackDelayTimer;
 Timer delaySendTimer = {DELAY};
+Timer longPressButtonTimer = {LONG_PRESS_BUTTON_TIMER};
 
 Sequence *sequence; // = sequences[0];
 int sequenceIndex = -1;
@@ -139,6 +141,7 @@ void setup() {
 
 void loop() {
   audio.loop();
+  audio.setVolume(volume);
 
   readRotaryEncoder();
 
@@ -299,7 +302,7 @@ void setupAudioSD() {
   }
 
   audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
-  audio.setVolume(MAX_VOLUME);
+  audio.setVolume(volume);
 
   rootDir = SD.open("/");
   if (!rootDir) {
@@ -328,11 +331,10 @@ void readRotaryEncoder() {
   currentCLK = digitalRead(ENCODER_CLK);
   currentSW = digitalRead(ENCODER_SW);
 
-  if ((millis() - lastButtonClick) > debounceDelay) {
-    if (currentSW == LOW && prevSW == HIGH) {
-      Serial.println("Button pressed!");
-      lastButtonClick = millis();
-
+  if (currentSW == HIGH && prevSW == LOW) {
+    Serial.println("Button up!");
+    buttonHeld = false;
+    if (!longPressButtonTimer.complete()) {
       // Set sequence according to knob position
       if (knobPosition < numSequences + 1) {
         sequenceIndex = knobPosition;
@@ -342,24 +344,40 @@ void readRotaryEncoder() {
     }
   }
 
+  if (currentSW == LOW && prevSW == HIGH) {
+    Serial.println("Button down!");
+    longPressButtonTimer.reset();
+    buttonHeld = true;
+  }
+
   // A pulse occurs if the previous and the current state differ
+  int delta = 0;
   if (currentCLK != prevCLK) {
     if (digitalRead(ENCODER_DT) != currentCLK) {
       clicks++;
+      delta = 1;
       if (clicks >= MAX_CLICKS) {
         clicks = 0;
       }
     } else {
       clicks--;
+      delta = -1;
       if (clicks < 0) {
         clicks = MAX_CLICKS;
       }
     }
 
-    // Print the rotation angle, a value from 0-360 degrees
-    Serial.print("Knob position: ");
-    Serial.println(map(clicks, 0, MAX_CLICKS, 0, NUM_KNOB_POSITIONS));
-    knobPosition = map(clicks, 0, MAX_CLICKS, 0, NUM_KNOB_POSITIONS);
+    if (longPressButtonTimer.complete() && buttonHeld) {
+      // change volume
+      volume = constrain(volume + delta, 0, MAX_VOLUME);
+      Serial.print("Volume: ");
+      Serial.println(volume);
+    } else {
+      // change knob position
+      Serial.print("Knob position: ");
+      Serial.println(map(clicks, 0, MAX_CLICKS, 0, NUM_KNOB_POSITIONS));
+      knobPosition = map(clicks, 0, MAX_CLICKS, 0, NUM_KNOB_POSITIONS);
+    }
   }
 
   prevCLK = currentCLK;
@@ -369,13 +387,11 @@ void readRotaryEncoder() {
 void showKnobLEDs() {
   FastLED.clear();
 
-  if (millis() < lastButtonClick + debounceDelay &&
-      knobPosition < numSequences) {
-    // Flash LEDs white when sequence is selected
-    for (int i = 0; i < NUM_LEDS; i++) {
-      leds[i] = CRGB::White;
+  if (longPressButtonTimer.complete() && buttonHeld) {
+    int maxIndex = map(volume, 0, MAX_VOLUME, 0, NUM_LEDS);
+    for (int i = 0; i < maxIndex; i++) {
+      leds[NUM_LEDS - i - 1] = CRGB::White;
     }
-    FastLED.show();
   } else if (knobPosition < numSequences) {
     // Light segment of LEDs aligned with current knob position
     int numLEDsPerKnobPosition = NUM_LEDS / NUM_KNOB_POSITIONS;
