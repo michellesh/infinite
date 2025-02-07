@@ -100,7 +100,8 @@
 // char senderB3[] = "FC:B4:67:74:5C:68"; // (sender)
 // char senderMS[] = "C8:F0:9E:9F:36:A8"; // (sender)
 
-char receiverM1[] = "4C:75:25:64:E5:DC";
+//char receiverM1[] = "4C:75:25:64:E5:DC"; // M1 on Micky's prototype
+char receiverM1[] = "A0:A3:B3:AB:87:C4"; // Brian's prototype
 char receiverM2[] = "A8:42:E3:48:A1:8C";
 char receiverM3[] = "A0:B7:65:63:7D:8C";
 char receiverM4[] = "48:E7:29:C9:F9:F8";

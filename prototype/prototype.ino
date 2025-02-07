@@ -62,8 +62,8 @@
 
 #define NUM_RINGS 10
 #define NUM_STRAIGHTS 6
-#define NUM_LEDS_PER_STRAIGHT 551
-#define NUM_LEDS_PER_RING 372
+#define NUM_LEDS_PER_STRAIGHT 144
+#define NUM_LEDS_PER_RING 144
 #define NUM_LEDS                                                               \
   NUM_RINGS *NUM_LEDS_PER_RING + NUM_STRAIGHTS *NUM_LEDS_PER_STRAIGHT
 
